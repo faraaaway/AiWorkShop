@@ -6,7 +6,7 @@
 |------|------|------|------|------------------|
 | 팀원1 **Core (Lead)** | ______ | 프로젝트 뼈대, 공용 타입, Obscura 래퍼, 수집 실행기, API, 통합·머지 | [1-core.md](./1-core.md) | `src/lib/*`, `src/crawler/*.ts`, `src/app/api/*`, `fixtures/sample-deals.json` |
 | 팀원2 **UI** | ______ | 카드 목록, 필터·정렬, 상태 화면, 비교 화면 | [2-ui.md](./2-ui.md) | `src/app/page.tsx`, `src/app/status`, `src/app/compare`, `src/components/*`, `src/lib/filters.ts`, `src/lib/time.ts` |
-| 팀원3 **Crawl A** | ______ | 무신사(MVP) → 29CM → W컨셉 → 네이버쇼핑 | [3-crawl-a.md](./3-crawl-a.md) | `src/crawler/adapters/{musinsa,29cm,wconcept,naver}.ts`, `fixtures/sites/…`, `tests/adapters/…` |
+| 팀원3 **Crawl A** | 이광민 | 무신사(MVP) → 29CM → W컨셉 → 네이버쇼핑 | [3-crawl-a.md](./3-crawl-a.md) | `src/crawler/adapters/{musinsa,29cm,wconcept,naver}.ts`, `fixtures/sites/…`, `tests/adapters/…` |
 | 팀원4 **Crawl B** | ______ | 지그재그 → 퀸잇 → 포스티 → 4910 → 에이블리 | [4-crawl-b.md](./4-crawl-b.md) | `src/crawler/adapters/{zigzag,queenit,posty,4910,ably}.ts`, `fixtures/sites/…`, `tests/adapters/…` |
 
 ## 타임라인
