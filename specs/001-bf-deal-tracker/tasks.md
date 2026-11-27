@@ -135,6 +135,9 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 - [ ] T047 [P] [US3] (CrawlB) 4910 — `src/crawler/adapters/4910.ts`, `fixtures/sites/4910/`, `tests/adapters/4910.test.ts`
 - [ ] T048 [P] [US3] (CrawlB) 에이블리 — `src/crawler/adapters/ably.ts`, `fixtures/sites/ably/`, `tests/adapters/ably.test.ts` (앱 중심이라 마지막)
 
+- [ ] T058 [P] [US3] (UI→CrawlC) 아뜨랑스(새 사이트, ID `attrangs`) — `src/crawler/adapters/attrangs.ts`, `fixtures/sites/attrangs/`, `tests/adapters/attrangs.test.ts`. 렌더링 fetch는 시간 초과라 원본 HTML(`--dump original`) + cheerio 파싱. 상세: team/2-ui.md "추가 담당 (Crawl C)"
+- [ ] T059 (Core) 새 사이트 `attrangs`를 `src/lib/types.ts` `SITE_IDS`, `src/lib/labels.ts`, `src/crawler/adapters/index.ts`(+스텁)에 등록하고, `CrawlContext.fetchHtml`에 원본 모드 `{ raw: true }` 추가 — 코어 엔진 워크플로가 끝난 직후
+
 **Checkpoint (~4:15)**: 4개 이상 사이트 통합 목표(SC-002).
 
 ---

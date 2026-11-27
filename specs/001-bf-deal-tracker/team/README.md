@@ -5,9 +5,13 @@
 | 역할                  | 이름       | 담당                                                                | 문서                           | 주로 수정하는 곳                                                                                                     |
 | --------------------- | ---------- | ------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
 | 팀원1 **Core (Lead)** | 장성민(나) | 프로젝트 뼈대, 공용 타입, Obscura 래퍼, 수집 실행기, API, 통합·머지 | [1-core.md](./1-core.md)       | `src/lib/*`, `src/crawler/*.ts`, `src/app/api/*`, `fixtures/sample-deals.json`                                       |
-| 팀원2 **UI**          | 김호성     | 카드 목록, 필터·정렬, 상태 화면, 비교 화면                          | [2-ui.md](./2-ui.md)           | `src/app/page.tsx`, `src/app/status`, `src/app/compare`, `src/components/*`, `src/lib/filters.ts`, `src/lib/time.ts` |
+| 팀원2 **UI + Crawl C** | 김호성    | 카드 목록, 필터·정렬, 상태 화면, 비교 화면 + **새 사이트 수집기: 아뜨랑스**(다음 후보: 유니클로·탑텐몰·스파오) | [2-ui.md](./2-ui.md)           | `src/app/page.tsx`, `src/app/status`, `src/app/compare`, `src/components/*`, `src/lib/filters.ts`, `src/lib/time.ts`, 새 사이트의 `adapters/<id>.ts` |
 | 팀원3 **Crawl A**     | 이광민     | 무신사(MVP) → 29CM → W컨셉 → 네이버쇼핑                             | [3-crawl-a.md](./3-crawl-a.md) | `src/crawler/adapters/{musinsa,29cm,wconcept,naver}.ts`, `fixtures/sites/…`, `tests/adapters/…`                      |
 | 팀원4 **Crawl B**     | 이태영     | 지그재그 → 퀸잇 → 포스티 → 4910 → 에이블리                          | [4-crawl-b.md](./4-crawl-b.md) | `src/crawler/adapters/{zigzag,queenit,posty,4910,ably}.ts`, `fixtures/sites/…`, `tests/adapters/…`                   |
+
+> **담당 추가 (1시간 시점)**: UI 화면이 일찍 끝나, 김호성 님이 기존 9개 밖의 **새 사이트**를 맡습니다. 첫 번째는
+> 아뜨랑스(`attrangs`, 블프 행사 진행 중 확인)입니다. 기존 9개 사이트의 담당은 그대로입니다.
+> 새 사이트 ID는 Core(장성민)가 공용 타입에 등록합니다 — 두 번째 사이트를 정하면 팀 채팅에 알려 주세요.
 
 ## 타임라인
 
