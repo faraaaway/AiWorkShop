@@ -126,7 +126,7 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 
 ### Implementation for User Story 3 — 사이트 수집기 (각 사이트 = fixture 저장 → parse 함수 → 테스트 → crawl 연결, contracts/adapter-interface.md "완료 기준")
 
-- [ ] T041 [P] [US3] (CrawlA) 29CM — `src/crawler/adapters/29cm.ts`, `fixtures/sites/29cm/`, `tests/adapters/29cm.test.ts`
+- [x] T041 [P] [US3] (CrawlA) 29CM — `src/crawler/adapters/29cm.ts`, `fixtures/sites/29cm/`, `tests/adapters/29cm.test.ts`
 - [ ] T042 [P] [US3] (CrawlA) W컨셉 — `src/crawler/adapters/wconcept.ts`, `fixtures/sites/wconcept/`, `tests/adapters/wconcept.test.ts`
 - [ ] T043 [P] [US3] (CrawlA) 네이버쇼핑 — `src/crawler/adapters/naver.ts`, `fixtures/sites/naver/`, `tests/adapters/naver.test.ts` (차단되면 상태만 확인하고 중단)
 - [ ] T044 [P] [US3] (CrawlB) 지그재그 — `src/crawler/adapters/zigzag.ts`, `fixtures/sites/zigzag/`, `tests/adapters/zigzag.test.ts`
