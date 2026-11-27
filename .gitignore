@@ -1,0 +1,35 @@
+# Personal Claude Code settings (shared skills in .claude/skills stay tracked)
+.claude/settings.local.json
+.claude/*.local.*
+
+# Secrets and owner's login sessions (constitution: never commit cookies/tokens)
+.env
+.env.*
+!.env.example
+secrets/
+sessions/
+cookies/
+*.cookies.json
+
+# Local crawl data and caches
+data/
+*.db
+*.sqlite
+*.sqlite3
+cache/
+logs/
+*.log
+
+# Dependencies and build output
+node_modules/
+dist/
+build/
+.venv/
+__pycache__/
+target/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,49 @@
+# Contract: Internal HTTP API
+
+Next.js Route Handler. 코어 담당이 구현하고 UI 담당이 호출한다. 로컬 전용(인증 없음, 헌법 I).
+응답 공통 형식: `{ "ok": true, "data": ... }` / `{ "ok": false, "error": "사람이 읽는 메시지" }`.
+타입은 [data-model.md](../data-model.md) 참고.
+
+UI 담당은 API가 준비되기 전까지 `fixtures/sample-deals.json`을 직접 import해서 개발하고,
+`src/lib/api.ts`의 `getDeals()` 한 곳만 나중에 실제 API로 바꾼다.
+
+## GET /api/deals
+
+모든 사이트의 Deal을 합쳐 반환. 필터/정렬은 클라이언트(`lib/filters.ts`)에서 한다.
+
+- Query: `includeExpired=1` (선택, 기본은 만료 제외)
+- 200:
+  ```json
+  { "ok": true, "data": { "deals": [ /* Deal */ ], "lastUpdatedAt": "2026-11-27T21:00:00+09:00" } }
+  ```
+  `lastUpdatedAt` = 사이트별 `lastSuccessAt` 중 가장 최근. 데이터가 없으면 `deals: []`, `lastUpdatedAt: null`.
+
+## GET /api/status
+
+- 200: `{ "ok": true, "data": { "sites": [ /* SiteStatus + displayName */ ] } }` — 9개 사이트 모두, 고정 순서.
+
+## POST /api/crawl
+
+수집 시작. 응답은 바로 돌려주고 수집은 백그라운드에서 진행(상태는 `/api/status`로 확인).
+
+- Body: `{ "siteId": "musinsa" }` 또는 `{ "siteId": "all" }`
+- Query/Body 옵션: `"force": true` — 쿨다운 무시(수동 재시도)
+- 202: `{ "ok": true, "data": { "started": ["musinsa"] } }`
+- 409: 이미 실행 중 `{ "ok": false, "error": "무신사 수집이 이미 진행 중입니다" }`
+- 400: 알 수 없는 siteId
+
+## PATCH /api/status/:siteId (Should)
+
+- Body: `{ "enabled": false }` — 사이트 켜기/끄기
+- 200: 변경된 SiteStatus
+
+## 화면 계약 (UI)
+
+| 경로 | 내용 | 관련 요구사항 |
+|------|------|---------------|
+| `/` | 상단: 마지막 업데이트 시각 · 성별 탭 · 테마 칩 · 할인율 구간 · 사이트 선택 · "오늘 마감" · 정렬 · "종료된 할인 보기". 본문: DealCard 그리드(모바일 2열, 데스크톱 4~5열) | FR-014~017, 020, 021 |
+| `/status` | 사이트별 행: 이름 · 상태 배지 · 마지막 수집 · 건수 · 메시지 · [지금 수집] 버튼, 상단 [전체 수집] | FR-018 |
+| `/compare` (Stretch) | 그룹 상품 사이트별 가격표, 최저가 강조 / 비교함 2~4개 | FR-019 |
+
+DealCard 필수 표시: 이미지, 사이트명, 브랜드, 상품명, 할인율(크게), 할인가, 정가(취소선), 남은 시간
+(`D-2 13:00` 또는 "알 수 없음"), 품절/만료 배지. 카드 클릭 → `url`을 새 탭(`target="_blank" rel="noopener"`).
