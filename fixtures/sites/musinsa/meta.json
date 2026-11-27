@@ -1,0 +1,21 @@
+{"meta":{"result":"SUCCESS","errorCode":null,"message":"성공"},"data":{"meta":{"uuid":"01a05b53-0ffb-7364-b9bc-1e81bbccbdf3","cpcmsCode":"mujinjangwinter2026","cpcmsType":"MUJINJANG","title":"무진장 26 겨울 블랙프라이데이","genderUseYn":"Y","startAt":"2026-11-22T19:00:00+09:00","endAt":"2026-12-03T00:00:00+09:00","afterRedirectUrl":"","status":"ACTIVE"},"opengraph":{"ogTitle":"무진장 26 겨울 블랙프라이데이","ogDescription":"무진장 26 겨울 블랙프라이데이","ogImage":"https://image.msscdn.net/campaign_service/images/cpcms/2026/1ae0b0b5ce054ad6b710b696ed55d94e.jpg"},"kvList":[],"linkTabList":[
+{"linkTabId":"01a1c351-88ca-7fde-b432-dde431d95782","title":"타임","seq":0,"type":"MODULE","redirectUrl":null,"startAt":"2026-11-22T19:00:00+09:00","endAt":"2026-12-03T00:00:00+09:00","anchorList":[]},
+{"linkTabId":"01a17801-653c-73dc-a95d-e57864714371","title":"특가","seq":2,"type":"MODULE","redirectUrl":null,"startAt":"2026-11-22T19:00:00+09:00","endAt":"2026-12-03T00:00:00+09:00","anchorList":[
+{"anchorTabFocusId":"surprisecoupon","anchorTitle":"주말 쿠폰","seq":1,"moduleUuid":"01a21a56-34a5-7a69-ba5d-15f36ed80a4f"},
+{"anchorTabFocusId":"signatureItem","anchorTitle":"시그니처특가","seq":2,"moduleUuid":"01a1a6e2-798c-7774-9b13-295239702aae"},
+{"anchorTabFocusId":"signaturebrand","anchorTitle":"시그니처 브랜드데이","seq":4,"moduleUuid":"01a1aada-1e42-7382-bb8c-7694f41c4296"},
+{"anchorTabFocusId":"openingfinal","anchorTitle":"단독 하루특가","seq":9,"moduleUuid":"01a1cd9b-f109-72e4-89b3-747d8a109c28"},
+{"anchorTabFocusId":"limited","anchorTitle":"선착순 한정 수량 특가","seq":11,"moduleUuid":"01a1cd9b-f63f-7f55-a231-2ca2ce4074de"},
+{"anchorTabFocusId":"timedeal","anchorTitle":"72시간 특가","seq":14,"moduleUuid":"01a1cd9c-0046-7a89-9806-f46c44d1e1ae"},
+{"anchorTabFocusId":"global_limited","anchorTitle":"글로벌 특가","seq":18,"moduleUuid":"01a20dcb-3e24-7312-8209-47d8fd4f0b6f"},
+{"anchorTabFocusId":"coupon","anchorTitle":"상품 쿠폰","seq":20,"moduleUuid":"01a1cd9c-1b92-74ec-8607-2258228b79a7"},
+{"anchorTabFocusId":"cartcoupon","anchorTitle":"장바구니 쿠폰","seq":21,"moduleUuid":"01a1cd9c-1d0a-7bf3-94d3-82974bb80b35"},
+{"anchorTabFocusId":"itemranking","anchorTitle":"상품 랭킹","seq":22,"moduleUuid":"01a21a65-d5d9-702c-89e1-30110bc70f70"},
+{"anchorTabFocusId":"used","anchorTitle":"유즈드","seq":23,"moduleUuid":"01a21cc4-0e20-7f9c-bdf2-914f0b688247"},
+{"anchorTabFocusId":"special_item","anchorTitle":"스페셜 발매 상품","seq":24,"moduleUuid":"01a1cd9c-1ea5-768e-8e3b-7039b21d84b7"},
+{"anchorTabFocusId":"category_1","anchorTitle":"상의데이","seq":28,"moduleUuid":"01a1cd9c-22d6-7310-a3ec-94de15acece2"},
+{"anchorTabFocusId":"category_2","anchorTitle":"하의데이","seq":29,"moduleUuid":"01a1cd9c-3f16-7a6d-96b6-14765d911158"},
+{"anchorTabFocusId":"focus","anchorTitle":"오늘 주목할","seq":40,"moduleUuid":"01a20c2a-5bd4-7d96-a9e5-c19507301e7b"},
+{"anchorTabFocusId":"live","anchorTitle":"무신사 라이브","seq":45,"moduleUuid":"01a1cd9c-4b57-7789-84e8-c8195ccab190"}]},
+{"linkTabId":"01a20c19-ed11-7adc-9758-c6e7e6348d59","title":"아우터","seq":15,"type":"EXTERNAL_LINK","redirectUrl":"https://www.musinsa.com/campaign/mujinjangwinter2026_outer/0","startAt":"2026-11-25T00:00:00+09:00","endAt":"2026-12-02T00:00:00+09:00","anchorList":[]}
+]}}

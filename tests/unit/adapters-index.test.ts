@@ -72,7 +72,15 @@ describe('adapter registry', () => {
   });
 });
 
-describe('adapter stubs', () => {
+/**
+ * Sites whose real adapter has been merged. Core adds an id here when merging an adapter branch;
+ * every other site must still be the untouched stub.
+ */
+const IMPLEMENTED_SITE_IDS: readonly SiteId[] = ['musinsa'];
+const STUB_SITE_IDS: readonly SiteId[] = SITE_IDS.filter((id) => !IMPLEMENTED_SITE_IDS.includes(id));
+const MAX_REQUESTS_CEILING = 30;
+
+describe('every adapter', () => {
   it.each(SITE_IDS)('%s has the agreed display name and home url', (id) => {
     const adapter = getAdapter(id);
 
@@ -80,15 +88,24 @@ describe('adapter stubs', () => {
     expect(adapter.homeUrl).toBe(EXPECTED_HOME_URLS[id]);
   });
 
-  it.each(SITE_IDS)('%s uses the default crawl settings', (id) => {
+  it.each(SITE_IDS)('%s obeys robots.txt and stays within the request ceiling', (id) => {
+    const adapter = getAdapter(id);
+
+    expect(adapter.obeyRobots).toBe(true);
+    expect(adapter.maxRequests).toBeGreaterThan(0);
+    expect(adapter.maxRequests).toBeLessThanOrEqual(MAX_REQUESTS_CEILING);
+  });
+});
+
+describe('adapter stubs', () => {
+  it.each(STUB_SITE_IDS)('%s uses the default crawl settings', (id) => {
     const adapter = getAdapter(id);
 
     expect(adapter.stealth).toBe(true);
-    expect(adapter.obeyRobots).toBe(true);
-    expect(adapter.maxRequests).toBe(30);
+    expect(adapter.maxRequests).toBe(MAX_REQUESTS_CEILING);
   });
 
-  it.each(SITE_IDS)('%s crawl rejects with a not_implemented error', async (id) => {
+  it.each(STUB_SITE_IDS)('%s crawl rejects with a not_implemented error', async (id) => {
     const adapter = getAdapter(id);
 
     const error = await captureRejection(adapter.crawl(createUnusedContext()));
