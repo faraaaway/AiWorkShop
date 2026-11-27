@@ -11,14 +11,14 @@
 
 ## 설계 문서
 
-| 문서 | 내용 |
-|------|------|
-| [constitution.md](.specify/memory/constitution.md) | 프로젝트 원칙 (개인용, 크롤링 규칙, 출처 표시) |
-| [spec.md](specs/001-bf-deal-tracker/spec.md) | 기능 명세 (Must / Should / Stretch) |
-| [plan.md](specs/001-bf-deal-tracker/plan.md) | 기술 스택·폴더 구조 |
-| [research.md](specs/001-bf-deal-tracker/research.md) | 기술 선택 근거, 사이트별 난이도 |
-| [data-model.md](specs/001-bf-deal-tracker/data-model.md) | Deal / SiteStatus 데이터 형식 |
-| [contracts/](specs/001-bf-deal-tracker/contracts/) | 수집기 인터페이스, 내부 API |
+| 문서                                                     | 내용                                           |
+| -------------------------------------------------------- | ---------------------------------------------- |
+| [constitution.md](.specify/memory/constitution.md)       | 프로젝트 원칙 (개인용, 크롤링 규칙, 출처 표시) |
+| [spec.md](specs/001-bf-deal-tracker/spec.md)             | 기능 명세 (Must / Should / Stretch)            |
+| [plan.md](specs/001-bf-deal-tracker/plan.md)             | 기술 스택·폴더 구조                            |
+| [research.md](specs/001-bf-deal-tracker/research.md)     | 기술 선택 근거, 사이트별 난이도                |
+| [data-model.md](specs/001-bf-deal-tracker/data-model.md) | Deal / SiteStatus 데이터 형식                  |
+| [contracts/](specs/001-bf-deal-tracker/contracts/)       | 수집기 인터페이스, 내부 API                    |
 
 ## 기술 스택
 

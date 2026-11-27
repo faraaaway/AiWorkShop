@@ -34,6 +34,7 @@ build/
 .venv/
 __pycache__/
 target/
+specs/001-bf-deal-tracker/team/README.md
 
 # OS / editor
 .DS_Store

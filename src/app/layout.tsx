@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "블프 할인 모아보기",
-  description: "여러 쇼핑몰의 블랙프라이데이 의류 할인을 할인율·마감 시각과 함께 한곳에서 비교합니다.",
+  title: "블랙프라이데이 할인 모아보기",
+  description:
+    "여러 쇼핑몰의 블랙프라이데이 의류 할인을 할인율·마감 시각과 함께 한곳에서 비교합니다.",
 };
 
 export default function RootLayout({
