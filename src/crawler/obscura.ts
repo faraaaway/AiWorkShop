@@ -12,8 +12,12 @@ import type { CrawlContext, FetchHtmlOptions, SiteAdapter } from '@/lib/types';
 const DEFAULT_MIN_DELAY_MS = 2_000;
 const DEFAULT_MAX_DELAY_MS = 4_000;
 const DEFAULT_TIMEOUT_SEC = 30;
-/** The process is killed this long after Obscura's own --timeout (+ --wait) should have ended it. */
-const KILL_GRACE_SEC = 15;
+/**
+ * The process is killed this long after Obscura's own --timeout (+ --wait) should have ended it.
+ * It is only a backstop against a hung process: pages that scroll and wait (preEval) took about
+ * 80 s in live runs with --timeout 30 --wait 25, so the margin is generous.
+ */
+const KILL_GRACE_SEC = 120;
 const MS_PER_SEC = 1_000;
 const MAX_BUFFER_BYTES = 64 * 1024 * 1024;
 /** Weak block signals and Cloudflare markers only count in a body shorter than this. */
@@ -229,7 +233,7 @@ function assertRequestSpec(spec: RequestSpec): void {
     throw new Error(`waitSec는 0 이상의 정수(초)여야 합니다: ${spec.waitSec}`);
   }
   if (spec.js !== undefined && spec.js.trim() === '') {
-    throw new Error('evalPage에 넘긴 JS 표현식이 비어 있습니다');
+    throw new Error('페이지에서 실행할 JS 표현식(evalPage의 js 또는 fetchHtml의 preEval)이 비어 있습니다');
   }
 }
 
@@ -369,7 +373,16 @@ export function createObscuraContext(options: ObscuraContextOptions): ObscuraCon
 
   return {
     async fetchHtml(url: string, opts?: FetchHtmlOptions): Promise<string> {
-      const html = await request({ url, dump: 'html', waitSec: opts?.waitSec });
+      if (opts?.raw === true) {
+        // Raw body, no rendering: waitSec and preEval do not apply. An empty body is a valid
+        // answer here (e.g. the page after the last one of a paged list).
+        const body = await request({ url, dump: 'original' });
+        const rawReason = detectBlockSignal(body);
+        if (rawReason !== null) throw latchBlock(new BlockedError(rawReason, url));
+        return body;
+      }
+      // With --dump html, --eval runs the script first and Obscura still prints the page HTML.
+      const html = await request({ url, dump: 'html', waitSec: opts?.waitSec, js: opts?.preEval });
       if (html.trim() === '') throw new Error(`빈 페이지가 돌아왔습니다: ${url}`);
       const reason = detectBlockSignal(html);
       if (reason !== null) throw latchBlock(new BlockedError(reason, url));

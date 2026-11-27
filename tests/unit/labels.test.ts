@@ -48,6 +48,7 @@ describe('label maps', () => {
       queenit: '퀸잇',
       posty: '포스티',
       '4910': '4910',
+      attrangs: '아뜨랑스',
     });
   });
 

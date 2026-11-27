@@ -40,6 +40,7 @@ const EXPECTED_NAMES: Readonly<Record<SiteId, string>> = {
   queenit: '퀸잇',
   posty: '포스티',
   '4910': '4910',
+  attrangs: '아뜨랑스',
 };
 const OK_STATUS: SiteStatus = {
   siteId: 'musinsa',

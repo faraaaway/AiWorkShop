@@ -1187,7 +1187,7 @@ describe('startBackgroundRun', () => {
     const answer = await startBackgroundRun('all');
 
     expect(answer).toEqual({
-      started: ['musinsa', '29cm', 'wconcept', 'queenit', 'posty', '4910'],
+      started: ['musinsa', '29cm', 'wconcept', 'queenit', 'posty', '4910', 'attrangs'],
       skipped: [
         { siteId: 'naver', reason: 'disabled' },
         { siteId: 'zigzag', reason: 'cooldown' },
@@ -1195,7 +1195,7 @@ describe('startBackgroundRun', () => {
       ],
     });
     await waitForPhase('musinsa', 'running');
-    for (const siteId of ['29cm', 'wconcept', 'queenit', 'posty', '4910'] as const) {
+    for (const siteId of ['29cm', 'wconcept', 'queenit', 'posty', '4910', 'attrangs'] as const) {
       expect(await getRunPhase(siteId)).toBe('queued');
       expect(JSON.parse(await readText('locks', siteId))).toMatchObject({ pid: process.pid, phase: 'queued' });
     }

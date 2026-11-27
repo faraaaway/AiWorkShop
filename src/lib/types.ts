@@ -16,6 +16,7 @@ export const SITE_IDS = [
   'queenit',
   'posty',
   '4910',
+  'attrangs',
 ] as const;
 export type SiteId = (typeof SITE_IDS)[number];
 
@@ -169,6 +170,19 @@ export interface DealsFile {
 export interface FetchHtmlOptions {
   /** Fixed post-load wait in seconds. */
   waitSec?: number;
+  /**
+   * fetchHtml only: return the raw response body without rendering (no JavaScript runs). Use it
+   * for server-rendered pages and HTML fragments that time out when rendered. An empty body is
+   * returned as ''. Block detection still applies.
+   */
+  raw?: boolean;
+  /**
+   * fetchHtml only: one synchronous JS expression run in the page right after load, BEFORE the
+   * `waitSec` wait; its result is ignored and the rendered HTML is returned afterwards. Used by
+   * pages that load products while scrolling (the script scrolls and stashes what it sees in the
+   * DOM). It must only read the page: no form input, no clicks on challenge pages. Ignored with raw.
+   */
+  preEval?: string;
 }
 
 /**

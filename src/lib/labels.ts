@@ -18,6 +18,7 @@ export const SITE_LABELS: Readonly<Record<SiteId, string>> = {
   queenit: '퀸잇',
   posty: '포스티',
   '4910': '4910',
+  attrangs: '아뜨랑스',
 };
 
 export const GENDER_LABELS: Readonly<Record<Gender, string>> = {

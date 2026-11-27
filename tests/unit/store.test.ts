@@ -455,7 +455,7 @@ describe('readStatus / writeStatus', () => {
 });
 
 describe('readAllStatuses', () => {
-  it('returns all nine sites in SITE_IDS order, with defaults for missing files', async () => {
+  it('returns every site in SITE_IDS order, with defaults for missing files', async () => {
     const zigzag = makeStatus('zigzag', { state: 'suspect_layout', dealCount: 0 });
     const musinsa = makeStatus('musinsa');
     await writeStatus(zigzag);
@@ -464,7 +464,7 @@ describe('readAllStatuses', () => {
     const statuses = await readAllStatuses();
 
     expect(statuses.map((status) => status.siteId)).toEqual([...SITE_IDS]);
-    expect(statuses).toHaveLength(9);
+    expect(statuses).toHaveLength(SITE_IDS.length);
     expect(statuses[SITE_IDS.indexOf('musinsa')]).toEqual(musinsa);
     expect(statuses[SITE_IDS.indexOf('zigzag')]).toEqual(zigzag);
     expect(statuses[SITE_IDS.indexOf('29cm')]).toEqual(defaultStatus('29cm'));

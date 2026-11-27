@@ -798,3 +798,71 @@ describe('createObscuraContext — log', () => {
     expect(ctx.blocked).toBeNull();
   });
 });
+
+function optionValue(args: readonly string[], flag: string): string | undefined {
+  const at = args.indexOf(flag);
+  return at < 0 ? undefined : args[at + 1];
+}
+
+describe('fetchHtml raw mode', () => {
+  it('asks for the raw body and ignores the rendering options', async () => {
+    const h = makeHarness([ok('<li class="item">상품</li>')]);
+
+    const body = await h.ctx.fetchHtml(PAGE_URL, { raw: true, waitSec: 5, preEval: 'window.scrollTo(0, 1)' });
+
+    expect(body).toBe('<li class="item">상품</li>');
+    expect(optionValue(h.calls[0].args, '--dump')).toBe('original');
+    expect(h.calls[0].args).not.toContain('--eval');
+    expect(h.calls[0].args).not.toContain('--wait');
+  });
+
+  it('returns an empty raw body as an empty string (end of a paged list)', async () => {
+    const h = makeHarness([ok('')]);
+
+    await expect(h.ctx.fetchHtml(PAGE_URL, { raw: true })).resolves.toBe('');
+  });
+
+  it('still detects a bot wall in a raw body and latches', async () => {
+    const h = makeHarness([ok('<html><head><title>Just a moment...</title></head><body></body></html>')]);
+
+    const error = await rejection(h.ctx.fetchHtml(PAGE_URL, { raw: true }));
+
+    expect(getCrawlErrorKind(error)).toBe('blocked');
+    expect(h.ctx.blocked).toBe(error);
+    expect(getCrawlErrorKind(await rejection(h.ctx.fetchHtml(PAGE_URL, { raw: true })))).toBe('blocked');
+    expect(h.calls).toHaveLength(1);
+  });
+});
+
+describe('fetchHtml preEval', () => {
+  const SCROLL_SCRIPT = '(function () { window.scrollTo(0, 1000); return "harvesting"; })()';
+
+  it('runs the script with --eval and still dumps the rendered html after the wait', async () => {
+    const h = makeHarness([ok(NORMAL_HTML)]);
+
+    const html = await h.ctx.fetchHtml(PAGE_URL, { waitSec: 25, preEval: SCROLL_SCRIPT });
+
+    expect(html).toBe(NORMAL_HTML);
+    expect(optionValue(h.calls[0].args, '--dump')).toBe('html');
+    expect(optionValue(h.calls[0].args, '--wait')).toBe('25');
+    expect(optionValue(h.calls[0].args, '--eval')).toBe(SCROLL_SCRIPT);
+  });
+
+  it('rejects an empty script without starting a process', async () => {
+    const h = makeHarness();
+
+    const error = await rejection(h.ctx.fetchHtml(PAGE_URL, { preEval: '   ' }));
+
+    expect(error.message).toMatch(/[가-힣]/);
+    expect(h.calls).toHaveLength(0);
+  });
+
+  it('leaves a slow scroll-and-wait page enough time before the hard kill', async () => {
+    const h = makeHarness([ok(NORMAL_HTML)]);
+
+    await h.ctx.fetchHtml(PAGE_URL, { waitSec: 25, preEval: SCROLL_SCRIPT });
+
+    // A scroll-harvest page took about 80 s in live runs with --timeout 30 --wait 25.
+    expect(h.calls[0].timeoutMs).toBeGreaterThanOrEqual(150_000);
+  });
+});
