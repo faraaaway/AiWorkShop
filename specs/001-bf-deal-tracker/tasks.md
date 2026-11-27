@@ -55,25 +55,25 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 
 ### Tests for User Story 1
 
-- [ ] T011 [P] [US1] (Core) `tests/unit/discount.test.ts` — data-model.md `Deal.discountRate` 규칙(내림, 정가 없음→표시값, 범위 밖→null)과 `Deal.displayedDiscountRate` 1%p 차이 판정
-- [ ] T012 [P] [US1] (Core) `tests/unit/dates.test.ts` — `parseKoreanEndDate`: `~11.30(일) 23:59`, `11/30까지`, `D-2`, `오늘 마감`, 알 수 없는 문자열→null
+- [x] T011 [P] [US1] (Core) `tests/unit/discount.test.ts` — data-model.md `Deal.discountRate` 규칙(내림, 정가 없음→표시값, 범위 밖→null)과 `Deal.displayedDiscountRate` 1%p 차이 판정
+- [x] T012 [P] [US1] (Core) `tests/unit/dates.test.ts` — `parseKoreanEndDate`: `~11.30(일) 23:59`, `11/30까지`, `D-2`, `오늘 마감`, 알 수 없는 문자열→null
 - [x] T013 [P] [US1] (CrawlA) `tests/adapters/musinsa.test.ts` — `fixtures/sites/musinsa/`로 `parseMusinsa` 검증(10개 이상, 필수 필드 존재, 가격 숫자)
 
 ### Implementation for User Story 1
 
-- [ ] T014 [P] [US1] (Core) `src/lib/discount.ts` — data-model.md `Deal.discountRate`, `Deal.displayedDiscountRate` 계산
-- [ ] T015 [P] [US1] (Core) `src/lib/dates.ts` — `parseKoreanEndDate(text, now)`(KST, 연도 생략 시 올해/내년 판정)
-- [ ] T016 [US1] (Core) `src/crawler/obscura.ts` — `CrawlContext` 구현: `execFile(OBSCURA_PATH)`로 `--stealth`/`--obey-robots` 사이트 설정 반영, `fetchHtml`(`--dump html`), `fetchJson`(`--dump original`), `evalPage`(`--eval`), 요청 간 2~4초 대기, `maxRequests` 초과 시 중단, research.md R4 신호 감지 시 `BlockedError`
-- [ ] T017 [US1] (Core) `src/lib/classify.ts` 최소 버전(항상 `unclassified`) + `src/lib/normalize.ts` — `RawDeal`→`Deal` 변환: data-model.md `Deal.id`, `Deal.salePrice`(≤0 버림), `Deal.endsAt`/`Deal.endsAtSource`(상품→행사 순), 같은 `id`는 최저가만
-- [ ] T018 [US1] (Core) `src/lib/store.ts` — `data/deals/<siteId>.json`, `data/status/<siteId>.json` 읽기/쓰기(임시 파일→rename), 파일 없으면 빈 값
-- [ ] T019 [US1] (Core) `src/crawler/runner.ts` 기본형 + `src/crawler/cli.ts` — `--site <id>` 실행, normalize 후 저장, data-model.md `SiteStatus.lastRunAt`/`lastSuccessAt`/`dealCount`/`state` 갱신
-- [ ] T020 [US1] (Core) `src/app/api/deals/route.ts` — contracts/http-api.md `GET /api/deals`(만료 제외 기본, `lastUpdatedAt`)
+- [x] T014 [P] [US1] (Core) `src/lib/discount.ts` — data-model.md `Deal.discountRate`, `Deal.displayedDiscountRate` 계산
+- [x] T015 [P] [US1] (Core) `src/lib/dates.ts` — `parseKoreanEndDate(text, now)`(KST, 연도 생략 시 올해/내년 판정)
+- [x] T016 [US1] (Core) `src/crawler/obscura.ts` — `CrawlContext` 구현: `execFile(OBSCURA_PATH)`로 `--stealth`/`--obey-robots` 사이트 설정 반영, `fetchHtml`(`--dump html`), `fetchJson`(`--dump original`), `evalPage`(`--eval`), 요청 간 2~4초 대기, `maxRequests` 초과 시 중단, research.md R4 신호 감지 시 `BlockedError`
+- [x] T017 [US1] (Core) `src/lib/classify.ts` 최소 버전(항상 `unclassified`) + `src/lib/normalize.ts` — `RawDeal`→`Deal` 변환: data-model.md `Deal.id`, `Deal.salePrice`(≤0 버림), `Deal.endsAt`/`Deal.endsAtSource`(상품→행사 순), 같은 `id`는 최저가만
+- [x] T018 [US1] (Core) `src/lib/store.ts` — `data/deals/<siteId>.json`, `data/status/<siteId>.json` 읽기/쓰기(임시 파일→rename), 파일 없으면 빈 값
+- [x] T019 [US1] (Core) `src/crawler/runner.ts` 기본형 + `src/crawler/cli.ts` — `--site <id>` 실행, normalize 후 저장, data-model.md `SiteStatus.lastRunAt`/`lastSuccessAt`/`dealCount`/`state` 갱신
+- [x] T020 [US1] (Core) `src/app/api/deals/route.ts` — contracts/http-api.md `GET /api/deals`(만료 제외 기본, `lastUpdatedAt`)
 - [x] T021 [US1] (CrawlA) 무신사 블프 행사 페이지 조사 후 원본을 `fixtures/sites/musinsa/`에 저장(행사 목록 1개 + 상품 목록 1개 이상)
 - [x] T022 [US1] (CrawlA) `src/crawler/adapters/musinsa.ts` — `parseMusinsa` 순수 함수 + `crawl(ctx)`(행사 → 상품 목록, `rawCategory`·`rawGender`·`event.endsAt` 채움)
 - [x] T023 [P] [US1] (UI) `src/lib/time.ts` — 남은 시간 표시(`D-2 13:00`, `오늘 23:59 마감`, `알 수 없음`, 만료)
 - [x] T024 [P] [US1] (UI) `src/components/DealCard.tsx` — contracts/http-api.md "DealCard 필수 표시" 전부, 새 탭 링크, `Deal.discountRate` null이면 "알 수 없음"
 - [x] T025 [US1] (UI) `src/app/page.tsx` — 상단 마지막 업데이트 시각 + 카드 그리드(모바일 2열/데스크톱 4~5열), `getDeals()` 사용
-- [ ] T026 [US1] (UI) `src/lib/api.ts`의 `getDeals()`를 `/api/deals` 호출로 교체(T020 완료 후, Core와 같이 확인)
+- [x] T026 [US1] (UI) `src/lib/api.ts`의 `getDeals()`를 `/api/deals` 호출로 교체(T020 완료 후, Core와 같이 확인)
 
 **Checkpoint (~2:00)**: 무신사 실데이터로 목록 동작 = MVP 확보. 바로 `main`에 머지.
 
@@ -87,12 +87,12 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 
 ### Tests for User Story 2
 
-- [ ] T027 [P] [US2] (Core) `tests/unit/classify.test.ts` — research.md R8 키워드·카테고리 사례 20개 이상
+- [x] T027 [P] [US2] (Core) `tests/unit/classify.test.ts` — research.md R8 키워드·카테고리 사례 20개 이상
 - [x] T028 [P] [US2] (UI) `tests/unit/filters.test.ts` — 조합 필터, 정렬 3종, 할인율 null 제외, 품절 뒤로
 
 ### Implementation for User Story 2
 
-- [ ] T029 [US2] (Core) `src/lib/classify.ts` 완성 — data-model.md `Deal.gender`, `Deal.theme`(카테고리 1순위, 상품명 키워드 2순위, 실패 시 `unclassified`)
+- [x] T029 [US2] (Core) `src/lib/classify.ts` 완성 — data-model.md `Deal.gender`, `Deal.theme`(카테고리 1순위, 상품명 키워드 2순위, 실패 시 `unclassified`)
 - [x] T030 [US2] (UI) `src/lib/filters.ts` — `applyFilters(deals, state)`/`sortDeals(deals, sort)`: 성별, 테마, 할인율 구간(30/50/70+), 사이트, 오늘 마감, 종료 포함 여부; 정렬 할인율↓·마감 임박·가격↑
 - [x] T031 [P] [US2] (UI) `src/components/FilterBar.tsx` — 성별 탭, 테마 칩(가로 스크롤), 할인율 구간, 사이트 선택, "오늘 마감", "종료된 할인 보기"
 - [x] T032 [P] [US2] (UI) `src/components/SortSelect.tsx`
@@ -111,13 +111,13 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 
 ### Tests for User Story 3
 
-- [ ] T035 [P] [US3] (Core) `tests/unit/runner.test.ts` — 가짜 어댑터로 성공/예외/0건/`BlockedError`/`LoginRequiredError`/`NotImplementedError` 각각의 data-model.md `SiteStatus.state`·`SiteStatus.cooldownUntil` 전이와 기존 Deal 유지 확인
+- [x] T035 [P] [US3] (Core) `tests/unit/runner.test.ts` — 가짜 어댑터로 성공/예외/0건/`BlockedError`/`LoginRequiredError`/`NotImplementedError` 각각의 data-model.md `SiteStatus.state`·`SiteStatus.cooldownUntil` 전이와 기존 Deal 유지 확인
 
 ### Implementation for User Story 3 — Core
 
-- [ ] T036 [US3] (Core) `src/crawler/runner.ts` 확장 — `--site all` 순차 실행, 사이트별 try/catch 격리, data-model.md "상태 전이" 그대로 구현(0건→`suspect_layout`, 차단→`blocked`+6h, 쿨다운 중 건너뜀, `force`로 무시)
-- [ ] T037 [P] [US3] (Core) `src/app/api/status/route.ts` — contracts/http-api.md `GET /api/status`
-- [ ] T038 [US3] (Core) `src/app/api/crawl/route.ts` — `POST /api/crawl` 백그라운드 실행, 실행 중 409, 잘못된 siteId 400
+- [x] T036 [US3] (Core) `src/crawler/runner.ts` 확장 — `--site all` 순차 실행, 사이트별 try/catch 격리, data-model.md "상태 전이" 그대로 구현(0건→`suspect_layout`, 차단→`blocked`+6h, 쿨다운 중 건너뜀, `force`로 무시)
+- [x] T037 [P] [US3] (Core) `src/app/api/status/route.ts` — contracts/http-api.md `GET /api/status`
+- [x] T038 [US3] (Core) `src/app/api/crawl/route.ts` — `POST /api/crawl` 백그라운드 실행, 실행 중 409, 잘못된 siteId 400
 
 ### Implementation for User Story 3 — UI
 
@@ -131,20 +131,20 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 - [ ] T043 [P] [US3] (CrawlA) 네이버쇼핑 — `src/crawler/adapters/naver.ts`, `fixtures/sites/naver/`, `tests/adapters/naver.test.ts` (차단되면 상태만 확인하고 중단)
 - [ ] T044 [P] [US3] (CrawlB) 지그재그 — `src/crawler/adapters/zigzag.ts`, `fixtures/sites/zigzag/`, `tests/adapters/zigzag.test.ts`
   - **보류(2026-11-27, CrawlB)**: `NotImplemented` 유지. 행사 페이지(`zigzag.kr/events/<uuid>`)는 열리지만 상품은 `api.zigzag.kr` GraphQL(POST 전용)로 따로 불러오는데, Obscura 0.2.7에서는 이 호출의 CORS 사전 요청이 거부되어 스크롤해도 상품 카드가 0개다. `fetchJson`(GET)으로는 "GraphQL only supports POST" 응답. 소유자 결정으로 제외.
-- [ ] T045 [P] [US3] (CrawlB) 퀸잇 — `src/crawler/adapters/queenit.ts`, `fixtures/sites/queenit/`, `tests/adapters/queenit.test.ts`
+- [x] T045 [P] [US3] (CrawlB) 퀸잇 — `src/crawler/adapters/queenit.ts`, `fixtures/sites/queenit/`, `tests/adapters/queenit.test.ts`
   - **진행(2026-11-27, CrawlB)**: fixture·`parseQueenit`·테스트 통과, 실수집 19개(기획전 1곳, 53초), 무작위 5개 대조 5/5 일치. 남은 것: Core의 `fetchHtml` `preEval` 지원(아래 "CrawlB → Core 요청") 후 `npm run crawl -- --site queenit` 확인.
   - 주의: 목록 카드 가격은 비로그인 "첫구매 특가"(쿠폰 포함)다. 예: 목록 141,000원(16%) / 상품 페이지 기본가 149,000원(11%). 정가는 목록에 없어 `originalPrice: null`. 기획전 주소는 홈 HTML에 없어 `QUEENIT_SEED_COLLECTIONS`에 직접 적는다(현재 1곳).
-- [ ] T046 [P] [US3] (CrawlB) 포스티 — `src/crawler/adapters/posty.ts`, `fixtures/sites/posty/`, `tests/adapters/posty.test.ts`
+- [x] T046 [P] [US3] (CrawlB) 포스티 — `src/crawler/adapters/posty.ts`, `fixtures/sites/posty/`, `tests/adapters/posty.test.ts`
   - **진행(2026-11-27, CrawlB)**: fixture·`parsePosty`·테스트 통과, 실수집 562개(중복 제외 524개, 블프 기획전 5곳, 요청 6회, 371초), 무작위 5개 대조 5/5 일치, 기획전 종료 시각(`date_ended`) 수집. 남은 것: Core `preEval` 지원 후 `npm run crawl -- --site posty` 확인.
   - 주의: 가격은 "쿠폰할인가", 정가는 목록에 없어 `originalPrice: null`. 371초라 "사이트당 2분"(R5)을 넘는다 — 줄이려면 `posty.ts`의 `MAX_EVENTS`(5)를 낮춘다. 위 실수집에는 뷰티&리빙 기획전 1곳(115개)이 섞였고, 이후 제목에 뷰티·리빙이 있으면 빼도록 고쳤다(테스트만 확인, 재수집 안 함).
-- [ ] T047 [P] [US3] (CrawlB) 4910 — `src/crawler/adapters/4910.ts`, `fixtures/sites/4910/`, `tests/adapters/4910.test.ts`
+- [x] T047 [P] [US3] (CrawlB) 4910 — `src/crawler/adapters/4910.ts`, `fixtures/sites/4910/`, `tests/adapters/4910.test.ts`
   - **진행(2026-11-27, CrawlB)**: fixture·`parse4910`·테스트 통과, 실수집 107개(홈 1장, 52초). 대조: 링크·상품명·브랜드 5/5 일치, **가격은 상품 페이지 대표가와 1/5만 정확히 일치**(3개는 1~2%p, 1개는 9%p 차이). 홈 카드 가격과 상품 페이지 대표가(첫구매 쿠폰 포함)가 서로 다른 쿠폰 기준이라서다 → 완료 기준 "무작위 5개 대조" 미충족. **소유자 결정(2026-11-27): 가격 차이를 감수하고 홈 카드 가격 그대로 사용.**
   - 주의: 홈 탭·"전체보기"가 버튼이라 행사 페이지 주소를 못 얻어 홈만 수집(`event: null`, 종료 시각 null). export 이름은 `site4910`(식별자가 숫자로 시작할 수 없음) — `adapters/index.ts`에서 이 이름으로 등록 필요.
 - [ ] T048 [P] [US3] (CrawlB) 에이블리 — `src/crawler/adapters/ably.ts`, `fixtures/sites/ably/`, `tests/adapters/ably.test.ts` (앱 중심이라 마지막)
   - **보류(2026-11-27, CrawlB)**: `NotImplemented` 유지. `m.a-bly.com`·`a-bly.com` 모두 Obscura 0.2.7에서 페이지 스크립트가 "Maximum call stack size exceeded"로 죽어 오류 화면(새로고침 버튼)만 렌더링된다. 상품·행사 내용이 전혀 나오지 않아 수집 불가.
 
 - [x] T058 [P] [US3] (UI→CrawlC) 아뜨랑스(새 사이트, ID `attrangs`) — `src/crawler/adapters/attrangs.ts`, `fixtures/sites/attrangs/`, `tests/adapters/attrangs.test.ts`. 렌더링 fetch는 시간 초과라 원본 HTML(`--dump original`) + cheerio 파싱. 상세: team/2-ui.md "추가 담당 (Crawl C)"
-- [ ] T059 (Core) 새 사이트 `attrangs`를 `src/lib/types.ts` `SITE_IDS`, `src/lib/labels.ts`, `src/crawler/adapters/index.ts`(+스텁)에 등록하고, `CrawlContext.fetchHtml`에 원본 모드 `{ raw: true }` 추가 — 코어 엔진 워크플로가 끝난 직후
+- [x] T059 (Core) 새 사이트 `attrangs`를 `src/lib/types.ts` `SITE_IDS`, `src/lib/labels.ts`, `src/crawler/adapters/index.ts`(+스텁)에 등록하고, `CrawlContext.fetchHtml`에 원본 모드 `{ raw: true }` 추가 — 코어 엔진 워크플로가 끝난 직후
 
 **Checkpoint (~4:15)**: 4개 이상 사이트 통합 목표(SC-002).
 
@@ -172,10 +172,10 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 
 ## Phase 7: Polish & Stretch (4:15–5:00)
 
-- [ ] T052 [P] (Core) `src/app/api/status/[siteId]/route.ts` — `PATCH` 사이트 켜기/끄기(FR-018), runner가 `SiteStatus.enabled` 반영
+- [x] T052 [P] (Core) `src/app/api/status/[siteId]/route.ts` — `PATCH` 사이트 켜기/끄기(FR-018), runner가 `SiteStatus.enabled` 반영
 - [x] T053 [P] (UI) 필터·정렬 상태를 `localStorage`에 기억(FR-022, Stretch) — `src/lib/filters.ts`, `src/app/page.tsx`
 - [x] T054 [P] (UI) 마지막 업데이트 12시간 초과 경고 배너(FR-020a, Stretch) — `src/app/page.tsx`
-- [ ] T055 [P] (Core) 자동 주기 수집(FR-002a, Stretch) — `src/crawler/schedule.ts`, `npm run crawl:watch`
+- [x] T055 [P] (Core) 자동 주기 수집(FR-002a, Stretch) — `src/crawler/schedule.ts`, `src/instrumentation.ts`
 - [ ] T056 (전원) quickstart.md V1–V8 검증, 실패 항목 수정, `README.md`에 실행법 요약
 - [ ] T057 (Core) 최종 `main` 정리·태그 `v0.1.0`
 

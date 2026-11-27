@@ -11,7 +11,11 @@ import type { CrawlContext, FetchHtmlOptions, SiteAdapter } from '@/lib/types';
 
 const DEFAULT_MIN_DELAY_MS = 2_000;
 const DEFAULT_MAX_DELAY_MS = 4_000;
-const DEFAULT_TIMEOUT_SEC = 30;
+/**
+ * Obscura's --timeout (navigation deadline). 30 s was too short in live runs: W Concept product
+ * pages and the Posty home page take 35 s or more to finish loading.
+ */
+const DEFAULT_TIMEOUT_SEC = 90;
 /**
  * The process is killed this long after Obscura's own --timeout (+ --wait) should have ended it.
  * It is only a backstop against a hung process: pages that scroll and wait (preEval) took about
@@ -89,7 +93,7 @@ export interface ObscuraContextOptions {
   /** Cancels the run from outside (the context's own signal follows it). */
   signal?: AbortSignal;
   log?: (msg: string) => void;
-  /** Test seams. Defaults: execFile, an abortable setTimeout, Math.random, 2000-4000 ms, 30 s. */
+  /** Test seams. Defaults: execFile, an abortable setTimeout, Math.random, 2000-4000 ms, 90 s. */
   exec?: ObscuraExec;
   sleep?: (ms: number, signal: AbortSignal) => Promise<void>;
   random?: () => number;

@@ -3,6 +3,7 @@ import type { SiteStatusView } from '@/lib/types';
 import {
   POLL_ACTIVE_MS,
   POLL_IDLE_MS,
+  autoCrawlText,
   cooldownText,
   crawlStartNotice,
   createResponseSequence,
@@ -191,5 +192,36 @@ describe('화면에 먼저 반영하기', () => {
     const after = patchSite(before, 'musinsa', { enabled: false, state: 'disabled', displayName: undefined });
     expect(after[0].displayName).toBe('무신사');
     expect(after[0].run).toBe('running');
+  });
+});
+
+describe('autoCrawlText', () => {
+  const now = new Date('2026-11-28T00:50:00+09:00');
+
+  it('shows the interval in hours and the next run time in KST', () => {
+    const info = { intervalMinutes: 60, nextRunAt: '2026-11-28T01:26:00+09:00' };
+
+    expect(autoCrawlText(info, now)).toBe('자동 수집: 1시간마다 · 다음 수집 01:26');
+  });
+
+  it('shows minutes when the interval is not a whole number of hours', () => {
+    const info = { intervalMinutes: 90, nextRunAt: '2026-11-28T01:26:00+09:00' };
+
+    expect(autoCrawlText(info, now)).toBe('자동 수집: 90분마다 · 다음 수집 01:26');
+  });
+
+  it('adds the date when the next run is on another day', () => {
+    const info = { intervalMinutes: 360, nextRunAt: '2026-11-29T03:00:00+09:00' };
+
+    expect(autoCrawlText(info, now)).toBe('자동 수집: 6시간마다 · 다음 수집 11/29 03:00');
+  });
+
+  it('says a scheduled run is in progress when there is no next time yet', () => {
+    expect(autoCrawlText({ intervalMinutes: 60, nextRunAt: null }, now)).toBe('자동 수집: 1시간마다 · 지금 수집 중');
+  });
+
+  it('says so when automatic crawling is off, and shows nothing when the server does not report it', () => {
+    expect(autoCrawlText(null, now)).toContain('꺼짐');
+    expect(autoCrawlText(undefined, now)).toBeNull();
   });
 });

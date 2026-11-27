@@ -217,7 +217,7 @@ describe('createObscuraContext — argv', () => {
       'html',
       '--quiet',
       '--timeout',
-      '30',
+      '90',
     ]);
   });
 
@@ -235,7 +235,7 @@ describe('createObscuraContext — argv', () => {
       'html',
       '--quiet',
       '--timeout',
-      '30',
+      '90',
       '--wait',
       '7',
     ]);
@@ -277,7 +277,7 @@ describe('createObscuraContext — argv', () => {
       'original',
       '--quiet',
       '--timeout',
-      '30',
+      '90',
     ]);
   });
 
@@ -295,7 +295,7 @@ describe('createObscuraContext — argv', () => {
       PAGE_URL,
       '--quiet',
       '--timeout',
-      '30',
+      '90',
       '--wait',
       '3',
       '--eval',

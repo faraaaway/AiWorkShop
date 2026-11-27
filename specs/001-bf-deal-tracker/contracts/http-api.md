@@ -21,6 +21,9 @@ UI 담당은 API가 준비되기 전까지 `fixtures/sample-deals.json`을 직�
 ## GET /api/status
 
 - 200: `{ "ok": true, "data": { "sites": [ /* SiteStatusView */ ] } }` — 9개 사이트 모두, 고정 순서.
+- 응답에는 `autoCrawl`도 들어 있다: `{ "intervalMinutes": 60, "nextRunAt": "2026-11-28T01:26:00+09:00" }`.
+  자동 수집이 꺼져 있으면 `null`, 예약된 수집이 도는 중이면 `nextRunAt`이 `null`이다. 주기는 서버 환경변수
+  `BF_AUTO_CRAWL_MINUTES`(기본 60, 최소 10, `0`이면 끔)로 정하고, 서버가 켜져 있는 동안만 동작한다.
 - `SiteStatusView` = `SiteStatus` + `displayName` + `run: 'idle' | 'queued' | 'running'`.
   UI는 `run`이 `queued`/`running`인 사이트가 하나라도 있으면 3초마다 다시 조회하고, 모두 `idle`이면 멈춘다.
 - `state`는 `enabled === false`이면 `disabled`로 바뀌어 온다. 토글은 `enabled`에, 배지는 `state`에 연결한다.

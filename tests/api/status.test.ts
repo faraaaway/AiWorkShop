@@ -179,7 +179,7 @@ describe('GET /api/status', () => {
     expect([patchDynamic, patchRuntime]).toEqual(['force-dynamic', 'nodejs']);
   });
 
-  it('lists all nine sites in the fixed order with defaults before the first run', async () => {
+  it('lists every site in the fixed order with defaults before the first run', async () => {
     const response = await GET();
     const body = await readBody<StatusResponse>(response);
 
@@ -193,6 +193,8 @@ describe('GET /api/status', () => {
           displayName: EXPECTED_NAMES[siteId],
           run: 'idle',
         })),
+        // No schedule is started in tests (the server start hook does that), so it reports null.
+        autoCrawl: null,
       },
     });
   });

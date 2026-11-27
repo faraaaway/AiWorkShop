@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import type { SiteId, SiteStatusView } from '@/lib/types';
+import type { AutoCrawlInfo, SiteId, SiteStatusView, StatusResponse } from '@/lib/types';
 import { ApiError, getStatus } from '@/lib/api';
 import { createResponseSequence, markQueued, patchSite, pollIntervalMs } from '@/lib/status-ui';
 
@@ -10,6 +10,8 @@ const LOAD_ERROR_FALLBACK = '수집 상태를 불러오지 못했습니다.';
 export interface SiteStatusStore {
   /** 아직 한 번도 못 읽었으면 null */
   sites: SiteStatusView[] | null;
+  /** 자동 수집 설정. 꺼져 있으면 null, 아직 못 읽었거나 서버가 알려 주지 않으면 undefined */
+  autoCrawl: AutoCrawlInfo | null | undefined;
   loadError: string | null;
   refresh: () => Promise<void>;
   /** 서버 응답을 기다리지 않고 한 줄을 먼저 고친다. */
@@ -18,10 +20,10 @@ export interface SiteStatusStore {
   markStarted: (started: readonly SiteId[]) => void;
 }
 
-async function loadSites(): Promise<SiteStatusView[]> {
+async function loadStatus(): Promise<StatusResponse> {
   const result = await getStatus();
   if (!Array.isArray(result?.sites)) throw new ApiError(LOAD_ERROR_FALLBACK, 0);
-  return result.sites;
+  return result;
 }
 
 /**
@@ -30,21 +32,25 @@ async function loadSites(): Promise<SiteStatusView[]> {
  */
 export function useSiteStatus(): SiteStatusStore {
   const [sites, setSites] = useState<SiteStatusView[] | null>(null);
+  const [autoCrawl, setAutoCrawl] = useState<AutoCrawlInfo | null | undefined>(undefined);
   const [loadError, setLoadError] = useState<string | null>(null);
   // 응답이 보낸 순서와 다르게 도착해도 옛 값이 새 값을 덮어쓰지 않게 한다.
   const [sequence] = useState(createResponseSequence);
 
   const refresh = useCallback(async () => {
     const seq = sequence.begin();
-    let next: SiteStatusView[] | null = null;
+    let next: StatusResponse | null = null;
     let error: string | null = null;
     try {
-      next = await loadSites();
+      next = await loadStatus();
     } catch (cause) {
       error = cause instanceof ApiError ? cause.message : LOAD_ERROR_FALLBACK;
     }
     if (!sequence.accept(seq)) return;
-    if (next) setSites(next);
+    if (next) {
+      setSites(next.sites);
+      setAutoCrawl(next.autoCrawl);
+    }
     setLoadError(error);
   }, [sequence]);
 
@@ -77,5 +83,5 @@ export function useSiteStatus(): SiteStatusStore {
     [sequence],
   );
 
-  return { sites, loadError, refresh, patch, markStarted };
+  return { sites, autoCrawl, loadError, refresh, patch, markStarted };
 }

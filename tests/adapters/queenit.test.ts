@@ -1,9 +1,52 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { parseQueenit } from '@/crawler/adapters/queenit';
+import { parseQueenit, queenit } from '@/crawler/adapters/queenit';
+import { createFakeContext } from '../helpers/fakeContext';
 
 const PAGE = 'https://web.queenit.kr/collection/COLL261006221807d8979';
 const html = readFileSync('fixtures/sites/queenit/collection.html', 'utf8');
+const EMPTY_PAGE = '<html><head><title></title></head><body><div id="__next"></div></body></html>';
+
+describe('queenit.crawl', () => {
+  it('상품이 있으면 기획전마다 한 번만 요청한다', async () => {
+    const ctx = createFakeContext({ fetchHtml: () => html });
+
+    const deals = await queenit.crawl(ctx);
+
+    expect(deals.length).toBeGreaterThanOrEqual(10);
+    expect(ctx.urls).toEqual([PAGE]);
+  });
+
+  it('목록이 늦게 떠서 0개면 더 길게 기다려 한 번만 다시 읽는다', async () => {
+    const waits: (number | undefined)[] = [];
+    const ctx = createFakeContext({
+      fetchHtml: (_url, opts) => {
+        waits.push(opts?.waitSec);
+        return waits.length === 1 ? EMPTY_PAGE : html;
+      },
+    });
+
+    const deals = await queenit.crawl(ctx);
+
+    expect(deals.length).toBeGreaterThanOrEqual(10);
+    expect(ctx.urls).toEqual([PAGE, PAGE]);
+    expect(waits[1]).toBeGreaterThan(waits[0] ?? 0);
+  });
+
+  it('다시 읽어도 0개면 빈 배열로 끝내고 더 요청하지 않는다', async () => {
+    const ctx = createFakeContext({ fetchHtml: () => EMPTY_PAGE });
+
+    expect(await queenit.crawl(ctx)).toEqual([]);
+    expect(ctx.urls).toHaveLength(2);
+  });
+
+  it('요청 상한이 남지 않았으면 다시 읽지 않는다', async () => {
+    const ctx = createFakeContext({ fetchHtml: () => EMPTY_PAGE, maxRequests: 1 });
+
+    expect(await queenit.crawl(ctx)).toEqual([]);
+    expect(ctx.urls).toHaveLength(1);
+  });
+});
 
 describe('parseQueenit', () => {
   const deals = parseQueenit(html, PAGE, { name: '퀸잇 기획전', url: PAGE, endsAt: null });

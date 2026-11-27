@@ -9,6 +9,8 @@ const HOME = 'https://web.queenit.kr';
 const LINK_SELECTOR = 'a[href^="/product/"]';
 const CARD_PARENT_LEVELS = 1;
 const MAX_PAGES = 4;
+/** 첫 시도(기본 25초)에서 상품을 못 모았을 때 다시 읽으며 기다리는 시간(초). */
+const RETRY_WAIT_SEC = 40;
 
 /** 2026-11-27 홈 메인 배너가 연결하던 겨울 특가 기획전. 시즌이 바뀌면 여기만 고친다. */
 export const QUEENIT_SEED_COLLECTIONS = [`${HOME}/collection/COLL261006221807d8979`];
@@ -86,8 +88,18 @@ export const queenit: SiteAdapter = {
       if (looksLikeLoginPage(html)) throw new LoginRequiredError();
 
       // 기획전 이름·종료 시각은 페이지에 글자로 나오지 않는다(배너 이미지 안). 모르는 값은 비운다.
-      const found = parseQueenit(html, url, { name: '퀸잇 기획전', url, endsAt: null });
+      const event: QueenitEvent = { name: '퀸잇 기획전', url, endsAt: null };
+      let found = parseQueenit(html, url, event);
       ctx.log(`queenit ${url} → ${found.length}개`);
+
+      // 상품 목록이 늦게 뜨면 기다리는 동안 카드를 하나도 못 모을 때가 있다(2026-11-28 실수집에서
+      // 같은 주소가 19개 → 0개 → 19개). 0개면 더 길게 기다려 한 번만 다시 읽는다.
+      if (found.length === 0 && ctx.requestsLeft > 0 && !ctx.signal.aborted) {
+        const retryHtml = await fetchScrolled(ctx, url, LINK_SELECTOR, CARD_PARENT_LEVELS, RETRY_WAIT_SEC);
+        if (looksLikeLoginPage(retryHtml)) throw new LoginRequiredError();
+        found = parseQueenit(retryHtml, url, event);
+        ctx.log(`queenit ${url} 다시 읽기 → ${found.length}개`);
+      }
       deals.push(...found);
     }
     return deals;

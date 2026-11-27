@@ -4,6 +4,7 @@
  */
 import { getAdapter } from '@/crawler/adapters';
 import { getRunPhase } from '@/crawler/runner';
+import { getAutoCrawlInfo } from '@/crawler/schedule';
 import { HTTP_SERVER_ERROR, fail, logServerProblem, ok, runGuarded } from '@/lib/http';
 import { buildStatusView, partitionSettledStatuses } from '@/lib/server/status-view';
 import { readStatus } from '@/lib/store';
@@ -37,7 +38,10 @@ async function handleGet(): Promise<Response> {
       HTTP_SERVER_ERROR,
     );
   }
-  const data: StatusResponse = { sites: await Promise.all(statuses.map(toView)) };
+  const data: StatusResponse = {
+    sites: await Promise.all(statuses.map(toView)),
+    autoCrawl: getAutoCrawlInfo(),
+  };
   return ok(data);
 }
 

@@ -1,0 +1,179 @@
+/**
+ * Automatic crawling (spec FR-002a): while the app server is running, every enabled site is
+ * crawled once per interval. The interval comes from BF_AUTO_CRAWL_MINUTES (default 60, "0" or
+ * "off" disables it). Runs never overlap: the next one is scheduled only after the previous one
+ * has ended, and runAll() itself crawls the sites one at a time.
+ */
+import { runAll, type SiteRunResult } from '@/crawler/runner';
+import { toKstIso } from '@/lib/dates';
+import { readAllStatuses } from '@/lib/store';
+import type { AutoCrawlInfo, IsoDateTime } from '@/lib/types';
+
+export const AUTO_CRAWL_ENV = 'BF_AUTO_CRAWL_MINUTES';
+export const DEFAULT_INTERVAL_MINUTES = 60;
+/** A full run takes many minutes and every run visits every site, so shorter intervals are refused. */
+const MIN_INTERVAL_MINUTES = 10;
+/** First run after the server starts, when the stored data is older than one interval. */
+const STARTUP_DELAY_MS = 15_000;
+const MS_PER_MINUTE = 60_000;
+const DISABLED_VALUES: readonly string[] = ['0', 'off', 'false', 'no'];
+const WHOLE_NUMBER = /^\d+$/;
+
+export interface AutoCrawlOptions {
+  intervalMinutes: number;
+  /** Test seams. Defaults: runAll, last runs from the status files, stdout, the real clock and timers. */
+  runAllFn?: () => Promise<SiteRunResult[]>;
+  getLastRunAts?: () => Promise<readonly (IsoDateTime | null)[]>;
+  log?: (msg: string) => void;
+  now?: () => Date;
+  setTimer?: (run: () => void, ms: number) => unknown;
+  clearTimer?: (handle: unknown) => void;
+}
+
+export interface AutoCrawlHandle {
+  readonly intervalMinutes: number;
+  /** When the next run starts; null while a run is going or after stop(). */
+  readonly nextRunAt: Date | null;
+  stop(): void;
+}
+
+/** BF_AUTO_CRAWL_MINUTES -> minutes, or null when automatic crawling is switched off. */
+export function parseIntervalMinutes(raw: string | undefined): number | null {
+  const value = raw?.trim().toLowerCase() ?? '';
+  if (value === '') return DEFAULT_INTERVAL_MINUTES;
+  if (DISABLED_VALUES.includes(value)) return null;
+  if (!WHOLE_NUMBER.test(value)) return DEFAULT_INTERVAL_MINUTES;
+  return Math.max(MIN_INTERVAL_MINUTES, Number(value));
+}
+
+/**
+ * How long to wait before the first run: the rest of the interval when something was crawled
+ * recently, otherwise a short startup delay.
+ */
+export function computeFirstDelayMs(
+  lastRunAts: readonly (IsoDateTime | null)[],
+  intervalMs: number,
+  nowMs: number,
+): number {
+  const pastRuns = lastRunAts
+    .map((value) => (value === null ? Number.NaN : Date.parse(value)))
+    .filter((ms) => Number.isFinite(ms) && ms <= nowMs);
+  if (pastRuns.length === 0) return STARTUP_DELAY_MS;
+  const sinceLastRun = nowMs - Math.max(...pastRuns);
+  return Math.max(STARTUP_DELAY_MS, intervalMs - sinceLastRun);
+}
+
+async function readLastRunAts(): Promise<(IsoDateTime | null)[]> {
+  const statuses = await readAllStatuses();
+  return statuses.map((status) => status.lastRunAt);
+}
+
+function writeLine(msg: string): void {
+  process.stdout.write(`[자동 수집] ${msg}\n`);
+}
+
+function describeError(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function summarize(results: readonly SiteRunResult[]): string {
+  const succeeded = results.filter((result) => result.state === 'ok' && result.skipped === null).length;
+  const deals = results.reduce((sum, result) => sum + result.dealCount, 0);
+  return `${results.length}곳 중 ${succeeded}곳 수집 성공, 저장된 할인 ${deals}건`;
+}
+
+export function startAutoCrawl(options: AutoCrawlOptions): AutoCrawlHandle {
+  const { intervalMinutes } = options;
+  if (!Number.isFinite(intervalMinutes) || intervalMinutes < 1) {
+    throw new Error(`자동 수집 주기는 1분 이상이어야 합니다: ${intervalMinutes}`);
+  }
+  const runAllFn = options.runAllFn ?? ((): Promise<SiteRunResult[]> => runAll());
+  const getLastRunAts = options.getLastRunAts ?? readLastRunAts;
+  const log = options.log ?? writeLine;
+  const now = options.now ?? ((): Date => new Date());
+  const setTimer = options.setTimer ?? ((run: () => void, ms: number): unknown => setTimeout(run, ms));
+  const clearTimer =
+    options.clearTimer ?? ((handle: unknown): void => clearTimeout(handle as ReturnType<typeof setTimeout>));
+  const intervalMs = intervalMinutes * MS_PER_MINUTE;
+
+  let stopped = false;
+  let timer: unknown = null;
+  let nextRunAt: Date | null = null;
+
+  const schedule = (delayMs: number): void => {
+    if (stopped) return;
+    nextRunAt = new Date(now().getTime() + delayMs);
+    timer = setTimer(() => {
+      void tick();
+    }, delayMs);
+  };
+
+  const tick = async (): Promise<void> => {
+    if (stopped) return;
+    timer = null;
+    nextRunAt = null;
+    try {
+      log('전체 수집을 시작합니다');
+      log(`전체 수집 완료: ${summarize(await runAllFn())}`);
+    } catch (error) {
+      // One failed run must not end the schedule; the next interval tries again.
+      log(`전체 수집 중 오류가 났습니다: ${describeError(error)}`);
+    } finally {
+      schedule(intervalMs);
+    }
+  };
+
+  const start = async (): Promise<void> => {
+    let lastRunAts: readonly (IsoDateTime | null)[] = [];
+    try {
+      lastRunAts = await getLastRunAts();
+    } catch (error) {
+      log(`이전 수집 시각을 읽지 못해 곧바로 시작합니다: ${describeError(error)}`);
+    }
+    schedule(computeFirstDelayMs(lastRunAts, intervalMs, now().getTime()));
+    if (nextRunAt !== null) log(`${intervalMinutes}분마다 수집합니다. 다음 수집: ${toKstIso(nextRunAt) ?? '알 수 없음'}`);
+  };
+  void start();
+
+  return {
+    intervalMinutes,
+    get nextRunAt(): Date | null {
+      return nextRunAt;
+    },
+    stop(): void {
+      stopped = true;
+      if (timer !== null) clearTimer(timer);
+      timer = null;
+      nextRunAt = null;
+    },
+  };
+}
+
+// ---------- one schedule per server process ----------
+
+interface AutoCrawlGlobal {
+  __bfAutoCrawl?: AutoCrawlHandle | null;
+}
+
+/**
+ * Starts the schedule once per process (the handle lives on globalThis because the Next dev
+ * server reloads modules). Returns null when automatic crawling is switched off.
+ */
+export function ensureAutoCrawl(env: NodeJS.ProcessEnv = process.env): AutoCrawlHandle | null {
+  const store = globalThis as AutoCrawlGlobal;
+  if (store.__bfAutoCrawl !== undefined) return store.__bfAutoCrawl;
+  const intervalMinutes = parseIntervalMinutes(env[AUTO_CRAWL_ENV]);
+  store.__bfAutoCrawl = intervalMinutes === null ? null : startAutoCrawl({ intervalMinutes });
+  if (intervalMinutes === null) writeLine(`${AUTO_CRAWL_ENV} 설정으로 꺼져 있습니다`);
+  return store.__bfAutoCrawl;
+}
+
+/** For GET /api/status: null when no schedule is running in this process. */
+export function getAutoCrawlInfo(): AutoCrawlInfo | null {
+  const handle = (globalThis as AutoCrawlGlobal).__bfAutoCrawl;
+  if (handle === undefined || handle === null) return null;
+  return {
+    intervalMinutes: handle.intervalMinutes,
+    nextRunAt: handle.nextRunAt === null ? null : toKstIso(handle.nextRunAt),
+  };
+}

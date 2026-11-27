@@ -1,5 +1,5 @@
 // 수집 상태 화면의 판단·문구 (화면 없이 테스트할 수 있는 순수 함수만 둔다).
-import type { CrawlSkipReason, CrawlStartResponse, SiteId, SiteStatusView } from '@/lib/types';
+import type { AutoCrawlInfo, CrawlSkipReason, CrawlStartResponse, SiteId, SiteStatusView } from '@/lib/types';
 import { SITE_LABELS } from '@/lib/labels';
 import { formatTimeOfDay } from '@/lib/time';
 
@@ -76,6 +76,27 @@ export function cooldownText(site: Pick<SiteStatusView, 'state' | 'cooldownUntil
   const until = Date.parse(site.cooldownUntil);
   if (Number.isNaN(until) || until <= now.getTime()) return null;
   return `차단 해제 예정 ${formatTimeOfDay(site.cooldownUntil, now)}`;
+}
+
+// ── 자동 수집 안내 ──────────────────────────────────────────────────────────
+
+const MINUTES_PER_HOUR = 60;
+
+function intervalText(minutes: number): string {
+  if (minutes % MINUTES_PER_HOUR === 0) return `${minutes / MINUTES_PER_HOUR}시간마다`;
+  return `${minutes}분마다`;
+}
+
+/**
+ * `자동 수집: 1시간마다 · 다음 수집 01:26` (KST). 꺼져 있으면 그렇게 알리고,
+ * 서버가 정보를 주지 않았으면(undefined) 아무것도 보여 주지 않는다(null).
+ */
+export function autoCrawlText(info: AutoCrawlInfo | null | undefined, now: Date): string | null {
+  if (info === undefined) return null;
+  if (info === null) return '자동 수집: 꺼짐 (직접 수집 버튼을 눌러야 갱신됩니다)';
+  const every = intervalText(info.intervalMinutes);
+  if (info.nextRunAt === null) return `자동 수집: ${every} · 지금 수집 중`;
+  return `자동 수집: ${every} · 다음 수집 ${formatTimeOfDay(info.nextRunAt, now)}`;
 }
 
 // ── 늦게 도착한 응답 버리기 ─────────────────────────────────────────────────

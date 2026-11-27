@@ -244,8 +244,17 @@ export interface DealsResponse {
   lastUpdatedAt: IsoDateTime | null;
 }
 
+/** Automatic crawling of the running server (crawler/schedule.ts). */
+export interface AutoCrawlInfo {
+  intervalMinutes: number;
+  /** null while a scheduled run is in progress. */
+  nextRunAt: IsoDateTime | null;
+}
+
 export interface StatusResponse {
   sites: SiteStatusView[];
+  /** null when automatic crawling is switched off; absent when the server does not report it. */
+  autoCrawl?: AutoCrawlInfo | null;
 }
 
 /** Body of POST /api/crawl. */

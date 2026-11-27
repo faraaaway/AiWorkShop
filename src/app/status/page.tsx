@@ -3,7 +3,15 @@
 import { useState } from 'react';
 import type { SiteId, SiteStatusView } from '@/lib/types';
 import { ApiError, setSiteEnabled, startCrawl } from '@/lib/api';
-import { POLL_IDLE_MS, cooldownText, crawlStartNotice, hasActiveCrawl, siteName, type Notice } from '@/lib/status-ui';
+import {
+  POLL_IDLE_MS,
+  autoCrawlText,
+  cooldownText,
+  crawlStartNotice,
+  hasActiveCrawl,
+  siteName,
+  type Notice,
+} from '@/lib/status-ui';
 import { AppHeader } from '@/components/AppHeader';
 import { SiteStatusRow } from '@/components/SiteStatusRow';
 import { useNow } from '@/components/useNow';
@@ -97,6 +105,7 @@ export default function StatusPage() {
   const { notice, toggling, crawl, forceRetry, toggle } = useStatusActions(status, now);
   // 이 화면에서 시작했든 다른 곳(CLI 등)에서 시작했든 서버가 알려 주는 대로 따른다.
   const anyActive = hasActiveCrawl(sites);
+  const autoCrawlLine = autoCrawlText(status.autoCrawl, now);
 
   return (
     <div className="min-h-screen bg-white text-[#15171A]">
@@ -116,6 +125,8 @@ export default function StatusPage() {
             {anyActive ? '수집 중…' : '전체 수집'}
           </button>
         </div>
+
+        {autoCrawlLine && <p className="mt-2 text-xs text-[#8A9099]">{autoCrawlLine}</p>}
 
         <div aria-live="polite" className="mt-3 min-h-0">
           {notice && <NoticeBox notice={notice} />}
