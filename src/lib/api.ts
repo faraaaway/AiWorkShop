@@ -15,8 +15,11 @@ import type {
   StatusResponse,
 } from '@/lib/types';
 
-/** T026: set to false once GET /api/deals is live */
-export const USE_SAMPLE_DATA: boolean = true;
+/**
+ * false: getDeals() reads GET /api/deals (real crawled data). Set to true to develop the UI
+ * against fixtures/sample-deals.json without any crawl.
+ */
+export const USE_SAMPLE_DATA: boolean = false;
 
 const NETWORK_ERROR_MESSAGE = '서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.';
 const INVALID_RESPONSE_MESSAGE = '서버 응답을 읽지 못했습니다. 잠시 후 다시 시도해 주세요.';

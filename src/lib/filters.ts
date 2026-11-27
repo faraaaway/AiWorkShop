@@ -1,4 +1,5 @@
 // 목록 필터·정렬 순수 함수 (T030) + 선택 기억 (T053).
+import { SITE_IDS } from '@/lib/types';
 import type { Deal, Gender, SiteId, Theme } from '@/lib/types';
 import { isEndingSoon, isExpired } from '@/lib/time';
 
@@ -37,9 +38,8 @@ export const THEME_ORDER: Theme[] = [
   'outer', 'top', 'knit', 'bottom', 'dress', 'setup',
   'shoes', 'bag_acc', 'inner_home', 'etc', 'unclassified',
 ];
-export const SITE_ORDER: SiteId[] = [
-  'musinsa', '29cm', 'wconcept', 'naver', 'zigzag', 'ably', 'queenit', 'posty', '4910',
-];
+/** 등록된 모든 사이트(공용 SITE_IDS 순서). 사이트가 추가되면 필터와 안내 문구에 자동으로 반영된다. */
+export const SITE_ORDER: readonly SiteId[] = SITE_IDS;
 
 /** 기본값과 다른 조건이 하나라도 걸려 있는가. */
 export function isFiltered(state: FilterState): boolean {
