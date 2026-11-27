@@ -76,9 +76,15 @@ describe('adapter registry', () => {
  * Sites whose real adapter has been merged. Core adds an id here when merging an adapter branch;
  * every other site must still be the untouched stub.
  */
-const IMPLEMENTED_SITE_IDS: readonly SiteId[] = ['musinsa'];
+const IMPLEMENTED_SITE_IDS: readonly SiteId[] = ['musinsa', '29cm', 'wconcept'];
 const STUB_SITE_IDS: readonly SiteId[] = SITE_IDS.filter((id) => !IMPLEMENTED_SITE_IDS.includes(id));
 const MAX_REQUESTS_CEILING = 30;
+/**
+ * Sites the project lead allowed to run with obeyRobots: false (team decision 2026-11-27: their
+ * robots.txt disallows unlisted bots, so nothing can be read otherwise). Every other adapter must
+ * keep obeying robots.txt; adding a site here is a deliberate, reviewed choice.
+ */
+const ROBOTS_WAIVED_SITE_IDS: readonly SiteId[] = ['wconcept'];
 
 describe('every adapter', () => {
   it.each(SITE_IDS)('%s has the agreed display name and home url', (id) => {
@@ -88,10 +94,10 @@ describe('every adapter', () => {
     expect(adapter.homeUrl).toBe(EXPECTED_HOME_URLS[id]);
   });
 
-  it.each(SITE_IDS)('%s obeys robots.txt and stays within the request ceiling', (id) => {
+  it.each(SITE_IDS)('%s obeys robots.txt (unless waived) and stays within the request ceiling', (id) => {
     const adapter = getAdapter(id);
 
-    expect(adapter.obeyRobots).toBe(true);
+    expect(adapter.obeyRobots).toBe(!ROBOTS_WAIVED_SITE_IDS.includes(id));
     expect(adapter.maxRequests).toBeGreaterThan(0);
     expect(adapter.maxRequests).toBeLessThanOrEqual(MAX_REQUESTS_CEILING);
   });
