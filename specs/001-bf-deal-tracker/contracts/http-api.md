@@ -20,7 +20,11 @@ UI 담당은 API가 준비되기 전까지 `fixtures/sample-deals.json`을 직�
 
 ## GET /api/status
 
-- 200: `{ "ok": true, "data": { "sites": [ /* SiteStatus + displayName */ ] } }` — 9개 사이트 모두, 고정 순서.
+- 200: `{ "ok": true, "data": { "sites": [ /* SiteStatusView */ ] } }` — 9개 사이트 모두, 고정 순서.
+- `SiteStatusView` = `SiteStatus` + `displayName` + `run: 'idle' | 'queued' | 'running'`.
+  UI는 `run`이 `queued`/`running`인 사이트가 하나라도 있으면 3초마다 다시 조회하고, 모두 `idle`이면 멈춘다.
+- `state`는 `enabled === false`이면 `disabled`로 바뀌어 온다. 토글은 `enabled`에, 배지는 `state`에 연결한다.
+  [지금 수집]은 `enabled === false`이거나 `state === 'not_implemented'`일 때만 비활성화한다.
 
 ## POST /api/crawl
 
@@ -29,7 +33,11 @@ UI 담당은 API가 준비되기 전까지 `fixtures/sample-deals.json`을 직�
 - Body: `{ "siteId": "musinsa" }` 또는 `{ "siteId": "all" }`
 - Query/Body 옵션: `"force": true` — 쿨다운 무시(수동 재시도)
 - 202: `{ "ok": true, "data": { "started": ["musinsa"] } }`
+  - `"all"` 요청에서 시작하지 않은 사이트는 `"skipped": [{ "siteId": "naver", "reason": "cooldown" }]`로 알려 준다
+    (`reason`: `cooldown` | `disabled` | `running` | `not_implemented`).
 - 409: 이미 실행 중 `{ "ok": false, "error": "무신사 수집이 이미 진행 중입니다" }`
+- 409: 한 사이트 요청인데 쿨다운 중이고 `force`가 없음 → 남은 시간을 담은 메시지. UI는 그 줄에 "강제 재시도"를 보여 준다.
+  꺼진 사이트·미구현 사이트의 단일 요청도 409와 이유 메시지.
 - 400: 알 수 없는 siteId
 
 ## PATCH /api/status/:siteId (Should)

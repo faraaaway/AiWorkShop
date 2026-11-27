@@ -27,21 +27,21 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 
 **Purpose**: 프로젝트 뼈대. 나머지 3명은 이 시간에 Obscura 설치·사이트 조사(quickstart §1–2)
 
-- [ ] T001 (Core) Next.js 15 + TypeScript + Tailwind 프로젝트를 저장소 루트에 생성하고 `package.json` 스크립트 `dev`, `crawl`(`tsx src/crawler/cli.ts`), `test`(`vitest run`)를 추가 — `package.json`, `src/app/layout.tsx`, `src/app/page.tsx`
-- [ ] T002 [P] (Core) `cheerio`, `tsx`, `vitest` 설치 및 `vitest.config.ts` 작성(경로 별칭 `@/` = `src/`)
-- [ ] T003 [P] (Core) `.env.example`(`OBSCURA_PATH=`)과 환경변수 읽기 `src/lib/env.ts` 작성(없으면 명확한 오류 메시지)
+- [x] T001 (Core) Next.js 15 + TypeScript + Tailwind 프로젝트를 저장소 루트에 생성하고 `package.json` 스크립트 `dev`, `crawl`(`tsx src/crawler/cli.ts`), `test`(`vitest run`)를 추가 — `package.json`, `src/app/layout.tsx`, `src/app/page.tsx`
+- [x] T002 [P] (Core) `cheerio`, `tsx`, `vitest` 설치 및 `vitest.config.ts` 작성(경로 별칭 `@/` = `src/`)
+- [x] T003 [P] (Core) `.env.example`(`OBSCURA_PATH=`)과 환경변수 읽기 `src/lib/env.ts` 작성(없으면 명확한 오류 메시지)
 
 ---
 
 ## Phase 2: Foundational (0:20–0:40, Core 단독, ⚠️ 모든 작업의 선행 조건)
 
-- [ ] T004 (Core) `src/lib/types.ts`에 data-model.md의 `SiteId`, `Gender`, `Theme`, `SiteState`, `RawDeal`, `Deal`, `SiteStatus`와 contracts/adapter-interface.md의 `SiteAdapter`, `CrawlContext` 정의
-- [ ] T005 [P] (Core) `src/lib/errors.ts`에 `BlockedError`, `LoginRequiredError`, `NotImplementedError` 정의
-- [ ] T006 [P] (Core) `src/lib/labels.ts`에 SiteId·Gender·Theme·SiteState 한글 라벨 매핑(data-model.md 열거형 주석 기준)
-- [ ] T007 (Core) `src/crawler/adapters/index.ts`와 9개 스텁 파일 `src/crawler/adapters/{musinsa,29cm,wconcept,naver,zigzag,ably,queenit,posty,4910}.ts` 생성(contracts/adapter-interface.md "스텁" 형식, displayName·homeUrl 채움)
-- [ ] T008 [P] (Core) `fixtures/sample-deals.json`에 data-model.md `Deal` 형식 가짜 데이터 40개(9개 사이트, 모든 Gender/Theme, 할인율 10~80%, `endsAt` null·과거·오늘·며칠 뒤, `soldOut` true 포함)
-- [ ] T009 [P] (Core) `src/lib/api.ts`에 `getDeals()`·`getStatus()`·`startCrawl()` 작성 — 우선 `getDeals()`는 sample-deals.json 반환
-- [ ] T010 (Core) `main`에 커밋·푸시하고 팀에 "기반 완료" 알림
+- [x] T004 (Core) `src/lib/types.ts`에 data-model.md의 `SiteId`, `Gender`, `Theme`, `SiteState`, `RawDeal`, `Deal`, `SiteStatus`와 contracts/adapter-interface.md의 `SiteAdapter`, `CrawlContext` 정의
+- [x] T005 [P] (Core) `src/lib/errors.ts`에 `BlockedError`, `LoginRequiredError`, `NotImplementedError` 정의
+- [x] T006 [P] (Core) `src/lib/labels.ts`에 SiteId·Gender·Theme·SiteState 한글 라벨 매핑(data-model.md 열거형 주석 기준)
+- [x] T007 (Core) `src/crawler/adapters/index.ts`와 9개 스텁 파일 `src/crawler/adapters/{musinsa,29cm,wconcept,naver,zigzag,ably,queenit,posty,4910}.ts` 생성(contracts/adapter-interface.md "스텁" 형식, displayName·homeUrl 채움)
+- [x] T008 [P] (Core) `fixtures/sample-deals.json`에 data-model.md `Deal` 형식 가짜 데이터 40개(9개 사이트, 모든 Gender/Theme, 할인율 10~80%, `endsAt` null·과거·오늘·며칠 뒤, `soldOut` true 포함)
+- [x] T009 [P] (Core) `src/lib/api.ts`에 `getDeals()`·`getStatus()`·`startCrawl()` 작성 — 우선 `getDeals()`는 sample-deals.json 반환
+- [x] T010 (Core) `main`에 커밋·푸시하고 팀에 "기반 완료" 알림
 
 **Checkpoint (0:40)**: 이후 4명이 병렬 작업. 공용 파일(`types.ts`, `errors.ts`, `adapters/index.ts`) 수정은 Core에게 요청.
 

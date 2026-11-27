@@ -14,8 +14,11 @@ type Theme = 'outer' | 'top' | 'knit' | 'bottom' | 'dress' | 'setup'
            | 'shoes' | 'bag_acc' | 'inner_home' | 'etc' | 'unclassified';
 // 아우터/상의/니트/하의/원피스·스커트/셋업/신발/가방·잡화/이너·홈웨어/기타/미분류
 
-type SiteState = 'ok' | 'failed' | 'suspect_layout' | 'blocked' | 'login_required' | 'disabled' | 'never_run';
-// 정상/실패/실패(구조 변경 의심)/차단됨/로그인 필요/꺼짐/미실행
+type SiteState = 'ok' | 'failed' | 'suspect_layout' | 'blocked' | 'login_required' | 'disabled'
+               | 'not_implemented' | 'never_run';
+// 정상/실패/실패(구조 변경 의심)/차단됨/로그인 필요/꺼짐/준비 중(수집기 미구현)/미실행
+
+type RunPhase = 'idle' | 'queued' | 'running';   // 지금 수집 중인지. 저장하지 않고 GET /api/status가 채움
 ```
 
 화면 표시용 한글 라벨은 `src/lib/labels.ts`에 매핑한다.
@@ -34,7 +37,7 @@ type SiteState = 'ok' | 'failed' | 'suspect_layout' | 'blocked' | 'login_require
 | `originalPrice` | number \| null | | 정가(원) |
 | `salePrice` | number | ✔ | 할인가(원) |
 | `displayedDiscountRate` | number \| null | | 사이트가 표시한 할인율(%) |
-| `endsAt` | string \| null | | 상품 할인 종료 시각 |
+| `endsAt` | string \| null | | 상품 할인 종료 시각. `Date.parse`가 읽는 절대 시각이면 형식 무관 — `normalize()`가 `+09:00` 형식으로 통일하고, 못 읽으면 null. 한글 문구는 `parseKoreanEndDate()` 사용 |
 | `rawCategory` | string \| null | | 사이트 카테고리 경로 (예: "여성 > 아우터 > 패딩") |
 | `rawGender` | string \| null | | 사이트가 준 성별 표기 |
 | `soldOut` | boolean | | 기본 false |
@@ -85,12 +88,20 @@ type SiteState = 'ok' | 'failed' | 'suspect_layout' | 'blocked' | 'login_require
 never_run ──run──▶ ok
 ok/failed/suspect_layout ──run──▶ ok | failed | suspect_layout | blocked | login_required
 blocked ──(cooldownUntil 지남 또는 수동 재시도)──▶ run
-any ──disable──▶ disabled ──enable──▶ (이전 상태)
+수집기가 스텁(NotImplementedError) ──run──▶ not_implemented
+enabled=false ──(조회 시)──▶ disabled 로 표시, enabled=true 로 되돌리면 저장된 마지막 결과가 다시 보임
 ```
 
 - 결과 0건 → `suspect_layout`, 기존 Deal 파일 **유지**
 - CAPTCHA/403/429 감지 → `blocked`, `cooldownUntil = now + 6h`, 기존 Deal 유지
-- 예외 → `failed`, 기존 Deal 유지
+- 요청 상한 초과(RequestLimitError를 수집기가 잡지 않음)·그 밖의 예외 → `failed`, 기존 Deal 유지
+- 로그인 필요 → `login_required`, 기존 Deal 유지
+
+**enabled와 state의 관계**: `enabled`는 사용자가 켜고 끄는 유일한 스위치이며 전체 수집에서 건너뛰는 유일한 기준이다.
+runner는 `enabled`를 쓰지 않는다. 디스크의 `state`에는 항상 마지막 실행 결과가 들어가고 `disabled`는 저장하지 않는다
+(`enabled === false`일 때 조회 시점에만 `disabled`로 바꿔 보여 준다).
+
+**SiteStatusView** (GET /api/status 응답 한 줄) = `SiteStatus` + `displayName` + `run: RunPhase`.
 
 ## 파일 형식
 

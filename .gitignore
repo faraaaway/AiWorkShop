@@ -20,6 +20,13 @@ cache/
 logs/
 *.log
 
+# Next.js / TypeScript
+/.next/
+/out/
+/coverage
+*.tsbuildinfo
+next-env.d.ts
+
 # Dependencies and build output
 node_modules/
 dist/

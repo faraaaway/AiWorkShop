@@ -2,23 +2,23 @@
 
 이름 칸을 채우고 시작하세요. 작업 번호는 [tasks.md](../tasks.md) 기준입니다.
 
-| 역할 | 이름 | 담당 | 문서 | 주로 수정하는 곳 |
-|------|------|------|------|------------------|
-| 팀원1 **Core (Lead)** | ______ | 프로젝트 뼈대, 공용 타입, Obscura 래퍼, 수집 실행기, API, 통합·머지 | [1-core.md](./1-core.md) | `src/lib/*`, `src/crawler/*.ts`, `src/app/api/*`, `fixtures/sample-deals.json` |
-| 팀원2 **UI** | ______ | 카드 목록, 필터·정렬, 상태 화면, 비교 화면 | [2-ui.md](./2-ui.md) | `src/app/page.tsx`, `src/app/status`, `src/app/compare`, `src/components/*`, `src/lib/filters.ts`, `src/lib/time.ts` |
-| 팀원3 **Crawl A** | ______ | 무신사(MVP) → 29CM → W컨셉 → 네이버쇼핑 | [3-crawl-a.md](./3-crawl-a.md) | `src/crawler/adapters/{musinsa,29cm,wconcept,naver}.ts`, `fixtures/sites/…`, `tests/adapters/…` |
-| 팀원4 **Crawl B** | ______ | 지그재그 → 퀸잇 → 포스티 → 4910 → 에이블리 | [4-crawl-b.md](./4-crawl-b.md) | `src/crawler/adapters/{zigzag,queenit,posty,4910,ably}.ts`, `fixtures/sites/…`, `tests/adapters/…` |
+| 역할                  | 이름       | 담당                                                                | 문서                           | 주로 수정하는 곳                                                                                                     |
+| --------------------- | ---------- | ------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| 팀원1 **Core (Lead)** | 장성민(나) | 프로젝트 뼈대, 공용 타입, Obscura 래퍼, 수집 실행기, API, 통합·머지 | [1-core.md](./1-core.md)       | `src/lib/*`, `src/crawler/*.ts`, `src/app/api/*`, `fixtures/sample-deals.json`                                       |
+| 팀원2 **UI**          | 김호성     | 카드 목록, 필터·정렬, 상태 화면, 비교 화면                          | [2-ui.md](./2-ui.md)           | `src/app/page.tsx`, `src/app/status`, `src/app/compare`, `src/components/*`, `src/lib/filters.ts`, `src/lib/time.ts` |
+| 팀원3 **Crawl A**     | 이광민     | 무신사(MVP) → 29CM → W컨셉 → 네이버쇼핑                             | [3-crawl-a.md](./3-crawl-a.md) | `src/crawler/adapters/{musinsa,29cm,wconcept,naver}.ts`, `fixtures/sites/…`, `tests/adapters/…`                      |
+| 팀원4 **Crawl B**     | 이태영     | 지그재그 → 퀸잇 → 포스티 → 4910 → 에이블리                          | [4-crawl-b.md](./4-crawl-b.md) | `src/crawler/adapters/{zigzag,queenit,posty,4910,ably}.ts`, `fixtures/sites/…`, `tests/adapters/…`                   |
 
 ## 타임라인
 
-| 시간 | Core | UI | Crawl A | Crawl B |
-|------|------|----|---------|---------|
-| 0:00–0:40 | 뼈대·공용 타입·스텁·샘플 데이터 (T001–T010) | Obscura 설치, 디자인 참고(배민/쿠팡이츠) 정리 | Obscura 설치, 무신사 블프 페이지 찾기·원본 저장 | Obscura 설치, 지그재그·퀸잇 블프 페이지 찾기·원본 저장 |
-| 0:40–2:00 | obscura.ts → normalize → store → runner/cli → `/api/deals` | DealCard·목록 화면(샘플 데이터) | 무신사 수집기 완성 | 지그재그 수집기 |
-| **2:00** | **MVP 통합: 무신사 실데이터가 목록에 표시** | ← API 연결 | ← 실수집 확인 | 계속 |
-| 2:00–3:00 | 분류 규칙(classify) | 필터·정렬 | 29CM | 퀸잇 → 포스티 |
-| 3:00–4:15 | 실패 격리·상태 API·수집 API | 상태 화면 | W컨셉 → 네이버 | 4910 → 에이블리 |
-| 4:15–5:00 | 통합 검증·머지 | 다듬기·Stretch | 검증 | 검증 |
+| 시간      | Core                                                       | UI                                            | Crawl A                                         | Crawl B                                                |
+| --------- | ---------------------------------------------------------- | --------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------ |
+| 0:00–0:40 | 뼈대·공용 타입·스텁·샘플 데이터 (T001–T010)                | Obscura 설치, 디자인 참고(배민/쿠팡이츠) 정리 | Obscura 설치, 무신사 블프 페이지 찾기·원본 저장 | Obscura 설치, 지그재그·퀸잇 블프 페이지 찾기·원본 저장 |
+| 0:40–2:00 | obscura.ts → normalize → store → runner/cli → `/api/deals` | DealCard·목록 화면(샘플 데이터)               | 무신사 수집기 완성                              | 지그재그 수집기                                        |
+| **2:00**  | **MVP 통합: 무신사 실데이터가 목록에 표시**                | ← API 연결                                    | ← 실수집 확인                                   | 계속                                                   |
+| 2:00–3:00 | 분류 규칙(classify)                                        | 필터·정렬                                     | 29CM                                            | 퀸잇 → 포스티                                          |
+| 3:00–4:15 | 실패 격리·상태 API·수집 API                                | 상태 화면                                     | W컨셉 → 네이버                                  | 4910 → 에이블리                                        |
+| 4:15–5:00 | 통합 검증·머지                                             | 다듬기·Stretch                                | 검증                                            | 검증                                                   |
 
 ## 공통 규칙
 
