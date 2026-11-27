@@ -27,12 +27,22 @@ interface SiteAdapter {
 
 interface CrawlContext {
   fetchHtml(url: string, opts?: { waitSec?: number }): Promise<string>;   // 렌더링된 HTML
-  fetchJson<T = unknown>(url: string): Promise<T>;                         // --dump original + JSON.parse
-  evalPage<T = unknown>(url: string, js: string): Promise<T>;             // --eval 결과(JSON)
+  fetchJson<T = unknown>(url: string): Promise<T>;                         // 단순 GET(--dump original) + JSON.parse
+  evalPage<T = unknown>(url: string, js: string, opts?: { waitSec?: number }): Promise<T | null>; // --eval 결과
   log(msg: string): void;
   signal: AbortSignal;          // 차단 감지 시 runner가 중단
+  readonly requestsLeft: number; // 이번 실행에서 남은 요청 수
 }
 ```
+
+### Obscura 0.2.7에서 확인한 동작 (2026-11-27)
+
+- `fetchJson`은 **GET만** 가능하다(헤더·POST·GraphQL 불가).
+- `evalPage`의 `js`는 **동기 표현식 하나**이고 **객체나 배열**로 끝나야 한다. Promise는 기다려 주지 않고(`{}`가 됨),
+  표현식이 예외를 던지거나 값이 없으면 `null`이 온다 → `null`이면 "구조를 못 찾음"으로 보고 빈 배열을 반환한다.
+  늦게 채워지는 데이터는 `opts.waitSec`로 기다린다.
+- HTTP 403/429, robots.txt 차단은 `ctx`가 오류로 바꿔 준다(아래 규칙 6).
+- 테스트에서는 객체를 직접 만들지 말고 `tests/helpers/fakeContext.ts`의 `createFakeContext()`를 쓴다.
 
 ## 규칙
 
@@ -46,7 +56,9 @@ interface CrawlContext {
 6. 예외 처리:
    - 로그인 페이지로 이동됨 → `throw new LoginRequiredError()`
    - 구조를 못 찾음 → 빈 배열 반환(runner가 `suspect_layout` 처리)
-   - CAPTCHA/차단은 `ctx`가 `BlockedError`를 던지므로 잡지 말 것
+   - CAPTCHA/차단은 `ctx`가 `BlockedError`를 던지므로 잡지 말 것 (한 번 던진 뒤에는 이후 모든 `ctx` 호출이 다시 던진다)
+   - 요청 상한을 넘으면 `ctx`가 `RequestLimitError`를 던진다. `ctx.requestsLeft`를 보고 미리 멈추거나, 잡아서 그때까지
+     모은 결과를 반환해도 된다. 잡지 않으면 그 실행은 `failed`가 되고 이전 데이터가 유지된다
 7. 블프/행사 상품만 대상. 행사 목록 페이지 → 상품 목록 순서로, 사이트 전체 상품을 훑지 않는다.
 
 ## 스텁 (0단계 기본값)
@@ -59,7 +71,7 @@ export const zigzag: SiteAdapter = {
 };
 ```
 
-`NotImplementedError`인 사이트는 상태 화면에서 `disabled`(꺼짐)로 보인다.
+`NotImplementedError`인 사이트는 상태 화면에서 `not_implemented`(준비 중)로 보인다.
 
 ## 완료 기준 (사이트 하나당)
 

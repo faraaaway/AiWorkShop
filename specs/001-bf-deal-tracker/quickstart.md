@@ -23,10 +23,14 @@ UI 담당은 Obscura 없이도 샘플 데이터로 개발할 수 있지만, 통�
 ## 2. Obscura 동작 확인 (수집 담당·코어 담당)
 
 ```powershell
-& $env:OBSCURA_PATH --stealth --obey-robots fetch https://www.musinsa.com --dump text --timeout 30
+& $env:OBSCURA_PATH --stealth --obey-robots fetch https://example.com --dump text --timeout 30
 ```
 
-텍스트가 나오면 정상. CAPTCHA/차단 문구가 나오면 해당 사이트는 잠시 쉬고 다른 사이트부터.
+"Example Domain" 텍스트가 나오면 정상. 담당 사이트는 그다음에 같은 명령으로 확인한다.
+
+- `Blocked by robots.txt` 오류: 그 주소는 robots.txt가 막은 것이다(예: `www.musinsa.com` 페이지). 같은 사이트의
+  공개 JSON API(`api.musinsa.com`처럼 허용된 주소)를 찾거나, 없으면 그 사이트는 건너뛴다.
+- CAPTCHA/차단 문구: 해당 사이트는 잠시 쉬고 다른 사이트부터.
 
 ## 3. 실행
 

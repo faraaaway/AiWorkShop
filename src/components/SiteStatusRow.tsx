@@ -13,6 +13,7 @@ const STATE_BADGE: Record<SiteState, string> = {
   blocked: 'bg-[#15171A] text-white',
   login_required: 'bg-[#E4EEFF] text-[#1F4FA8]',
   disabled: 'bg-[#EEF0F3] text-[#5B616A]',
+  not_implemented: 'border border-dashed border-[#C9CDD3] bg-white text-[#5B616A]',
   never_run: 'border border-[#DFE2E7] bg-white text-[#5B616A]',
 };
 
