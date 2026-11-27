@@ -70,9 +70,9 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 - [ ] T020 [US1] (Core) `src/app/api/deals/route.ts` — contracts/http-api.md `GET /api/deals`(만료 제외 기본, `lastUpdatedAt`)
 - [x] T021 [US1] (CrawlA) 무신사 블프 행사 페이지 조사 후 원본을 `fixtures/sites/musinsa/`에 저장(행사 목록 1개 + 상품 목록 1개 이상)
 - [x] T022 [US1] (CrawlA) `src/crawler/adapters/musinsa.ts` — `parseMusinsa` 순수 함수 + `crawl(ctx)`(행사 → 상품 목록, `rawCategory`·`rawGender`·`event.endsAt` 채움)
-- [ ] T023 [P] [US1] (UI) `src/lib/time.ts` — 남은 시간 표시(`D-2 13:00`, `오늘 23:59 마감`, `알 수 없음`, 만료)
-- [ ] T024 [P] [US1] (UI) `src/components/DealCard.tsx` — contracts/http-api.md "DealCard 필수 표시" 전부, 새 탭 링크, `Deal.discountRate` null이면 "알 수 없음"
-- [ ] T025 [US1] (UI) `src/app/page.tsx` — 상단 마지막 업데이트 시각 + 카드 그리드(모바일 2열/데스크톱 4~5열), `getDeals()` 사용
+- [x] T023 [P] [US1] (UI) `src/lib/time.ts` — 남은 시간 표시(`D-2 13:00`, `오늘 23:59 마감`, `알 수 없음`, 만료)
+- [x] T024 [P] [US1] (UI) `src/components/DealCard.tsx` — contracts/http-api.md "DealCard 필수 표시" 전부, 새 탭 링크, `Deal.discountRate` null이면 "알 수 없음"
+- [x] T025 [US1] (UI) `src/app/page.tsx` — 상단 마지막 업데이트 시각 + 카드 그리드(모바일 2열/데스크톱 4~5열), `getDeals()` 사용
 - [ ] T026 [US1] (UI) `src/lib/api.ts`의 `getDeals()`를 `/api/deals` 호출로 교체(T020 완료 후, Core와 같이 확인)
 
 **Checkpoint (~2:00)**: 무신사 실데이터로 목록 동작 = MVP 확보. 바로 `main`에 머지.
@@ -88,16 +88,16 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 ### Tests for User Story 2
 
 - [ ] T027 [P] [US2] (Core) `tests/unit/classify.test.ts` — research.md R8 키워드·카테고리 사례 20개 이상
-- [ ] T028 [P] [US2] (UI) `tests/unit/filters.test.ts` — 조합 필터, 정렬 3종, 할인율 null 제외, 품절 뒤로
+- [x] T028 [P] [US2] (UI) `tests/unit/filters.test.ts` — 조합 필터, 정렬 3종, 할인율 null 제외, 품절 뒤로
 
 ### Implementation for User Story 2
 
 - [ ] T029 [US2] (Core) `src/lib/classify.ts` 완성 — data-model.md `Deal.gender`, `Deal.theme`(카테고리 1순위, 상품명 키워드 2순위, 실패 시 `unclassified`)
-- [ ] T030 [US2] (UI) `src/lib/filters.ts` — `applyFilters(deals, state)`/`sortDeals(deals, sort)`: 성별, 테마, 할인율 구간(30/50/70+), 사이트, 오늘 마감, 종료 포함 여부; 정렬 할인율↓·마감 임박·가격↑
-- [ ] T031 [P] [US2] (UI) `src/components/FilterBar.tsx` — 성별 탭, 테마 칩(가로 스크롤), 할인율 구간, 사이트 선택, "오늘 마감", "종료된 할인 보기"
-- [ ] T032 [P] [US2] (UI) `src/components/SortSelect.tsx`
-- [ ] T033 [US2] (UI) `src/app/page.tsx`에 필터·정렬 연결, 빈 결과 문구 + 필터 초기화 버튼, 결과 개수 표시
-- [ ] T034 [US2] (UI) `src/components/DealCard.tsx`에 품절·만료 배지, 만료 카드 회색 처리
+- [x] T030 [US2] (UI) `src/lib/filters.ts` — `applyFilters(deals, state)`/`sortDeals(deals, sort)`: 성별, 테마, 할인율 구간(30/50/70+), 사이트, 오늘 마감, 종료 포함 여부; 정렬 할인율↓·마감 임박·가격↑
+- [x] T031 [P] [US2] (UI) `src/components/FilterBar.tsx` — 성별 탭, 테마 칩(가로 스크롤), 할인율 구간, 사이트 선택, "오늘 마감", "종료된 할인 보기"
+- [x] T032 [P] [US2] (UI) `src/components/SortSelect.tsx`
+- [x] T033 [US2] (UI) `src/app/page.tsx`에 필터·정렬 연결, 빈 결과 문구 + 필터 초기화 버튼, 결과 개수 표시
+- [x] T034 [US2] (UI) `src/components/DealCard.tsx`에 품절·만료 배지, 만료 카드 회색 처리
 
 **Checkpoint (~3:00)**: US1+US2 완료.
 
@@ -121,8 +121,8 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 
 ### Implementation for User Story 3 — UI
 
-- [ ] T039 [P] [US3] (UI) `src/components/SiteStatusRow.tsx` — 상태 배지(색상), 마지막 수집, 건수, 메시지, [지금 수집]
-- [ ] T040 [US3] (UI) `src/app/status/page.tsx` — 9개 사이트 목록, [전체 수집], 수집 중 3초마다 상태 새로고침, 목록 화면과 상단 탭으로 이동
+- [x] T039 [P] [US3] (UI) `src/components/SiteStatusRow.tsx` — 상태 배지(색상), 마지막 수집, 건수, 메시지, [지금 수집]
+- [x] T040 [US3] (UI) `src/app/status/page.tsx` — 9개 사이트 목록, [전체 수집], 수집 중 3초마다 상태 새로고침, 목록 화면과 상단 탭으로 이동
 
 ### Implementation for User Story 3 — 사이트 수집기 (각 사이트 = fixture 저장 → parse 함수 → 테스트 → crawl 연결, contracts/adapter-interface.md "완료 기준")
 
@@ -157,8 +157,8 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 ## Phase 7: Polish & Stretch (4:15–5:00)
 
 - [ ] T052 [P] (Core) `src/app/api/status/[siteId]/route.ts` — `PATCH` 사이트 켜기/끄기(FR-018), runner가 `SiteStatus.enabled` 반영
-- [ ] T053 [P] (UI) 필터·정렬 상태를 `localStorage`에 기억(FR-022, Stretch) — `src/lib/filters.ts`, `src/app/page.tsx`
-- [ ] T054 [P] (UI) 마지막 업데이트 12시간 초과 경고 배너(FR-020a, Stretch) — `src/app/page.tsx`
+- [x] T053 [P] (UI) 필터·정렬 상태를 `localStorage`에 기억(FR-022, Stretch) — `src/lib/filters.ts`, `src/app/page.tsx`
+- [x] T054 [P] (UI) 마지막 업데이트 12시간 초과 경고 배너(FR-020a, Stretch) — `src/app/page.tsx`
 - [ ] T055 [P] (Core) 자동 주기 수집(FR-002a, Stretch) — `src/crawler/schedule.ts`, `npm run crawl:watch`
 - [ ] T056 (전원) quickstart.md V1–V8 검증, 실패 항목 수정, `README.md`에 실행법 요약
 - [ ] T057 (Core) 최종 `main` 정리·태그 `v0.1.0`
