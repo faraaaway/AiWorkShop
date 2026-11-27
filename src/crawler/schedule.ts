@@ -1,29 +1,28 @@
 /**
  * Automatic crawling (spec FR-002a): while the app server is running, every enabled site is
- * crawled once per interval. The interval comes from BF_AUTO_CRAWL_MINUTES (default 60, "0" or
- * "off" disables it). Runs never overlap: the next one is scheduled only after the previous one
- * has ended, and runAll() itself crawls the sites one at a time.
+ * crawled on the clock — with the default interval of 60 minutes, at every full hour (x:00, Korean
+ * time). The interval comes from BF_AUTO_CRAWL_MINUTES (default 60, "0" or "off" disables it).
+ * Runs never overlap: the next one is scheduled only after the previous one has ended, and
+ * runAll() itself crawls the sites one at a time.
  */
 import { runAll, type SiteRunResult } from '@/crawler/runner';
 import { toKstIso } from '@/lib/dates';
-import { readAllStatuses } from '@/lib/store';
-import type { AutoCrawlInfo, IsoDateTime } from '@/lib/types';
+import type { AutoCrawlInfo } from '@/lib/types';
 
 export const AUTO_CRAWL_ENV = 'BF_AUTO_CRAWL_MINUTES';
 export const DEFAULT_INTERVAL_MINUTES = 60;
 /** A full run takes many minutes and every run visits every site, so shorter intervals are refused. */
 const MIN_INTERVAL_MINUTES = 10;
-/** First run after the server starts, when the stored data is older than one interval. */
-const STARTUP_DELAY_MS = 15_000;
 const MS_PER_MINUTE = 60_000;
+/** Korea has no daylight saving time, so clock boundaries are a fixed offset from UTC. */
+const KST_OFFSET_MS = 9 * 60 * MS_PER_MINUTE;
 const DISABLED_VALUES: readonly string[] = ['0', 'off', 'false', 'no'];
 const WHOLE_NUMBER = /^\d+$/;
 
 export interface AutoCrawlOptions {
   intervalMinutes: number;
-  /** Test seams. Defaults: runAll, last runs from the status files, stdout, the real clock and timers. */
+  /** Test seams. Defaults: runAll, stdout, the real clock and timers. */
   runAllFn?: () => Promise<SiteRunResult[]>;
-  getLastRunAts?: () => Promise<readonly (IsoDateTime | null)[]>;
   log?: (msg: string) => void;
   now?: () => Date;
   setTimer?: (run: () => void, ms: number) => unknown;
@@ -47,25 +46,13 @@ export function parseIntervalMinutes(raw: string | undefined): number | null {
 }
 
 /**
- * How long to wait before the first run: the rest of the interval when something was crawled
- * recently, otherwise a short startup delay.
+ * Milliseconds until the next clock boundary of the interval, counted from midnight in Korean
+ * time: every 60 minutes -> the next full hour, every 30 -> :00 or :30, every 6 hours -> 0, 6,
+ * 12 or 18 o'clock. Exactly on a boundary, the wait is one whole interval.
  */
-export function computeFirstDelayMs(
-  lastRunAts: readonly (IsoDateTime | null)[],
-  intervalMs: number,
-  nowMs: number,
-): number {
-  const pastRuns = lastRunAts
-    .map((value) => (value === null ? Number.NaN : Date.parse(value)))
-    .filter((ms) => Number.isFinite(ms) && ms <= nowMs);
-  if (pastRuns.length === 0) return STARTUP_DELAY_MS;
-  const sinceLastRun = nowMs - Math.max(...pastRuns);
-  return Math.max(STARTUP_DELAY_MS, intervalMs - sinceLastRun);
-}
-
-async function readLastRunAts(): Promise<(IsoDateTime | null)[]> {
-  const statuses = await readAllStatuses();
-  return statuses.map((status) => status.lastRunAt);
+export function computeAlignedDelayMs(nowMs: number, intervalMs: number): number {
+  const sinceBoundary = (((nowMs + KST_OFFSET_MS) % intervalMs) + intervalMs) % intervalMs;
+  return intervalMs - sinceBoundary;
 }
 
 function writeLine(msg: string): void {
@@ -88,7 +75,6 @@ export function startAutoCrawl(options: AutoCrawlOptions): AutoCrawlHandle {
     throw new Error(`자동 수집 주기는 1분 이상이어야 합니다: ${intervalMinutes}`);
   }
   const runAllFn = options.runAllFn ?? ((): Promise<SiteRunResult[]> => runAll());
-  const getLastRunAts = options.getLastRunAts ?? readLastRunAts;
   const log = options.log ?? writeLine;
   const now = options.now ?? ((): Date => new Date());
   const setTimer = options.setTimer ?? ((run: () => void, ms: number): unknown => setTimeout(run, ms));
@@ -100,9 +86,12 @@ export function startAutoCrawl(options: AutoCrawlOptions): AutoCrawlHandle {
   let timer: unknown = null;
   let nextRunAt: Date | null = null;
 
-  const schedule = (delayMs: number): void => {
+  /** Books the next clock boundary. A boundary that passed while a run was going is skipped. */
+  const scheduleNext = (): void => {
     if (stopped) return;
-    nextRunAt = new Date(now().getTime() + delayMs);
+    const nowMs = now().getTime();
+    const delayMs = computeAlignedDelayMs(nowMs, intervalMs);
+    nextRunAt = new Date(nowMs + delayMs);
     timer = setTimer(() => {
       void tick();
     }, delayMs);
@@ -116,24 +105,15 @@ export function startAutoCrawl(options: AutoCrawlOptions): AutoCrawlHandle {
       log('전체 수집을 시작합니다');
       log(`전체 수집 완료: ${summarize(await runAllFn())}`);
     } catch (error) {
-      // One failed run must not end the schedule; the next interval tries again.
+      // One failed run must not end the schedule; the next boundary tries again.
       log(`전체 수집 중 오류가 났습니다: ${describeError(error)}`);
     } finally {
-      schedule(intervalMs);
+      scheduleNext();
     }
   };
 
-  const start = async (): Promise<void> => {
-    let lastRunAts: readonly (IsoDateTime | null)[] = [];
-    try {
-      lastRunAts = await getLastRunAts();
-    } catch (error) {
-      log(`이전 수집 시각을 읽지 못해 곧바로 시작합니다: ${describeError(error)}`);
-    }
-    schedule(computeFirstDelayMs(lastRunAts, intervalMs, now().getTime()));
-    if (nextRunAt !== null) log(`${intervalMinutes}분마다 수집합니다. 다음 수집: ${toKstIso(nextRunAt) ?? '알 수 없음'}`);
-  };
-  void start();
+  scheduleNext();
+  if (nextRunAt !== null) log(`${intervalMinutes}분마다 수집합니다. 다음 수집: ${toKstIso(nextRunAt) ?? '알 수 없음'}`);
 
   return {
     intervalMinutes,

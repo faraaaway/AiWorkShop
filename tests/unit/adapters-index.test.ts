@@ -82,6 +82,8 @@ const IMPLEMENTED_SITE_IDS: readonly SiteId[] = [
   'musinsa',
   '29cm',
   'wconcept',
+  'zigzag',
+  'ably',
   'queenit',
   'posty',
   '4910',
@@ -94,7 +96,7 @@ const MAX_REQUESTS_CEILING = 30;
  * robots.txt disallows unlisted bots, so nothing can be read otherwise). Every other adapter must
  * keep obeying robots.txt; adding a site here is a deliberate, reviewed choice.
  */
-const ROBOTS_WAIVED_SITE_IDS: readonly SiteId[] = ['wconcept', 'queenit', 'posty', '4910'];
+const ROBOTS_WAIVED_SITE_IDS: readonly SiteId[] = ['wconcept', 'zigzag', 'ably', 'queenit', 'posty', '4910'];
 
 describe('every adapter', () => {
   it.each(SITE_IDS)('%s has the agreed display name and home url', (id) => {

@@ -31,6 +31,7 @@ interface CrawlContext {
   evalPage<T = unknown>(url: string, js: string, opts?: { waitSec?: number }): Promise<T | null>; // --eval 결과
   log(msg: string): void;
   signal: AbortSignal;          // 차단 감지 시 runner가 중단
+  postJson<T = unknown>(url: string, body: unknown, opts?: { headers?: Record<string, string> }): Promise<T>; // JSON POST
   readonly requestsLeft: number; // 이번 실행에서 남은 요청 수
 }
 ```
@@ -38,6 +39,10 @@ interface CrawlContext {
 ### Obscura 0.2.7에서 확인한 동작 (2026-11-27)
 
 - `fetchJson`은 **GET만** 가능하다(헤더·POST·GraphQL 불가).
+- `postJson(url, body, { headers })`는 JSON을 POST로 보내고 JSON 응답을 돌려준다. Obscura CLI는 POST를 못 보내서
+  **이 요청만 Node가 직접 보낸다**(요청 간격·요청 상한·차단 감지는 똑같이 적용). 웹사이트가 로그인 없이 부르는
+  공개 API에만 쓴다 — 쿠키, 로그인 토큰, 앱에서 꺼낸 키는 보내지 않는다. 빈 응답은 오류로 처리된다.
+  예: 지그재그 행사 상품(GraphQL, `Origin`/`Referer`에 사이트 주소 필요).
 - `fetchHtml(url, { raw: true })`는 렌더링하지 않고 **원본 응답 본문**을 그대로 준다(자바스크립트 실행 없음).
   렌더링이 시간 초과되는 사이트(예: 아뜨랑스)나 HTML 조각 응답에 쓴다. 빈 본문은 빈 문자열로 온다.
 - `fetchHtml(url, { preEval, waitSec })`는 페이지가 뜬 직후 `preEval`(동기 표현식 하나)을 실행하고, `waitSec`만큼

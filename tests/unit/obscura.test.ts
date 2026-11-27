@@ -8,6 +8,8 @@ import {
   type ObscuraContext,
   type ObscuraContextOptions,
   type ObscuraExecResult,
+  type ObscuraHttpPost,
+  type ObscuraHttpResult,
 } from '@/crawler/obscura';
 import { getCrawlErrorKind } from '@/lib/errors';
 
@@ -857,6 +859,16 @@ describe('fetchHtml preEval', () => {
     expect(h.calls).toHaveLength(0);
   });
 
+  it('keeps the request cap and pacing for preEval requests like any other request', async () => {
+    const h = makeHarness([ok(NORMAL_HTML), ok(NORMAL_HTML)]);
+
+    await h.ctx.fetchHtml(PAGE_URL, { preEval: SCROLL_SCRIPT });
+    await h.ctx.fetchHtml(PAGE_URL, { preEval: SCROLL_SCRIPT });
+
+    expect(h.order).toEqual(['exec', 'sleep', 'exec']);
+    expect(h.ctx.requestsLeft).toBe(28);
+  });
+
   it('leaves a slow scroll-and-wait page enough time before the hard kill', async () => {
     const h = makeHarness([ok(NORMAL_HTML)]);
 
@@ -864,5 +876,129 @@ describe('fetchHtml preEval', () => {
 
     // A scroll-harvest page took about 80 s in live runs with --timeout 30 --wait 25.
     expect(h.calls[0].timeoutMs).toBeGreaterThanOrEqual(150_000);
+  });
+});
+
+describe('postJson', () => {
+  const GRAPHQL_URL = 'https://api.example.com/graphql/GetProducts';
+
+  interface PostCall {
+    url: string;
+    headers: Record<string, string>;
+    body: string;
+  }
+
+  /** A harness whose HTTP POST is a fake that records what was sent. */
+  function makePostHarness(
+    respond: (call: PostCall) => ObscuraHttpResult | Promise<ObscuraHttpResult>,
+    adapter: Partial<ObscuraContextOptions['adapter']> = {},
+  ) {
+    const posts: PostCall[] = [];
+    const httpPost: ObscuraHttpPost = async (url, init) => {
+      const call = { url, headers: { ...init.headers }, body: init.body };
+      posts.push(call);
+      return respond(call);
+    };
+    return { ...makeHarness([], { httpPost, adapter }), posts };
+  }
+
+  it('sends the body as JSON with the given headers and returns the parsed answer', async () => {
+    const h = makePostHarness(() => ({ status: 200, body: '{"data":{"items":[1,2]}}' }));
+
+    const answer = await h.ctx.postJson<{ data: { items: number[] } }>(
+      GRAPHQL_URL,
+      { query: 'query Q { items }', variables: { after: null } },
+      { headers: { Origin: 'https://shop.example.com', Referer: 'https://shop.example.com/' } },
+    );
+
+    expect(answer.data.items).toEqual([1, 2]);
+    expect(h.posts).toHaveLength(1);
+    expect(h.posts[0].url).toBe(GRAPHQL_URL);
+    expect(JSON.parse(h.posts[0].body)).toEqual({ query: 'query Q { items }', variables: { after: null } });
+    expect(h.posts[0].headers['Content-Type']).toBe('application/json');
+    expect(h.posts[0].headers.Origin).toBe('https://shop.example.com');
+    expect(h.posts[0].headers.Referer).toBe('https://shop.example.com/');
+    expect(h.calls).toHaveLength(0); // no Obscura process is started for a POST
+  });
+
+  it('counts against the request cap and is paced like every other request', async () => {
+    const h = makePostHarness(() => ({ status: 200, body: '{}' }), { maxRequests: 2 });
+
+    await h.ctx.postJson(GRAPHQL_URL, {});
+    expect(h.sleeps).toHaveLength(0);
+    await h.ctx.postJson(GRAPHQL_URL, {});
+
+    expect(h.sleeps).toEqual([3000]);
+    expect(h.ctx.requestsLeft).toBe(0);
+    expect(getCrawlErrorKind(await rejection(h.ctx.postJson(GRAPHQL_URL, {})))).toBe('request_limit');
+    expect(h.posts).toHaveLength(2);
+  });
+
+  it('treats an empty answer as an error, not as an empty result', async () => {
+    const h = makePostHarness(() => ({ status: 200, body: '' }));
+
+    const error = await rejection(h.ctx.postJson(GRAPHQL_URL, {}));
+
+    expect(getCrawlErrorKind(error)).toBeNull();
+    expect(error.message).toMatch(/[가-힣]/);
+    expect(h.ctx.blocked).toBeNull();
+  });
+
+  it.each([403, 429])('latches a block on HTTP %i', async (status) => {
+    const h = makePostHarness(() => ({ status, body: 'Forbidden' }));
+
+    const error = await rejection(h.ctx.postJson(GRAPHQL_URL, {}));
+
+    expect(getCrawlErrorKind(error)).toBe('blocked');
+    expect(h.ctx.blocked).toBe(error);
+    expect(getCrawlErrorKind(await rejection(h.ctx.postJson(GRAPHQL_URL, {})))).toBe('blocked');
+    expect(h.posts).toHaveLength(1);
+  });
+
+  it('reports other HTTP errors with the status code', async () => {
+    const h = makePostHarness(() => ({ status: 500, body: 'oops' }));
+
+    const error = await rejection(h.ctx.postJson(GRAPHQL_URL, {}));
+
+    expect(getCrawlErrorKind(error)).toBeNull();
+    expect(error.message).toContain('500');
+  });
+
+  it('detects a bot wall returned instead of JSON', async () => {
+    const h = makePostHarness(() => ({
+      status: 200,
+      body: '<html><head><title>Just a moment...</title></head><body></body></html>',
+    }));
+
+    expect(getCrawlErrorKind(await rejection(h.ctx.postJson(GRAPHQL_URL, {})))).toBe('blocked');
+  });
+
+  it('reports a non-JSON answer that is not a bot wall as a plain error', async () => {
+    const h = makePostHarness(() => ({ status: 200, body: 'GraphQL only supports POST requests.' }));
+
+    const error = await rejection(h.ctx.postJson(GRAPHQL_URL, {}));
+
+    expect(getCrawlErrorKind(error)).toBeNull();
+    expect(error.message).toContain('GraphQL only supports POST');
+  });
+
+  it('turns a network failure into a readable error', async () => {
+    const h = makePostHarness(() => {
+      throw new TypeError('fetch failed');
+    });
+
+    const error = await rejection(h.ctx.postJson(GRAPHQL_URL, {}));
+
+    expect(error.message).toMatch(/[가-힣]/);
+    expect(error.message).toContain('fetch failed');
+  });
+
+  it('rejects a non-http address without sending anything', async () => {
+    const h = makePostHarness(() => ({ status: 200, body: '{}' }));
+
+    await rejection(h.ctx.postJson('file:///etc/passwd', {}));
+
+    expect(h.posts).toHaveLength(0);
+    expect(h.ctx.requestsLeft).toBe(30);
   });
 });

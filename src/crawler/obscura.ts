@@ -2,12 +2,14 @@
  * The ONLY module allowed to start the Obscura headless browser (constitution II).
  * It implements CrawlContext for the site adapters: one `obscura fetch` process per request,
  * a polite random wait between requests, a request cap, and block detection that latches.
+ * The one exception to "everything through Obscura" is postJson: Obscura's CLI cannot POST, so
+ * that request is sent by Node's fetch, under the same pacing, cap and block detection.
  * Verified against obscura 0.2.7 (specs/001-bf-deal-tracker/research.md R2, R4, R5).
  */
 import { execFile, type ExecFileException } from 'node:child_process';
 import { getObscuraPath } from '@/lib/env';
 import { BlockedError, RequestLimitError } from '@/lib/errors';
-import type { CrawlContext, FetchHtmlOptions, SiteAdapter } from '@/lib/types';
+import type { CrawlContext, FetchHtmlOptions, PostJsonOptions, SiteAdapter } from '@/lib/types';
 
 const DEFAULT_MIN_DELAY_MS = 2_000;
 const DEFAULT_MAX_DELAY_MS = 4_000;
@@ -29,6 +31,8 @@ const SHORT_BODY_MAX_CHARS = 20_000;
 const BODY_PREVIEW_CHARS = 120;
 const STDERR_DETAIL_MAX_CHARS = 300;
 const BLOCKING_HTTP_STATUSES: readonly number[] = [403, 429];
+const HTTP_OK_MIN = 200;
+const HTTP_OK_MAX = 299;
 const HTTP_NOT_FOUND = 404;
 const HTTP_SERVER_ERROR_MIN = 500;
 /** Some APIs prefix their JSON with a UTF-8 byte order mark, which JSON.parse rejects. */
@@ -81,6 +85,21 @@ export type ObscuraExec = (
   options: ObscuraExecOptions,
 ) => Promise<ObscuraExecResult>;
 
+export interface ObscuraHttpResult {
+  status: number;
+  body: string;
+}
+
+export interface ObscuraHttpInit {
+  headers: Record<string, string>;
+  body: string;
+  timeoutMs: number;
+  signal: AbortSignal;
+}
+
+/** Sends one HTTP POST (postJson). Obscura's CLI cannot POST, so this request is made by Node. */
+export type ObscuraHttpPost = (url: string, init: ObscuraHttpInit) => Promise<ObscuraHttpResult>;
+
 export interface ObscuraContext extends CrawlContext {
   /** Requests made so far in this run (failed ones included). */
   readonly requestCount: number;
@@ -95,6 +114,8 @@ export interface ObscuraContextOptions {
   log?: (msg: string) => void;
   /** Test seams. Defaults: execFile, an abortable setTimeout, Math.random, 2000-4000 ms, 90 s. */
   exec?: ObscuraExec;
+  /** Default: the global fetch with the run's abort signal and the page timeout. */
+  httpPost?: ObscuraHttpPost;
   sleep?: (ms: number, signal: AbortSignal) => Promise<void>;
   random?: () => number;
   minDelayMs?: number;
@@ -189,6 +210,17 @@ const execObscura: ObscuraExec = (file, args, options) =>
     );
   });
 
+const postWithFetch: ObscuraHttpPost = async (url, init) => {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: init.headers,
+    body: init.body,
+    redirect: 'follow',
+    signal: AbortSignal.any([init.signal, AbortSignal.timeout(init.timeoutMs)]),
+  });
+  return { status: response.status, body: await response.text() };
+};
+
 function abortableSleep(ms: number, signal: AbortSignal): Promise<void> {
   return new Promise((resolve, reject) => {
     if (signal.aborted) {
@@ -222,16 +254,20 @@ function buildArgs(adapter: ObscuraContextOptions['adapter'], spec: RequestSpec,
   ];
 }
 
-function assertRequestSpec(spec: RequestSpec): void {
+function assertHttpUrl(url: string): void {
   let protocol: string | null = null;
   try {
-    protocol = new URL(spec.url).protocol;
+    protocol = new URL(url).protocol;
   } catch {
     protocol = null; // not a URL at all: reported below together with other schemes
   }
   if (protocol !== 'http:' && protocol !== 'https:') {
-    throw new Error(`http(s) 주소만 요청할 수 있습니다: ${spec.url || '(빈 문자열)'}`);
+    throw new Error(`http(s) 주소만 요청할 수 있습니다: ${url || '(빈 문자열)'}`);
   }
+}
+
+function assertRequestSpec(spec: RequestSpec): void {
+  assertHttpUrl(spec.url);
   // Obscura's --wait only accepts whole seconds.
   if (spec.waitSec !== undefined && (!Number.isInteger(spec.waitSec) || spec.waitSec < 0)) {
     throw new Error(`waitSec는 0 이상의 정수(초)여야 합니다: ${spec.waitSec}`);
@@ -302,6 +338,7 @@ function assertSettings(minDelayMs: number, maxDelayMs: number, timeoutSec: numb
 export function createObscuraContext(options: ObscuraContextOptions): ObscuraContext {
   const { adapter } = options;
   const exec = options.exec ?? execObscura;
+  const httpPost = options.httpPost ?? postWithFetch;
   const sleep = options.sleep ?? abortableSleep;
   const random = options.random ?? Math.random;
   const resolveBinary = options.resolveBinary ?? getObscuraPath;
@@ -341,12 +378,34 @@ export function createObscuraContext(options: ObscuraContextOptions): ObscuraCon
     return error;
   };
 
-  const perform = async (spec: RequestSpec, isFirst: boolean): Promise<string> => {
+  /** The polite wait before every request except the first of the run. */
+  const paced = async (isFirst: boolean, work: () => Promise<string>): Promise<string> => {
     throwIfStopped();
     if (!isFirst) {
       await sleep(Math.round(minDelayMs + random() * (maxDelayMs - minDelayMs)), controller.signal);
       throwIfStopped();
     }
+    return work();
+  };
+
+  /**
+   * Every request of a run (Obscura or POST) goes through here. Admission is synchronous (so
+   * requestsLeft is exact); the work itself runs one at a time.
+   */
+  const admit = (work: () => Promise<string>): Promise<string> => {
+    throwIfStopped();
+    if (requestCount >= adapter.maxRequests) throw new RequestLimitError(adapter.maxRequests);
+    const isFirst = requestCount === 0;
+    requestCount += 1;
+    const run = queue.then(() => paced(isFirst, work));
+    queue = run.then(
+      () => undefined,
+      () => undefined, // the caller receives the rejection through `run`; the queue only orders work
+    );
+    return run;
+  };
+
+  const runObscura = async (spec: RequestSpec): Promise<string> => {
     binaryPath ??= resolveBinary();
     const timeoutMs = (timeoutSec + (spec.waitSec ?? 0) + KILL_GRACE_SEC) * MS_PER_SEC;
     const result = await exec(binaryPath, buildArgs(adapter, spec, timeoutSec), {
@@ -360,19 +419,35 @@ export function createObscuraContext(options: ObscuraContextOptions): ObscuraCon
     return result.stdout;
   };
 
-  /** Admission is synchronous (so requestsLeft is exact); the work itself runs one at a time. */
   const request = (spec: RequestSpec): Promise<string> => {
     throwIfStopped();
     assertRequestSpec(spec);
-    if (requestCount >= adapter.maxRequests) throw new RequestLimitError(adapter.maxRequests);
-    const isFirst = requestCount === 0;
-    requestCount += 1;
-    const run = queue.then(() => perform(spec, isFirst));
-    queue = run.then(
-      () => undefined,
-      () => undefined, // the caller receives the rejection through `run`; the queue only orders work
-    );
-    return run;
+    return admit(() => runObscura(spec));
+  };
+
+  /** One POST sent by Node itself; HTTP 403/429 latch a block like an Obscura request does. */
+  const runPost = async (url: string, payload: string, extraHeaders: Readonly<Record<string, string>>): Promise<string> => {
+    let result: ObscuraHttpResult;
+    try {
+      result = await httpPost(url, {
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...extraHeaders },
+        body: payload,
+        timeoutMs: timeoutSec * MS_PER_SEC,
+        signal: controller.signal,
+      });
+    } catch (error) {
+      throwIfStopped();
+      const reason = error instanceof Error ? error.message : String(error);
+      throw new Error(`POST 요청을 보내지 못했습니다 (${url}): ${reason}`);
+    }
+    throwIfStopped();
+    if (BLOCKING_HTTP_STATUSES.includes(result.status)) {
+      throw latchBlock(new BlockedError(`HTTP ${result.status}`, url));
+    }
+    if (result.status < HTTP_OK_MIN || result.status > HTTP_OK_MAX) {
+      throw new Error(`${summarizeFailure(result.status, '', null)}: ${url}`);
+    }
+    return result.body;
   };
 
   return {
@@ -415,6 +490,21 @@ export function createObscuraContext(options: ObscuraContextOptions): ObscuraCon
         return null;
       }
       return (parsed.value ?? null) as T | null;
+    },
+
+    async postJson<T = unknown>(url: string, body: unknown, opts?: PostJsonOptions): Promise<T> {
+      throwIfStopped();
+      assertHttpUrl(url);
+      const payload = JSON.stringify(body);
+      const text = await admit(() => runPost(url, payload, opts?.headers ?? {}));
+      if (text.trim() === '') {
+        throw new Error(`빈 응답이 돌아왔습니다 (요청이 거부됐을 수 있습니다): ${url}`);
+      }
+      const parsed = parseJson(text);
+      if (parsed.ok) return parsed.value as T;
+      const reason = detectBlockSignal(text);
+      if (reason !== null) throw latchBlock(new BlockedError(reason, url));
+      throw new Error(`JSON이 아닌 응답입니다 (${url}): ${text.trim().slice(0, BODY_PREVIEW_CHARS)}`);
     },
 
     log,

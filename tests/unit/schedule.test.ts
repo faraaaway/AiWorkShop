@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_INTERVAL_MINUTES,
-  computeFirstDelayMs,
+  computeAlignedDelayMs,
   parseIntervalMinutes,
   startAutoCrawl,
   type AutoCrawlOptions,
 } from '@/crawler/schedule';
 
-const MINUTE_MS = 60_000;
+const SECOND_MS = 1_000;
+const MINUTE_MS = 60 * SECOND_MS;
 const HOUR_MS = 60 * MINUTE_MS;
-const STARTUP_DELAY_MS = 15_000;
 
 interface PendingTimer {
   run: () => void;
@@ -18,10 +18,10 @@ interface PendingTimer {
 }
 
 /** Manual timers and a controllable clock, so no test waits for real time. */
-function makeHarness(overrides: Partial<AutoCrawlOptions> = {}) {
+function makeHarness(overrides: Partial<AutoCrawlOptions> = {}, startAt = '2026-11-28T00:50:00+09:00') {
   const timers: PendingTimer[] = [];
   const logs: string[] = [];
-  let nowMs = Date.parse('2026-11-28T01:00:00+09:00');
+  let nowMs = Date.parse(startAt);
   let runs = 0;
 
   const options: AutoCrawlOptions = {
@@ -30,7 +30,6 @@ function makeHarness(overrides: Partial<AutoCrawlOptions> = {}) {
       runs += 1;
       return [];
     },
-    getLastRunAts: async () => [],
     log: (msg) => {
       logs.push(msg);
     },
@@ -50,6 +49,7 @@ function makeHarness(overrides: Partial<AutoCrawlOptions> = {}) {
   const settle = async (): Promise<void> => {
     for (let i = 0; i < 10; i += 1) await Promise.resolve();
   };
+  /** Moves the clock to the moment the latest timer is due, fires it and waits for the run. */
   const fireLatest = async (): Promise<void> => {
     const timer = timers[timers.length - 1];
     nowMs += timer.ms;
@@ -67,6 +67,7 @@ function makeHarness(overrides: Partial<AutoCrawlOptions> = {}) {
     advance: (ms: number) => {
       nowMs += ms;
     },
+    nowIso: () => new Date(nowMs).toISOString(),
   };
 }
 
@@ -98,40 +99,39 @@ describe('parseIntervalMinutes', () => {
   });
 });
 
-describe('computeFirstDelayMs', () => {
-  const now = Date.parse('2026-11-28T01:00:00+09:00');
+describe('computeAlignedDelayMs', () => {
+  const at = (iso: string): number => Date.parse(iso);
 
-  it('starts shortly after boot when nothing was ever collected', () => {
-    expect(computeFirstDelayMs([], HOUR_MS, now)).toBe(STARTUP_DELAY_MS);
-    expect(computeFirstDelayMs([null, null], HOUR_MS, now)).toBe(STARTUP_DELAY_MS);
+  it('waits until the next full hour for an hourly schedule', () => {
+    expect(computeAlignedDelayMs(at('2026-11-28T00:50:00+09:00'), HOUR_MS)).toBe(10 * MINUTE_MS);
+    expect(computeAlignedDelayMs(at('2026-11-28T13:07:30+09:00'), HOUR_MS)).toBe(52 * MINUTE_MS + 30 * SECOND_MS);
+    expect(computeAlignedDelayMs(at('2026-11-28T23:59:59.500+09:00'), HOUR_MS)).toBe(500);
   });
 
-  it('waits for the rest of the interval after the most recent run', () => {
-    const lastRuns = ['2026-11-28T00:10:00+09:00', '2026-11-28T00:40:00+09:00', null];
-
-    expect(computeFirstDelayMs(lastRuns, HOUR_MS, now)).toBe(40 * MINUTE_MS);
+  it('waits a whole interval when the clock is exactly on a boundary', () => {
+    expect(computeAlignedDelayMs(at('2026-11-28T01:00:00+09:00'), HOUR_MS)).toBe(HOUR_MS);
   });
 
-  it('starts shortly after boot when the last run is older than the interval', () => {
-    expect(computeFirstDelayMs(['2026-11-27T20:00:00+09:00'], HOUR_MS, now)).toBe(STARTUP_DELAY_MS);
+  it('aligns shorter intervals to the clock too (every 30 minutes: :00 and :30)', () => {
+    expect(computeAlignedDelayMs(at('2026-11-28T00:50:00+09:00'), 30 * MINUTE_MS)).toBe(10 * MINUTE_MS);
+    expect(computeAlignedDelayMs(at('2026-11-28T00:20:00+09:00'), 30 * MINUTE_MS)).toBe(10 * MINUTE_MS);
   });
 
-  it('ignores unreadable timestamps and runs dated in the future', () => {
-    expect(computeFirstDelayMs(['not a date'], HOUR_MS, now)).toBe(STARTUP_DELAY_MS);
-    expect(computeFirstDelayMs(['2026-11-29T00:00:00+09:00'], HOUR_MS, now)).toBe(STARTUP_DELAY_MS);
+  it('aligns multi-hour intervals to midnight in Korean time (every 6 hours: 0, 6, 12, 18 KST)', () => {
+    expect(computeAlignedDelayMs(at('2026-11-28T01:00:00+09:00'), 6 * HOUR_MS)).toBe(5 * HOUR_MS);
+    expect(computeAlignedDelayMs(at('2026-11-28T19:30:00+09:00'), 6 * HOUR_MS)).toBe(4 * HOUR_MS + 30 * MINUTE_MS);
   });
 });
 
 describe('startAutoCrawl', () => {
-  it('schedules the first run, then one run per interval measured from the end of the previous run', async () => {
+  it('runs on the hour, every hour', async () => {
     const h = makeHarness();
 
     const handle = startAutoCrawl(h.options);
-    await h.settle();
 
     expect(h.timers).toHaveLength(1);
-    expect(h.timers[0].ms).toBe(STARTUP_DELAY_MS);
-    expect(handle.nextRunAt?.toISOString()).toBe(new Date('2026-11-28T01:00:15+09:00').toISOString());
+    expect(h.timers[0].ms).toBe(10 * MINUTE_MS);
+    expect(handle.nextRunAt?.toISOString()).toBe(new Date('2026-11-28T01:00:00+09:00').toISOString());
     expect(h.runs()).toBe(0);
 
     await h.fireLatest();
@@ -139,21 +139,42 @@ describe('startAutoCrawl', () => {
     expect(h.runs()).toBe(1);
     expect(h.timers).toHaveLength(2);
     expect(h.timers[1].ms).toBe(HOUR_MS);
+    expect(handle.nextRunAt?.toISOString()).toBe(new Date('2026-11-28T02:00:00+09:00').toISOString());
 
     await h.fireLatest();
 
     expect(h.runs()).toBe(2);
-    expect(h.timers[2].ms).toBe(HOUR_MS);
+    expect(handle.nextRunAt?.toISOString()).toBe(new Date('2026-11-28T03:00:00+09:00').toISOString());
     handle.stop();
   });
 
-  it('waits out the rest of the interval when a crawl ran recently', async () => {
-    const h = makeHarness({ getLastRunAts: async () => ['2026-11-28T00:45:00+09:00'] });
+  it('stays on the hour when a run takes a while', async () => {
+    const h = makeHarness();
+    h.options.runAllFn = async () => {
+      h.advance(20 * MINUTE_MS); // the crawl itself takes 20 minutes
+      return [];
+    };
 
     const handle = startAutoCrawl(h.options);
-    await h.settle();
+    await h.fireLatest(); // starts 01:00, ends 01:20
 
-    expect(h.timers[0].ms).toBe(45 * MINUTE_MS);
+    expect(h.timers[1].ms).toBe(40 * MINUTE_MS);
+    expect(handle.nextRunAt?.toISOString()).toBe(new Date('2026-11-28T02:00:00+09:00').toISOString());
+    handle.stop();
+  });
+
+  it('skips the hour it missed when a run takes longer than the interval', async () => {
+    const h = makeHarness();
+    h.options.runAllFn = async () => {
+      h.advance(70 * MINUTE_MS);
+      return [];
+    };
+
+    const handle = startAutoCrawl(h.options);
+    await h.fireLatest(); // starts 01:00, ends 02:10
+
+    expect(h.timers[1].ms).toBe(50 * MINUTE_MS);
+    expect(handle.nextRunAt?.toISOString()).toBe(new Date('2026-11-28T03:00:00+09:00').toISOString());
     handle.stop();
   });
 
@@ -167,7 +188,6 @@ describe('startAutoCrawl', () => {
     });
 
     const handle = startAutoCrawl(h.options);
-    await h.settle();
     await h.fireLatest();
 
     expect(calls).toBe(1);
@@ -189,11 +209,11 @@ describe('startAutoCrawl', () => {
     });
 
     const handle = startAutoCrawl(h.options);
-    await h.settle();
     h.timers[0].run();
     await h.settle();
 
     expect(calls).toBe(1);
+    expect(handle.nextRunAt).toBeNull(); // a run is in progress
     expect(h.timers).toHaveLength(1); // the next run is only scheduled after this one ends
 
     release();
@@ -207,7 +227,6 @@ describe('startAutoCrawl', () => {
     const h = makeHarness();
 
     const handle = startAutoCrawl(h.options);
-    await h.settle();
     handle.stop();
 
     expect(h.timers[0].cancelled).toBe(true);
@@ -218,21 +237,6 @@ describe('startAutoCrawl', () => {
 
     expect(h.runs()).toBe(0);
     expect(h.timers).toHaveLength(1);
-  });
-
-  it('still schedules the first run when the last-run lookup fails', async () => {
-    const h = makeHarness({
-      getLastRunAts: async () => {
-        throw new Error('status unreadable');
-      },
-    });
-
-    const handle = startAutoCrawl(h.options);
-    await h.settle();
-
-    expect(h.timers).toHaveLength(1);
-    expect(h.timers[0].ms).toBe(STARTUP_DELAY_MS);
-    handle.stop();
   });
 
   it('rejects an interval below one minute', () => {

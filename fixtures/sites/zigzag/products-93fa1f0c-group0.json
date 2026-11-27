@@ -1,0 +1,1758 @@
+{
+ "data": {
+  "cms_products_preset_product_card_item_list": {
+   "item_list": [
+    {
+     "shop": {
+      "id": "25938",
+      "main_domain": "cq-3lzn4zqy",
+      "name": "스파오"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/10/4/25938_202610041958441695_61981.gif?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/10/4/25938_202610041958441695_61981.gif?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/172164329?browsing_type=NATIVE_BROWSER",
+      "title": "[백지헌PICK/단독컬러💖][신세틱레더] 퍼배색 무스탕_SPJLG4VW01",
+      "discount_rate": 37,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 99900,
+      "final_price": 62930,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 62930,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 99900,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": true,
+      "catalog_product_id": "172164329",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 10311,
+      "review_score": 4.8,
+      "shop_product_no": null,
+      "shop_id": "25938",
+      "is_zonly": true,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807164431_075801.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807209683_083066.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807254170_097551.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807286989_077822.png",
+        "image_size": {
+         "width": 135,
+         "height": 60
+        },
+        "small_image_size": {
+         "width": 120,
+         "height": 48
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803554879_048237.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803581537_041470.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804048908_047443.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804077683_068121.png",
+        "image_size": {
+         "width": 147,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 84,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=37&final_price=62930&review_score=4.8&review_count=10311&badge_list=meta_cms_EXCLUSIVE_NEW,meta_FREE_SHIPPING,thum_WEEKEND_ZIGZIN,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832110236_022793.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836039205_082414.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832312595_099297.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836066940_055572.png",
+        "image_size": {
+         "width": 168,
+         "height": 36
+        },
+        "small_image_size": {
+         "width": 168,
+         "height": 36
+        }
+       }
+      ],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "25938",
+      "main_domain": "cq-3lzn4zqy",
+      "name": "스파오"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/11/23/25938_202611231626212945_86590.gif?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/11/23/25938_202611231626212945_86590.gif?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/171834823?browsing_type=NATIVE_BROWSER",
+      "title": "[백지헌PICK/신규컬러💖][소프트얀] 딥 브이넥 니트_SPKWG49G01",
+      "discount_rate": 30,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 29900,
+      "final_price": 20920,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 20920,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 29900,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": false,
+      "catalog_product_id": "171834823",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 2663,
+      "review_score": 4.9,
+      "shop_product_no": null,
+      "shop_id": "25938",
+      "is_zonly": true,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807164431_075801.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807209683_083066.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807254170_097551.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807286989_077822.png",
+        "image_size": {
+         "width": 135,
+         "height": 60
+        },
+        "small_image_size": {
+         "width": 120,
+         "height": 48
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803554879_048237.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803581537_041470.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804048908_047443.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804077683_068121.png",
+        "image_size": {
+         "width": 147,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 84,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=30&final_price=20920&review_score=4.9&review_count=2663&badge_list=meta_cms_EXCLUSIVE_NEW,meta_FREE_SHIPPING,thum_WEEKEND_ZIGZIN,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832110236_022793.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836039205_082414.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832312595_099297.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836066940_055572.png",
+        "image_size": {
+         "width": 168,
+         "height": 36
+        },
+        "small_image_size": {
+         "width": 168,
+         "height": 36
+        }
+       }
+      ],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "10403",
+      "main_domain": "saltandchocolate",
+      "name": "솔트앤초콜릿"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/9/28/10403_202609280912176796_54345.png?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/9/28/10403_202609280912176796_54345.png?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/123365823?browsing_type=NATIVE_BROWSER",
+      "title": "라운드 토 스티치 레이스업 로퍼 412215009 (4.5cm/1color)",
+      "discount_rate": 48,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 99000,
+      "final_price": 51900,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 51900,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 99000,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": true,
+      "catalog_product_id": "123365823",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 2380,
+      "review_score": 4.7,
+      "shop_product_no": null,
+      "shop_id": "10403",
+      "is_zonly": true,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/11/26/202611260707192463_096447.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/11/26/202611260707192549_038680.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/11/26/202611260707192548_026181.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/11/26/202611260707192460_064881.png",
+        "image_size": {
+         "width": 213,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 188,
+         "height": 64
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803554879_048237.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803581537_041470.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804048908_047443.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804077683_068121.png",
+        "image_size": {
+         "width": 147,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 84,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=48&final_price=51900&review_score=4.7&review_count=2380&badge_list=meta_bargain,meta_FREE_SHIPPING,thum_WEEKEND_ZIGZIN,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832110236_022793.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836039205_082414.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832312595_099297.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836066940_055572.png",
+        "image_size": {
+         "width": 168,
+         "height": 36
+        },
+        "small_image_size": {
+         "width": 168,
+         "height": 36
+        }
+       }
+      ],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "14875",
+      "main_domain": "cq-lh4g6xs9",
+      "name": "에잇세컨즈"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/10/28/14875_202610282136353141_30789.jpeg?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/10/28/14875_202610282136353141_30789.jpeg?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/172745941?browsing_type=NATIVE_BROWSER",
+      "title": "[직잭 단독] 리버시블 하이넥 스웨이드 무스탕  베이지 (356X3VCM2A)",
+      "discount_rate": 25,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 149900,
+      "final_price": 112420,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 112420,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 149900,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": false,
+      "catalog_product_id": "172745941",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 12,
+      "review_score": 4.8,
+      "shop_product_no": null,
+      "shop_id": "14875",
+      "is_zonly": false,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068089_081011.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068261_084333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068202_092984.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068155_075532.png",
+        "image_size": {
+         "width": 213,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 188,
+         "height": 64
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=25&final_price=112420&review_score=4.8&review_count=12&badge_list=meta_FIRST_ORDER_COUPON,meta_FREE_SHIPPING,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "14875",
+      "main_domain": "cq-lh4g6xs9",
+      "name": "에잇세컨즈"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/10/28/14875_202610282137528479_29397.jpeg?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/10/28/14875_202610282137528479_29397.jpeg?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/172746100?browsing_type=NATIVE_BROWSER",
+      "title": "[직잭 단독] 폴리피치 기모 안감 와이드 슬랙스  네이비 (356Y21WM2R)",
+      "discount_rate": 25,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 59900,
+      "final_price": 44920,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 44920,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 59900,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": false,
+      "catalog_product_id": "172746100",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 25,
+      "review_score": 4.9,
+      "shop_product_no": null,
+      "shop_id": "14875",
+      "is_zonly": false,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068089_081011.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068261_084333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068202_092984.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068155_075532.png",
+        "image_size": {
+         "width": 213,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 188,
+         "height": 64
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=25&final_price=44920&review_score=4.9&review_count=25&badge_list=meta_FIRST_ORDER_COUPON,meta_FREE_SHIPPING,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "38539",
+      "main_domain": "cq-gavcxm9l",
+      "name": "휠라언더웨어"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/8/14/38539_202608140840438624_48580.jpeg?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/8/14/38539_202608140840438624_48580.jpeg?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/168439395?browsing_type=NATIVE_BROWSER",
+      "title": "[지그재그 단독컬러/ 새가슴 브라 추천] 2cm 옆볼륨 벨로 소프트 앞후크 볼륨 브라+팬티(햄팬티,스트랩팬티,티팬티,사각드로즈) 속옷 세트 7colors",
+      "discount_rate": 44,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 46000,
+      "final_price": 25760,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 25760,
+       "display_currency": "~",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 46000,
+       "display_currency": "~",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": true,
+      "catalog_product_id": "168439395",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 333,
+      "review_score": 4.8,
+      "shop_product_no": null,
+      "shop_id": "38539",
+      "is_zonly": false,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068089_081011.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068261_084333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068202_092984.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068155_075532.png",
+        "image_size": {
+         "width": 213,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 188,
+         "height": 64
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=44&final_price=25760&review_score=4.8&review_count=333&badge_list=meta_FIRST_ORDER_COUPON,meta_FREE_SHIPPING,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "10403",
+      "main_domain": "saltandchocolate",
+      "name": "솔트앤초콜릿"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/10/27/10403_202610271711187328_44026.gif?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/10/27/10403_202610271711187328_44026.gif?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/172636907?browsing_type=NATIVE_BROWSER",
+      "title": "[코코 PICK/단독] 2way 그레디 클래식 로퍼 뮬 412539002 (5cm/3.5cm)",
+      "discount_rate": 51,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 109000,
+      "final_price": 53410,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 53410,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 109000,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": true,
+      "catalog_product_id": "172636907",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 335,
+      "review_score": 4.6,
+      "shop_product_no": null,
+      "shop_id": "10403",
+      "is_zonly": true,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068089_081011.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068261_084333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068202_092984.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068155_075532.png",
+        "image_size": {
+         "width": 213,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 188,
+         "height": 64
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803554879_048237.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803581537_041470.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804048908_047443.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804077683_068121.png",
+        "image_size": {
+         "width": 147,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 84,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=51&final_price=53410&review_score=4.6&review_count=335&badge_list=meta_FIRST_ORDER_COUPON,meta_FREE_SHIPPING,thum_WEEKEND_ZIGZIN,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832110236_022793.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836039205_082414.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832312595_099297.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836066940_055572.png",
+        "image_size": {
+         "width": 168,
+         "height": 36
+        },
+        "small_image_size": {
+         "width": 168,
+         "height": 36
+        }
+       }
+      ],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "10213",
+      "main_domain": "generalidea",
+      "name": "제너럴아이디어"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/7/23/10213_202607231721132048_99752.jpeg?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/7/23/10213_202607231721132048_99752.jpeg?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/168608209?browsing_type=NATIVE_BROWSER",
+      "title": "[비마이영 PICK] [직잭 단독] WOMAN 링클프리 라인 셔츠 [3COL] / GF1LSH508",
+      "discount_rate": 52,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 53000,
+      "final_price": 32900,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 32900,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 69000,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": true,
+      "catalog_product_id": "168608209",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 375,
+      "review_score": 4.7,
+      "shop_product_no": null,
+      "shop_id": "10213",
+      "is_zonly": true,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807164431_075801.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807209683_083066.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807254170_097551.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807286989_077822.png",
+        "image_size": {
+         "width": 135,
+         "height": 60
+        },
+        "small_image_size": {
+         "width": 120,
+         "height": 48
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803554879_048237.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803581537_041470.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804048908_047443.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804077683_068121.png",
+        "image_size": {
+         "width": 147,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 84,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=52&final_price=32900&review_score=4.7&review_count=375&badge_list=meta_cms_EXCLUSIVE_NEW,meta_FREE_SHIPPING,thum_WEEKEND_ZIGZIN,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832110236_022793.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836039205_082414.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832312595_099297.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836066940_055572.png",
+        "image_size": {
+         "width": 168,
+         "height": 36
+        },
+        "small_image_size": {
+         "width": 168,
+         "height": 36
+        }
+       }
+      ],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "11275",
+      "main_domain": "heii",
+      "name": "헤이"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/10/28/11275_202610281209128458_43902.jpeg?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/10/28/11275_202610281209128458_43902.jpeg?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/154156593?browsing_type=NATIVE_BROWSER",
+      "title": "[지그재그 단독][혜리,펜타곤 키노,채원빈 착용]bean long necklace 롱목걸이",
+      "discount_rate": 30,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 29000,
+      "final_price": 20300,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 20300,
+       "display_currency": "~",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 29000,
+       "display_currency": "~",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": false,
+      "catalog_product_id": "154156593",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 3177,
+      "review_score": 4.8,
+      "shop_product_no": null,
+      "shop_id": "11275",
+      "is_zonly": true,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068089_081011.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068261_084333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068202_092984.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068155_075532.png",
+        "image_size": {
+         "width": 213,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 188,
+         "height": 64
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803554879_048237.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803581537_041470.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804048908_047443.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804077683_068121.png",
+        "image_size": {
+         "width": 147,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 84,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=30&final_price=20300&review_score=4.8&review_count=3177&badge_list=meta_FIRST_ORDER_COUPON,meta_FREE_SHIPPING,thum_WEEKEND_ZIGZIN,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832110236_022793.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836039205_082414.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832312595_099297.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836066940_055572.png",
+        "image_size": {
+         "width": 168,
+         "height": 36
+        },
+        "small_image_size": {
+         "width": 168,
+         "height": 36
+        }
+       }
+      ],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "37796",
+      "main_domain": "qmomo",
+      "name": "큐모모"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/c/16/701/137/167011376-5450200242334674647.gif?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/c/16/701/137/167011376-5450200242334674647.gif?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/167011376?browsing_type=NATIVE_BROWSER",
+      "title": "[수면브라/탄력새틴]굿밤 보보 새틴 롱버전 단품 (Z)",
+      "discount_rate": 51,
+      "free_shipping": false,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 68000,
+      "final_price": 33320,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 33320,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 68000,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": true,
+      "catalog_product_id": "167011376",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 54,
+      "review_score": 4.9,
+      "shop_product_no": "1202",
+      "shop_id": "37796",
+      "is_zonly": false,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068089_081011.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068261_084333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068202_092984.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068155_075532.png",
+        "image_size": {
+         "width": 213,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 188,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=51&final_price=33320&review_score=4.9&review_count=54&badge_list=meta_FIRST_ORDER_COUPON,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "45033",
+      "main_domain": "ullala",
+      "name": "울랄라파자마"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2025/10/14/45033_202510141743320417_43584.jpeg?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2025/10/14/45033_202510141743320417_43584.jpeg?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/166186275?browsing_type=NATIVE_BROWSER",
+      "title": "[지그재그 단독] 포니 긴팔 투피스 인디블루 (21수)",
+      "discount_rate": 70,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 57400,
+      "final_price": 24970,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 24970,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 82000,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": true,
+      "catalog_product_id": "166186275",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 48,
+      "review_score": 4.9,
+      "shop_product_no": null,
+      "shop_id": "45033",
+      "is_zonly": false,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068089_081011.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068261_084333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068202_092984.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068155_075532.png",
+        "image_size": {
+         "width": 213,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 188,
+         "height": 64
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=70&final_price=24970&review_score=4.9&review_count=48&badge_list=meta_FIRST_ORDER_COUPON,meta_FREE_SHIPPING,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "12335",
+      "main_domain": "salbol",
+      "name": "샐볼"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/7/23/12335_202607231344080798_67473.jpeg?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/7/23/12335_202607231344080798_67473.jpeg?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/171145247?browsing_type=NATIVE_BROWSER",
+      "title": "[직잭팟][윤경 PICK!][with 규빈] FLIP-OVER BIG TOTE BAG [NAVY]",
+      "discount_rate": 37,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 89100,
+      "final_price": 62370,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 62370,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 99000,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": false,
+      "catalog_product_id": "171145247",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 123,
+      "review_score": 4.9,
+      "shop_product_no": null,
+      "shop_id": "12335",
+      "is_zonly": true,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/11/26/202611260707192463_096447.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/11/26/202611260707192549_038680.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/11/26/202611260707192548_026181.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/11/26/202611260707192460_064881.png",
+        "image_size": {
+         "width": 213,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 188,
+         "height": 64
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803554879_048237.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803581537_041470.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804048908_047443.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804077683_068121.png",
+        "image_size": {
+         "width": 147,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 84,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=37&final_price=62370&review_score=4.9&review_count=123&badge_list=meta_bargain,meta_FREE_SHIPPING,thum_WEEKEND_ZIGZIN,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832110236_022793.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836039205_082414.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832312595_099297.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836066940_055572.png",
+        "image_size": {
+         "width": 168,
+         "height": 36
+        },
+        "small_image_size": {
+         "width": 168,
+         "height": 36
+        }
+       }
+      ],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "50500",
+      "main_domain": "citta",
+      "name": "씨타"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/9/9/50500_202609091050141097_12618.jpeg?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/9/9/50500_202609091050141097_12618.jpeg?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/165596179?browsing_type=NATIVE_BROWSER",
+      "title": "[진현 pick][직잭 단독컬러]Signature Logo Knit Hair Band_CTA929(7color)",
+      "discount_rate": 49,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 38000,
+      "final_price": 19410,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 19410,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 38000,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": true,
+      "catalog_product_id": "165596179",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 560,
+      "review_score": 4.9,
+      "shop_product_no": null,
+      "shop_id": "50500",
+      "is_zonly": true,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068089_081011.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068261_084333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068202_092984.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200513068155_075532.png",
+        "image_size": {
+         "width": 213,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 188,
+         "height": 64
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803554879_048237.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803581537_041470.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804048908_047443.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804077683_068121.png",
+        "image_size": {
+         "width": 147,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 84,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=49&final_price=19410&review_score=4.9&review_count=560&badge_list=meta_FIRST_ORDER_COUPON,meta_FREE_SHIPPING,thum_WEEKEND_ZIGZIN,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832110236_022793.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836039205_082414.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832312595_099297.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836066940_055572.png",
+        "image_size": {
+         "width": 168,
+         "height": 36
+        },
+        "small_image_size": {
+         "width": 168,
+         "height": 36
+        }
+       }
+      ],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "11998",
+      "main_domain": "shoopen",
+      "name": "슈펜"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/4/15/11998_202604151237420675_68529.jpeg?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/4/15/11998_202604151237420675_68529.jpeg?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/169768081?browsing_type=NATIVE_BROWSER",
+      "title": "[직잭 단독][은채PICK] 사이드 포켓 호보백_가방 보부상 보부상가방 보부상백 출근룩 하객룩 모임룩 (HPABGGS46Q re) HPABGGF46Q",
+      "discount_rate": 34,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 39900,
+      "final_price": 26530,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 26530,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 39900,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": true,
+      "catalog_product_id": "169768081",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 125,
+      "review_score": 4.9,
+      "shop_product_no": null,
+      "shop_id": "11998",
+      "is_zonly": true,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807164431_075801.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807209683_083066.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807254170_097551.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/07/16/202607160807286989_077822.png",
+        "image_size": {
+         "width": 135,
+         "height": 60
+        },
+        "small_image_size": {
+         "width": 120,
+         "height": 48
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803554879_048237.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803581537_041470.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804048908_047443.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804077683_068121.png",
+        "image_size": {
+         "width": 147,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 84,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=34&final_price=26530&review_score=4.9&review_count=125&badge_list=meta_cms_EXCLUSIVE_NEW,meta_FREE_SHIPPING,thum_WEEKEND_ZIGZIN,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832110236_022793.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836039205_082414.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832312595_099297.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836066940_055572.png",
+        "image_size": {
+         "width": 168,
+         "height": 36
+        },
+        "small_image_size": {
+         "width": 168,
+         "height": 36
+        }
+       }
+      ],
+      "thumbnail_overlay_image_url": null
+     }
+    },
+    {
+     "shop": {
+      "id": "9264",
+      "main_domain": "citybreeze",
+      "name": "시티브리즈"
+     },
+     "product": {
+      "image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/9/4/9264_202609041018090912_74985.jpeg?width=400&height=400&quality=80&format=jpeg",
+      "webp_image_url": "https://cf.product-image.s.zigzag.kr/original/d/2026/9/4/9264_202609041018090912_74985.jpeg?width=400&height=400&quality=80&format=webp&transparent=true",
+      "product_url": "https://store.zigzag.kr/app/catalog/products/171500328?browsing_type=NATIVE_BROWSER",
+      "title": "[직진배송🚀][임마멜,진주,별밤 PICK][직잭 단독] 워셔블 라운드넥 니트 가디건_6COLORS",
+      "discount_rate": 45,
+      "free_shipping": true,
+      "zpay": true,
+      "has_coupon": true,
+      "price": 89900,
+      "final_price": 49630,
+      "is_saved_product": false,
+      "final_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 49630,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "max_price_with_currency": {
+       "currency": "KRW",
+       "decimal": 0,
+       "price_without_decimal": 89900,
+       "display_currency": "",
+       "is_currency_prefix": false
+      },
+      "is_zpay_discount": true,
+      "catalog_product_id": "171500328",
+      "browsing_type": "NATIVE_BROWSER",
+      "review_count": 88,
+      "review_score": 4.9,
+      "shop_product_no": null,
+      "shop_id": "9264",
+      "is_zonly": true,
+      "is_brand": true,
+      "sellable_status": "ON_SALE",
+      "discount_info": null,
+      "badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/11/26/202611260707192463_096447.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/11/26/202611260707192549_038680.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/11/26/202611260707192548_026181.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/11/26/202611260707192460_064881.png",
+        "image_size": {
+         "width": 213,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 188,
+         "height": 64
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078544_087571.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078511_049333.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078664_023020.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/05/20/202605200507078665_015081.png",
+        "image_size": {
+         "width": 178,
+         "height": 80
+        },
+        "small_image_size": {
+         "width": 156,
+         "height": 64
+        }
+       }
+      ],
+      "brand_name_badge_list": [],
+      "thumbnail_nudge_badge_list": [],
+      "thumbnail_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100208818_059232.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100280630_016116.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100235638_086583.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/06/02/202606020100257513_087510.png",
+        "image_size": {
+         "width": 120,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 105,
+         "height": 63
+        }
+       },
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803554879_048237.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190803581537_041470.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804048908_047443.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190804077683_068121.png",
+        "image_size": {
+         "width": 147,
+         "height": 75
+        },
+        "small_image_size": {
+         "width": 84,
+         "height": 63
+        }
+       }
+      ],
+      "log": "discount_rate=45&final_price=49630&review_score=4.9&review_count=88&badge_list=meta_bargain,meta_FREE_SHIPPING,thum_WEEKEND_ZIGZIN,thum_cms_ZIGZAG_POT&is_new=false",
+      "is_enabled_not_my_tasty": false,
+      "card_item_style": "Normal",
+      "metadata_emblem_badge_list": [
+       {
+        "image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832110236_022793.png",
+        "dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836039205_082414.png",
+        "small_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190832312595_099297.png",
+        "small_dark_image_url": "https://cf.image-farm.s.zigzag.kr/original/cms/2026/03/19/202603190836066940_055572.png",
+        "image_size": {
+         "width": 168,
+         "height": 36
+        },
+        "small_image_size": {
+         "width": 168,
+         "height": 36
+        }
+       }
+      ],
+      "thumbnail_overlay_image_url": null
+     }
+    }
+   ],
+   "total_count": 323,
+   "end_cursor": "",
+   "exposure_order_type": "SELECTABLE",
+   "has_next_page": false
+  }
+ }
+}

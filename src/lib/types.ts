@@ -185,6 +185,11 @@ export interface FetchHtmlOptions {
   preEval?: string;
 }
 
+export interface PostJsonOptions {
+  /** Extra request headers, e.g. the Origin / Referer of the site's own pages. */
+  headers?: Readonly<Record<string, string>>;
+}
+
 /**
  * The only way an adapter may touch the network. Every call counts as one request, waits 2-4 s
  * after the previous one, and throws:
@@ -205,6 +210,13 @@ export interface CrawlContext {
    * throws or yields nothing — treat that as "structure not found" and return [].
    */
   evalPage<T = unknown>(url: string, js: string, opts?: FetchHtmlOptions): Promise<T | null>;
+  /**
+   * POST `body` as JSON and parse the JSON answer. This request is sent by Node itself, not by the
+   * Obscura browser (which cannot POST); pacing, the request cap and block detection apply the
+   * same way. For public APIs the website itself calls anonymously — never send cookies, login
+   * tokens or keys taken from an app. An empty answer is an error, not an empty result.
+   */
+  postJson<T = unknown>(url: string, body: unknown, opts?: PostJsonOptions): Promise<T>;
   log(msg: string): void;
   /** Aborted by the runner when a block is detected or the run is cancelled. */
   signal: AbortSignal;

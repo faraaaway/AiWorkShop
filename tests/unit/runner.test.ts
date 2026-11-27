@@ -93,6 +93,7 @@ function makeContext(state: BlockState = { blocked: null }): ObscuraContext {
     fetchHtml: fake.fetchHtml,
     fetchJson: fake.fetchJson,
     evalPage: fake.evalPage,
+    postJson: fake.postJson,
     log: fake.log,
     signal: fake.signal,
     get requestsLeft(): number {

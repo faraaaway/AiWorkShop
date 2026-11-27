@@ -1,0 +1,19 @@
+{
+ "method": "POST",
+ "url": "https://api.zigzag.kr/api/2/graphql/GetCmsProductsPresetProductCardItemList",
+ "headers": {
+  "Content-Type": "application/json",
+  "Origin": "https://zigzag.kr",
+  "Referer": "https://zigzag.kr/"
+ },
+ "body": {
+  "query": "fragment CmsProductsPresetProductCardItemListPart on CmsProductsPresetProductCardItemList { item_list { ...CmsProductsPresetProductCardItemPart } total_count end_cursor exposure_order_type has_next_page } fragment CmsProductsPresetProductCardItemPart on CmsProductsPresetProductCardItem { shop { ...CmsProductsPresetShopPart } product { ...CmsProductsPresetProductPart } } fragment CmsProductsPresetShopPart on CmsProductsPresetShop { id main_domain name } fragment CmsProductsPresetProductPart on CmsProductsPresetProduct { image_url webp_image_url product_url title discount_rate free_shipping zpay has_coupon price final_price is_saved_product final_price_with_currency { ...CmsPriceWithCurrencyPart } max_price_with_currency { ...CmsPriceWithCurrencyPart } is_zpay_discount catalog_product_id browsing_type review_count review_score shop_product_no shop_id is_zonly is_brand sellable_status discount_info { ...CmsDiscountInfoPart } badge_list { ...CmsDisplayBadgePart } brand_name_badge_list { ...CmsDisplayBadgePart } thumbnail_nudge_badge_list { ...CmsDisplayBadgePart } thumbnail_emblem_badge_list { ...CmsDisplayBadgePart } log is_enabled_not_my_tasty card_item_style metadata_emblem_badge_list { ...CmsDisplayBadgePart } thumbnail_overlay_image_url is_saved_product } fragment CmsPriceWithCurrencyPart on CmsPriceWithCurrency { currency decimal price_without_decimal display_currency is_currency_prefix } fragment CmsDiscountInfoPart on CmsDiscountInfo { image_url title color issue_end_date } fragment CmsDisplayBadgePart on CmsDisplayBadge { image_url dark_image_url small_image_url small_dark_image_url image_size { ...CmsImageSizePart } small_image_size { ...CmsImageSizePart } } fragment CmsImageSizePart on CmsImageSize { width height } query GetCmsProductsPresetProductCardItemList($input: CmsProductsPresetProductCardItemListSearchInput!) { cms_products_preset_product_card_item_list(input: $input) { ...CmsProductsPresetProductCardItemListPart } }",
+  "variables": {
+   "input": {
+    "products_preset_uuid": "93fa1f0c-9604-4ba1-a415-cbfdc35bebcb",
+    "group_index": 0,
+    "after": null
+   }
+  }
+ }
+}

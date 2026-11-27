@@ -129,7 +129,7 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 - [x] T041 [P] [US3] (CrawlA) 29CM — `src/crawler/adapters/29cm.ts`, `fixtures/sites/29cm/`, `tests/adapters/29cm.test.ts`
 - [x] T042 [P] [US3] (CrawlA) W컨셉 — `src/crawler/adapters/wconcept.ts`, `fixtures/sites/wconcept/`, `tests/adapters/wconcept.test.ts`
 - [ ] T043 [P] [US3] (CrawlA) 네이버쇼핑 — `src/crawler/adapters/naver.ts`, `fixtures/sites/naver/`, `tests/adapters/naver.test.ts` (차단되면 상태만 확인하고 중단)
-- [ ] T044 [P] [US3] (CrawlB) 지그재그 — `src/crawler/adapters/zigzag.ts`, `fixtures/sites/zigzag/`, `tests/adapters/zigzag.test.ts`
+- [x] T044 [P] [US3] (CrawlB) 지그재그 — `src/crawler/adapters/zigzag.ts`, `fixtures/sites/zigzag/`, `tests/adapters/zigzag.test.ts`
   - **보류(2026-11-27, CrawlB)**: `NotImplemented` 유지. 행사 페이지(`zigzag.kr/events/<uuid>`)는 열리지만 상품은 `api.zigzag.kr` GraphQL(POST 전용)로 따로 불러오는데, Obscura 0.2.7에서는 이 호출의 CORS 사전 요청이 거부되어 스크롤해도 상품 카드가 0개다. `fetchJson`(GET)으로는 "GraphQL only supports POST" 응답. 소유자 결정으로 제외.
 - [x] T045 [P] [US3] (CrawlB) 퀸잇 — `src/crawler/adapters/queenit.ts`, `fixtures/sites/queenit/`, `tests/adapters/queenit.test.ts`
   - **진행(2026-11-27, CrawlB)**: fixture·`parseQueenit`·테스트 통과, 실수집 19개(기획전 1곳, 53초), 무작위 5개 대조 5/5 일치. 남은 것: Core의 `fetchHtml` `preEval` 지원(아래 "CrawlB → Core 요청") 후 `npm run crawl -- --site queenit` 확인.
@@ -140,7 +140,7 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 - [x] T047 [P] [US3] (CrawlB) 4910 — `src/crawler/adapters/4910.ts`, `fixtures/sites/4910/`, `tests/adapters/4910.test.ts`
   - **진행(2026-11-27, CrawlB)**: fixture·`parse4910`·테스트 통과, 실수집 107개(홈 1장, 52초). 대조: 링크·상품명·브랜드 5/5 일치, **가격은 상품 페이지 대표가와 1/5만 정확히 일치**(3개는 1~2%p, 1개는 9%p 차이). 홈 카드 가격과 상품 페이지 대표가(첫구매 쿠폰 포함)가 서로 다른 쿠폰 기준이라서다 → 완료 기준 "무작위 5개 대조" 미충족. **소유자 결정(2026-11-27): 가격 차이를 감수하고 홈 카드 가격 그대로 사용.**
   - 주의: 홈 탭·"전체보기"가 버튼이라 행사 페이지 주소를 못 얻어 홈만 수집(`event: null`, 종료 시각 null). export 이름은 `site4910`(식별자가 숫자로 시작할 수 없음) — `adapters/index.ts`에서 이 이름으로 등록 필요.
-- [ ] T048 [P] [US3] (CrawlB) 에이블리 — `src/crawler/adapters/ably.ts`, `fixtures/sites/ably/`, `tests/adapters/ably.test.ts` (앱 중심이라 마지막)
+- [x] T048 [P] [US3] (CrawlB) 에이블리 — `src/crawler/adapters/ably.ts`, `fixtures/sites/ably/`, `tests/adapters/ably.test.ts` (앱 중심이라 마지막)
   - **보류(2026-11-27, CrawlB)**: `NotImplemented` 유지. `m.a-bly.com`·`a-bly.com` 모두 Obscura 0.2.7에서 페이지 스크립트가 "Maximum call stack size exceeded"로 죽어 오류 화면(새로고침 버튼)만 렌더링된다. 상품·행사 내용이 전혀 나오지 않아 수집 불가.
 
 - [x] T058 [P] [US3] (UI→CrawlC) 아뜨랑스(새 사이트, ID `attrangs`) — `src/crawler/adapters/attrangs.ts`, `fixtures/sites/attrangs/`, `tests/adapters/attrangs.test.ts`. 렌더링 fetch는 시간 초과라 원본 HTML(`--dump original`) + cheerio 파싱. 상세: team/2-ui.md "추가 담당 (Crawl C)"
