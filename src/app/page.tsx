@@ -1,103 +1,267 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
+import type { Deal } from '@/lib/types';
+import { getDeals } from '@/lib/api';
+import {
+  DEFAULT_FILTERS,
+  DEFAULT_SORT,
+  SITE_ORDER,
+  applyFilters,
+  buildSiteOptions,
+  countCollectedSites,
+  isFiltered,
+  loadSavedView,
+  saveView,
+  sortDeals,
+  type FilterState,
+  type SortKey,
+} from '@/lib/filters';
+import { STALE_AFTER_HOURS, formatAgo, formatDateTime, isStale } from '@/lib/time';
+import { AppHeader } from '@/components/AppHeader';
+import { DealCard } from '@/components/DealCard';
+import { FilterBar } from '@/components/FilterBar';
+import { useNow } from '@/components/useNow';
+
+/** 한 번에 그리는 카드 수. 아래로 내리면 이만큼씩 더 그린다 (5,000개에서도 필터가 바로 반응하도록). */
+const PAGE_SIZE = 60;
+
+const GRID = 'grid grid-cols-2 gap-x-3 gap-y-7 sm:grid-cols-3 sm:gap-x-4 lg:grid-cols-4 xl:grid-cols-5';
+
+interface DealsData {
+  deals: Deal[];
+  lastUpdatedAt: string | null;
+}
+
+/** 일부 사이트만 수집됐을 때 필터 아래에 한 줄로 알린다 (수집이 막힌 사이트가 있을 수 있다). */
+function CollectionHint({ collected, total }: { collected: number; total: number }) {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <p className="mb-3 text-xs text-[#8A9099]">
+      {total}곳 중 {collected}곳만 수집됨 —{' '}
+      <Link href="/status" className="underline underline-offset-2 hover:text-[#15171A]">
+        수집 상태 보기
+      </Link>
+    </p>
+  );
+}
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+/** 수집된 할인이 모두 종료됐을 때: 걸린 필터가 없으니 초기화 대신 종료된 할인 보기를 권한다. */
+function AllExpiredMessage({ onShowExpired }: { onShowExpired: () => void }) {
+  return (
+    <div className="py-20 text-center">
+      <p className="text-base font-bold">진행 중인 할인이 없습니다</p>
+      <p className="mt-1 text-sm text-[#8A9099]">수집된 할인이 모두 종료됐습니다.</p>
+      <button
+        type="button"
+        onClick={onShowExpired}
+        className="mt-5 inline-flex h-11 items-center rounded-full bg-[#15171A] px-5 text-sm font-bold text-white"
+      >
+        종료된 할인 보기
+      </button>
+    </div>
+  );
+}
+
+export default function DealListPage() {
+  const [data, setData] = useState<DealsData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+  const [sort, setSort] = useState<SortKey>(DEFAULT_SORT);
+  const [restored, setRestored] = useState(false);
+  const [shown, setShown] = useState(PAGE_SIZE);
+  const now = useNow();
+  const moreRef = useRef<HTMLDivElement | null>(null);
+
+  const load = useCallback(async () => {
+    setError(null);
+    try {
+      // 실제 API는 종료된 할인을 기본으로 빼고 준다. 한 번에 모두 받아 두고 "종료된 할인 보기"는
+      // 다른 필터처럼 화면에서 거른다 (토글할 때마다 다시 받지 않아 5,000개에서도 바로 반응한다).
+      const result = await getDeals({ includeExpired: true });
+      setData({ deals: result.deals, lastUpdatedAt: result.lastUpdatedAt });
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : '할인 목록을 불러오지 못했습니다.');
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  // 지난번에 고른 필터·정렬 되살리기 (FR-022)
+  useEffect(() => {
+    const saved = loadSavedView();
+    if (saved) {
+      setFilters(saved.filters);
+      setSort(saved.sort);
+    }
+    setRestored(true);
+  }, []);
+
+  useEffect(() => {
+    if (restored) saveView({ filters, sort });
+  }, [restored, filters, sort]);
+
+  const changeFilters = (next: FilterState) => {
+    setFilters(next);
+    setShown(PAGE_SIZE);
+  };
+  const changeSort = (next: SortKey) => {
+    setSort(next);
+    setShown(PAGE_SIZE);
+  };
+  const resetFilters = () => changeFilters(DEFAULT_FILTERS);
+
+  const results = useMemo(
+    () => (data ? sortDeals(applyFilters(data.deals, filters, now), sort, now) : []),
+    [data, filters, sort, now],
+  );
+  const visible = results.slice(0, shown);
+  const hasMore = shown < results.length;
+
+  // 사이트 필터가 실제로 할인이 있는 사이트만 고르게 한다 (수집이 안 되는 사이트가 있다).
+  const siteOptions = useMemo(
+    () => (data ? buildSiteOptions(data.deals, filters.includeExpired, now) : null),
+    [data, filters.includeExpired, now],
+  );
+  const collectedSites = siteOptions ? countCollectedSites(siteOptions) : 0;
+
+  // 목록 끝이 보이면 다음 묶음을 그린다.
+  useEffect(() => {
+    const target = moreRef.current;
+    if (!target || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) setShown((count) => count + PAGE_SIZE);
+      },
+      { rootMargin: '600px' },
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [hasMore, shown]);
+
+  const stale = data ? isStale(data.lastUpdatedAt, now) : false;
+  const filtered = isFiltered(filters);
+
+  return (
+    <div className="min-h-screen bg-white text-[#15171A]">
+      <AppHeader>
+        {data &&
+          (data.lastUpdatedAt ? (
+            <span>
+              마지막 업데이트 <time dateTime={data.lastUpdatedAt}>{formatDateTime(data.lastUpdatedAt)}</time> (
+              {formatAgo(data.lastUpdatedAt, now)})
+            </span>
+          ) : (
+            <span>마지막 업데이트 알 수 없음</span>
+          ))}
+      </AppHeader>
+
+      {/* 상단 고정이 화면 전체 높이에서 동작하도록 감싸는 요소 없이 바로 둔다 */}
+      <FilterBar
+        filters={filters}
+        onChange={changeFilters}
+        sort={sort}
+        onSortChange={changeSort}
+        siteOptions={siteOptions}
+      />
+
+      <main className="mx-auto max-w-screen-2xl px-4 pb-16 pt-4">
+        {data && data.deals.length > 0 && collectedSites < SITE_ORDER.length && (
+          <CollectionHint collected={collectedSites} total={SITE_ORDER.length} />
+        )}
+
+        {stale && (
+          <p role="status" className="mb-4 rounded-lg bg-[#FFF4D6] px-3.5 py-2.5 text-sm text-[#5C4400]">
+            마지막 업데이트가 {STALE_AFTER_HOURS}시간을 넘었습니다. 가격과 마감 시각이 달라졌을 수 있습니다.{' '}
+            <Link href="/status" className="font-bold underline underline-offset-2">
+              다시 수집하기
+            </Link>
+          </p>
+        )}
+
+        {error && (
+          <div role="alert" className="rounded-lg bg-[#FDECEE] px-3.5 py-3 text-sm text-[#9B0C1F]">
+            <p>{error}</p>
+            <button type="button" onClick={() => void load()} className="mt-1 font-bold underline underline-offset-2">
+              다시 불러오기
+            </button>
+          </div>
+        )}
+
+        {!data && !error && (
+          <div className={GRID} aria-busy="true" aria-label="할인 목록을 불러오는 중">
+            {Array.from({ length: 10 }, (_, index) => (
+              <div key={index}>
+                <div className="aspect-square rounded-xl bg-[#F1F2F4]" />
+                <div className="mt-3 h-3 w-1/3 rounded bg-[#F1F2F4]" />
+                <div className="mt-2 h-3 w-4/5 rounded bg-[#F1F2F4]" />
+                <div className="mt-3 h-5 w-1/2 rounded bg-[#F1F2F4]" />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {data && data.deals.length === 0 && (
+          <div className="py-20 text-center">
+            <p className="text-base font-bold">아직 수집된 할인이 없습니다</p>
+            <p className="mt-1 text-sm text-[#8A9099]">수집 상태 화면에서 수집을 시작하면 여기에 표시됩니다.</p>
+            <Link
+              href="/status"
+              className="mt-5 inline-flex h-11 items-center rounded-full bg-[#15171A] px-5 text-sm font-bold text-white"
+            >
+              수집 상태로 가기
+            </Link>
+          </div>
+        )}
+
+        {data && data.deals.length > 0 && (
+          <>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <p className="text-sm text-[#3D4249]" aria-live="polite">
+                할인 <strong className="font-bold tabular-nums text-[#15171A]">{results.length.toLocaleString('ko-KR')}</strong>개
+              </p>
+              {filtered && results.length > 0 && (
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="text-sm font-medium text-[#8A9099] underline underline-offset-2 hover:text-[#15171A]"
+                >
+                  필터 초기화
+                </button>
+              )}
+            </div>
+
+            {results.length === 0 && !filtered ? (
+              <AllExpiredMessage onShowExpired={() => changeFilters({ ...filters, includeExpired: true })} />
+            ) : results.length === 0 ? (
+              <div className="py-20 text-center">
+                <p className="text-base font-bold">조건에 맞는 할인이 없습니다</p>
+                <p className="mt-1 text-sm text-[#8A9099]">조건을 줄이거나 필터를 초기화해 보세요.</p>
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="mt-5 inline-flex h-11 items-center rounded-full bg-[#15171A] px-5 text-sm font-bold text-white"
+                >
+                  필터 초기화
+                </button>
+              </div>
+            ) : (
+              <>
+                <ul className={GRID}>
+                  {visible.map((deal) => (
+                    <li key={deal.id} className="min-w-0">
+                      <DealCard deal={deal} now={now} />
+                    </li>
+                  ))}
+                </ul>
+                {hasMore && <div ref={moreRef} className="h-10" aria-hidden="true" />}
+              </>
+            )}
+          </>
+        )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
