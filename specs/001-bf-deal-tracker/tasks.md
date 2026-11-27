@@ -57,7 +57,7 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 
 - [ ] T011 [P] [US1] (Core) `tests/unit/discount.test.ts` — data-model.md `Deal.discountRate` 규칙(내림, 정가 없음→표시값, 범위 밖→null)과 `Deal.displayedDiscountRate` 1%p 차이 판정
 - [ ] T012 [P] [US1] (Core) `tests/unit/dates.test.ts` — `parseKoreanEndDate`: `~11.30(일) 23:59`, `11/30까지`, `D-2`, `오늘 마감`, 알 수 없는 문자열→null
-- [ ] T013 [P] [US1] (CrawlA) `tests/adapters/musinsa.test.ts` — `fixtures/sites/musinsa/`로 `parseMusinsa` 검증(10개 이상, 필수 필드 존재, 가격 숫자)
+- [x] T013 [P] [US1] (CrawlA) `tests/adapters/musinsa.test.ts` — `fixtures/sites/musinsa/`로 `parseMusinsa` 검증(10개 이상, 필수 필드 존재, 가격 숫자)
 
 ### Implementation for User Story 1
 
@@ -68,8 +68,8 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 - [ ] T018 [US1] (Core) `src/lib/store.ts` — `data/deals/<siteId>.json`, `data/status/<siteId>.json` 읽기/쓰기(임시 파일→rename), 파일 없으면 빈 값
 - [ ] T019 [US1] (Core) `src/crawler/runner.ts` 기본형 + `src/crawler/cli.ts` — `--site <id>` 실행, normalize 후 저장, data-model.md `SiteStatus.lastRunAt`/`lastSuccessAt`/`dealCount`/`state` 갱신
 - [ ] T020 [US1] (Core) `src/app/api/deals/route.ts` — contracts/http-api.md `GET /api/deals`(만료 제외 기본, `lastUpdatedAt`)
-- [ ] T021 [US1] (CrawlA) 무신사 블프 행사 페이지 조사 후 원본을 `fixtures/sites/musinsa/`에 저장(행사 목록 1개 + 상품 목록 1개 이상)
-- [ ] T022 [US1] (CrawlA) `src/crawler/adapters/musinsa.ts` — `parseMusinsa` 순수 함수 + `crawl(ctx)`(행사 → 상품 목록, `rawCategory`·`rawGender`·`event.endsAt` 채움)
+- [x] T021 [US1] (CrawlA) 무신사 블프 행사 페이지 조사 후 원본을 `fixtures/sites/musinsa/`에 저장(행사 목록 1개 + 상품 목록 1개 이상)
+- [x] T022 [US1] (CrawlA) `src/crawler/adapters/musinsa.ts` — `parseMusinsa` 순수 함수 + `crawl(ctx)`(행사 → 상품 목록, `rawCategory`·`rawGender`·`event.endsAt` 채움)
 - [ ] T023 [P] [US1] (UI) `src/lib/time.ts` — 남은 시간 표시(`D-2 13:00`, `오늘 23:59 마감`, `알 수 없음`, 만료)
 - [ ] T024 [P] [US1] (UI) `src/components/DealCard.tsx` — contracts/http-api.md "DealCard 필수 표시" 전부, 새 탭 링크, `Deal.discountRate` null이면 "알 수 없음"
 - [ ] T025 [US1] (UI) `src/app/page.tsx` — 상단 마지막 업데이트 시각 + 카드 그리드(모바일 2열/데스크톱 4~5열), `getDeals()` 사용

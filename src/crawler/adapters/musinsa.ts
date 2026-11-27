@@ -29,6 +29,7 @@ const MAX_GOODS_MODULES = 3;
 /**
  * 상품의 gender 코드 → 사이트 성별 필터 표기.
  * 성별 필터 gf=M 결과에는 2·6만, gf=F 결과에는 4·6만 나오는 것을 확인했다(2026-11-27).
+ * 상품 페이지 표기로는 2 = ["남성"], 4 = ["여성"], 6 = ["남성","여성"] 이다.
  * 그 밖의 코드(예: 뷰티 상품의 16)는 뜻을 확인하지 못해 null로 둔다.
  */
 const GENDER_LABELS: Record<number, string> = { 2: '남성', 4: '여성', 6: '남녀공용' };
@@ -229,7 +230,9 @@ export const musinsa: SiteAdapter = {
   id: 'musinsa',
   displayName: '무신사',
   homeUrl: 'https://www.musinsa.com',
-  stealth: true,
+  // api.musinsa.com JSON은 stealth 없이, robots.txt를 지킨 채로 응답한다(2026-11-27 실수집 확인).
+  // www.musinsa.com 페이지는 robots.txt가 막으므로 읽지 않는다.
+  stealth: false,
   obeyRobots: true,
   maxRequests: 30,
   crawl,

@@ -98,6 +98,20 @@ describe('parseMusinsa', () => {
     ]);
   });
 
+  it('goodsStatus가 SOLD_OUT이면 품절', () => {
+    // 2026-11-27 실수집: 상품 4459087이 SOLD_OUT이었고 상품 페이지에도 "품절"로 표시됨
+    const raw = {
+      meta: { result: 'SUCCESS' },
+      data: {
+        goodsList: [
+          { goodsNo: 4459087, goodsName: '품절 상품', finalPrice: 134800, goodsStatus: 'SOLD_OUT' },
+          { goodsNo: 7122634, goodsName: '판매 중', finalPrice: 29900, goodsStatus: 'ON_SALE' },
+        ],
+      },
+    };
+    expect(parseMusinsa(raw).map((d) => d.soldOut)).toEqual([true, false]);
+  });
+
   it('구조가 다르거나 실패 응답이면 빈 배열', () => {
     expect(parseMusinsa(null)).toEqual([]);
     expect(parseMusinsa('<html>차단</html>')).toEqual([]);
