@@ -176,6 +176,13 @@ export interface FetchHtmlOptions {
    * returned as ''. Block detection still applies.
    */
   raw?: boolean;
+  /**
+   * fetchHtml only: one synchronous JS expression run in the page right after load, BEFORE the
+   * `waitSec` wait; its result is ignored and the rendered HTML is returned afterwards. Used by
+   * pages that load products while scrolling (the script scrolls and stashes what it sees in the
+   * DOM). It must only read the page: no form input, no clicks on challenge pages. Ignored with raw.
+   */
+  preEval?: string;
 }
 
 /**
