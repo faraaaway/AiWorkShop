@@ -1,5 +1,5 @@
 import { RequestLimitError } from '@/lib/errors';
-import type { CrawlContext } from '@/lib/types';
+import type { CrawlContext, FetchHtmlOptions } from '@/lib/types';
 
 /**
  * Test double for CrawlContext. Use this in adapter tests instead of an object literal, so a
@@ -13,7 +13,8 @@ import type { CrawlContext } from '@/lib/types';
 type MaybePromise<T> = T | Promise<T>;
 
 export interface FakeContextHandlers {
-  fetchHtml?: (url: string) => MaybePromise<string>;
+  /** `opts` is what the adapter passed (e.g. `{ raw: true }`), so tests can assert on it. */
+  fetchHtml?: (url: string, opts?: FetchHtmlOptions) => MaybePromise<string>;
   fetchJson?: (url: string) => MaybePromise<unknown>;
   evalPage?: (url: string, js: string) => MaybePromise<unknown>;
   /** Request cap of the run (default 30, like SiteAdapter.maxRequests). */
@@ -44,9 +45,9 @@ export function createFakeContext(handlers: FakeContextHandlers = {}): FakeConte
   };
 
   return {
-    async fetchHtml(url: string): Promise<string> {
+    async fetchHtml(url: string, opts?: FetchHtmlOptions): Promise<string> {
       count(url);
-      return handlers.fetchHtml ? handlers.fetchHtml(url) : missing('fetchHtml');
+      return handlers.fetchHtml ? handlers.fetchHtml(url, opts) : missing('fetchHtml');
     },
     async fetchJson<T = unknown>(url: string): Promise<T> {
       count(url);

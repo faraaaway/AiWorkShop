@@ -6,7 +6,8 @@
 ## 열거형
 
 ```ts
-type SiteId = 'musinsa' | '29cm' | 'wconcept' | 'naver' | 'zigzag' | 'ably' | 'queenit' | 'posty' | '4910';
+type SiteId = 'musinsa' | '29cm' | 'wconcept' | 'naver' | 'zigzag' | 'ably' | 'queenit' | 'posty' | '4910'
+            | 'attrangs';   // 아뜨랑스: 1시간 시점에 추가한 10번째 사이트 (Crawl C)
 
 type Gender = 'men' | 'women' | 'unisex' | 'unclassified';          // 남성/여성/공용/미분류
 

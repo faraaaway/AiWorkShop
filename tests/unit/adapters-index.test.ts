@@ -17,6 +17,7 @@ const EXPECTED_DISPLAY_NAMES: Readonly<Record<SiteId, string>> = {
   queenit: '퀸잇',
   posty: '포스티',
   '4910': '4910',
+  attrangs: '아뜨랑스',
 };
 
 const EXPECTED_HOME_URLS: Readonly<Record<SiteId, string>> = {
@@ -29,6 +30,7 @@ const EXPECTED_HOME_URLS: Readonly<Record<SiteId, string>> = {
   queenit: 'https://web.queenit.kr',
   posty: 'https://posty.kr',
   '4910': 'https://4910.kr',
+  attrangs: 'https://attrangs.co.kr',
 };
 
 /** No handlers given, so any network call from a stub fails the test. */
@@ -46,9 +48,9 @@ async function captureRejection(promise: Promise<unknown>): Promise<unknown> {
 }
 
 describe('adapter registry', () => {
-  it('registers exactly the 9 site ids', () => {
+  it('registers exactly the 10 site ids', () => {
     expect(Object.keys(ADAPTERS).sort()).toEqual([...SITE_IDS].sort());
-    expect(SITE_IDS).toHaveLength(9);
+    expect(SITE_IDS).toHaveLength(10);
   });
 
   it.each(SITE_IDS)('registers %s under its own id', (id) => {
@@ -76,7 +78,7 @@ describe('adapter registry', () => {
  * Sites whose real adapter has been merged. Core adds an id here when merging an adapter branch;
  * every other site must still be the untouched stub.
  */
-const IMPLEMENTED_SITE_IDS: readonly SiteId[] = ['musinsa', '29cm', 'wconcept'];
+const IMPLEMENTED_SITE_IDS: readonly SiteId[] = ['musinsa', '29cm', 'wconcept', 'attrangs'];
 const STUB_SITE_IDS: readonly SiteId[] = SITE_IDS.filter((id) => !IMPLEMENTED_SITE_IDS.includes(id));
 const MAX_REQUESTS_CEILING = 30;
 /**

@@ -26,7 +26,7 @@ interface SiteAdapter {
 }
 
 interface CrawlContext {
-  fetchHtml(url: string, opts?: { waitSec?: number }): Promise<string>;   // 렌더링된 HTML
+  fetchHtml(url: string, opts?: { waitSec?: number; raw?: boolean }): Promise<string>;   // 렌더링된 HTML (raw: 원본 HTML)
   fetchJson<T = unknown>(url: string): Promise<T>;                         // 단순 GET(--dump original) + JSON.parse
   evalPage<T = unknown>(url: string, js: string, opts?: { waitSec?: number }): Promise<T | null>; // --eval 결과
   log(msg: string): void;
@@ -38,6 +38,8 @@ interface CrawlContext {
 ### Obscura 0.2.7에서 확인한 동작 (2026-11-27)
 
 - `fetchJson`은 **GET만** 가능하다(헤더·POST·GraphQL 불가).
+- `fetchHtml(url, { raw: true })`는 렌더링하지 않고 **원본 응답 본문**을 그대로 준다(자바스크립트 실행 없음).
+  렌더링이 시간 초과되는 사이트(예: 아뜨랑스)나 HTML 조각 응답에 쓴다. 빈 본문은 빈 문자열로 온다.
 - `evalPage`의 `js`는 **동기 표현식 하나**이고 **객체나 배열**로 끝나야 한다. Promise는 기다려 주지 않고(`{}`가 됨),
   표현식이 예외를 던지거나 값이 없으면 `null`이 온다 → `null`이면 "구조를 못 찾음"으로 보고 빈 배열을 반환한다.
   늦게 채워지는 데이터는 `opts.waitSec`로 기다린다.

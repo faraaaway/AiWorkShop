@@ -1,6 +1,6 @@
 /**
  * Adapter registry: every site id maps to exactly one SiteAdapter.
- * Only the Core owner edits this file. Crawl A / Crawl B change the adapter
+ * Only the Core owner edits this file. Crawl A / Crawl B / Crawl C change the adapter
  * files next to it, never the registration here
  * (specs/001-bf-deal-tracker/contracts/adapter-interface.md).
  */
@@ -10,6 +10,7 @@ import type { SiteAdapter, SiteId } from '@/lib/types';
 import { site29cm } from './29cm';
 import { site4910 } from './4910';
 import { ably } from './ably';
+import { attrangs } from './attrangs';
 import { musinsa } from './musinsa';
 import { naver } from './naver';
 import { posty } from './posty';
@@ -27,6 +28,7 @@ export const ADAPTERS: Readonly<Record<SiteId, SiteAdapter>> = Object.freeze({
   queenit,
   posty,
   '4910': site4910,
+  attrangs,
 });
 
 export function getAdapter(id: SiteId): SiteAdapter {

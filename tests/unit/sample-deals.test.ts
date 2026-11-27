@@ -7,6 +7,8 @@ import sampleDeals from '../../fixtures/sample-deals.json';
 // ---------- Fixture facts (documented expectations) ----------
 
 const EXPECTED_COUNT = 40;
+/** Sites registered after the 40 sample deals were written; the sample has no deals for them. */
+const SITES_ADDED_AFTER_SAMPLE: readonly SiteId[] = ['attrangs'];
 /** "Now" of the fixture: every deal was crawled at this moment (KST). */
 const CRAWLED_AT = '2026-11-27T21:00:00+09:00';
 const TODAY_KST = '2026-11-27';
@@ -50,6 +52,7 @@ const SITE_HOST_SUFFIX: Readonly<Record<SiteId, string>> = {
   queenit: 'queenit.kr',
   posty: 'posty.kr',
   '4910': '4910.kr',
+  attrangs: 'attrangs.co.kr',
 };
 
 const DEAL_KEYS: readonly (keyof Deal)[] = [
@@ -217,9 +220,10 @@ describe('fixtures/sample-deals.json', () => {
   });
 
   describe('coverage of sites, genders and themes', () => {
-    it('contains every site', () => {
+    it('contains every site the sample was written for', () => {
       const present = new Set(deals.map((deal) => deal.siteId));
-      expect(sorted([...present])).toEqual(sorted(SITE_IDS));
+      const expected = SITE_IDS.filter((id) => !SITES_ADDED_AFTER_SAMPLE.includes(id));
+      expect(sorted([...present])).toEqual(sorted(expected));
     });
 
     it('contains at least 3 deals for musinsa, 29cm and zigzag', () => {
