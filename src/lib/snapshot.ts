@@ -24,9 +24,26 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+function isHttpUrl(value: unknown): boolean {
+  return typeof value === 'string' && HTTP_URL.test(value);
+}
+
+function isFiniteNumber(value: unknown): boolean {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+function isNullOr(value: unknown, check: (candidate: unknown) => boolean): boolean {
+  return value === null || check(value);
+}
+
+function isString(value: unknown): boolean {
+  return typeof value === 'string';
+}
+
 /**
- * 화면이 믿고 쓰는 최소한만 확인한다: 식별자, 아는 사이트, 이름, http(s) 상품 주소, 숫자 할인가.
- * 상품 주소는 그대로 링크가 되므로 http(s)가 아닌 것(`javascript:` 등)은 받지 않는다.
+ * 화면이 그대로 믿고 쓰는 값을 확인한다: 식별자, 아는 사이트, 이름, 주소, 가격·할인율, 마감, 품절.
+ * 상품 주소는 링크가, 이미지 주소는 img src가 되므로 http(s)가 아닌 것(`javascript:` 등)은 받지 않는다.
+ * 모르는 값은 null이어야 한다 (다른 모양이면 화면이 "알 수 없음" 대신 엉뚱한 것을 그린다).
  */
 function isSnapshotDeal(value: unknown): value is Deal {
   return (
@@ -35,10 +52,15 @@ function isSnapshotDeal(value: unknown): value is Deal {
     value.id !== '' &&
     isSiteId(value.siteId) &&
     typeof value.name === 'string' &&
-    typeof value.url === 'string' &&
-    HTTP_URL.test(value.url) &&
-    typeof value.salePrice === 'number' &&
-    Number.isFinite(value.salePrice)
+    isHttpUrl(value.url) &&
+    isNullOr(value.imageUrl, isHttpUrl) &&
+    isNullOr(value.brand, isString) &&
+    isFiniteNumber(value.salePrice) &&
+    isNullOr(value.originalPrice, isFiniteNumber) &&
+    isNullOr(value.discountRate, isFiniteNumber) &&
+    isNullOr(value.displayedDiscountRate, isFiniteNumber) &&
+    isNullOr(value.endsAt, isString) &&
+    typeof value.soldOut === 'boolean'
   );
 }
 
