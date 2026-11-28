@@ -238,3 +238,97 @@ describe('error handling', () => {
     expect((error as ApiError).message).toContain('서버에 연결하지 못했습니다');
   });
 });
+
+describe('공개 배포판 (읽기 전용): 스냅샷에서 읽는다', () => {
+  const snapshot = {
+    exportedAt: '2026-11-27T21:30:00+09:00',
+    lastUpdatedAt: '2026-11-27T21:00:00+09:00',
+    deals: sampleDeals,
+  };
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  function enterReadOnly(): void {
+    vi.stubEnv('NEXT_PUBLIC_BF_READONLY', '1');
+  }
+
+  it('getDeals는 /api/deals 대신 정적 스냅샷 파일을 받아 온다', async () => {
+    enterReadOnly();
+    const fetchMock = stubFetch(jsonResponse(snapshot));
+
+    const result = await getDeals({ includeExpired: true });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][0]).toBe('/snapshot/deals.json');
+    expect(idsOf(result.deals)).toEqual(['musinsa:expired', 'musinsa:active', 'musinsa:no-end']);
+    expect(result.lastUpdatedAt).toBe('2026-11-27T21:00:00+09:00');
+  });
+
+  it('includeExpired가 없으면 종료된 할인을 뺀다 (실제 API와 같은 약속)', async () => {
+    enterReadOnly();
+    stubFetch(jsonResponse(snapshot));
+
+    const result = await getDeals({ now: NOW });
+
+    expect(idsOf(result.deals)).toEqual(['musinsa:active', 'musinsa:no-end']);
+    expect(result.lastUpdatedAt).toBe('2026-11-27T21:00:00+09:00');
+  });
+
+  it('스냅샷 파일이 없으면(404) 한글 ApiError', async () => {
+    enterReadOnly();
+    stubFetch(new Response('Not Found', { status: 404 }));
+
+    const error = await getDeals().catch((cause: unknown) => cause);
+
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({ status: 404 });
+    expect((error as ApiError).message).toMatch(/[가-힣]/);
+  });
+
+  it('스냅샷 모양이 틀리면 한글 ApiError (틀린 값을 화면에 내보내지 않는다)', async () => {
+    enterReadOnly();
+    stubFetch(jsonResponse({ deals: 'not-a-list' }));
+
+    const error = await getDeals().catch((cause: unknown) => cause);
+
+    expect(error).toBeInstanceOf(ApiError);
+    expect((error as ApiError).message).toMatch(/[가-힣]/);
+  });
+
+  it('서버에 닿지 못하면 status 0의 ApiError', async () => {
+    enterReadOnly();
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')));
+
+    const error = await getDeals().catch((cause: unknown) => cause);
+
+    expect(error).toMatchObject({ status: 0 });
+  });
+
+  it('수집 상태 조회·수집 시작·사이트 켜기/끄기는 서버에 묻지 않고 403 ApiError', async () => {
+    enterReadOnly();
+    const fetchMock = stubFetch(jsonResponse({ ok: true, data: null }));
+
+    const errors = await Promise.all([
+      getStatus().catch((cause: unknown) => cause),
+      startCrawl('all').catch((cause: unknown) => cause),
+      setSiteEnabled('musinsa', false).catch((cause: unknown) => cause),
+    ]);
+
+    for (const error of errors) {
+      expect(error).toBeInstanceOf(ApiError);
+      expect(error).toMatchObject({ status: 403 });
+    }
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('평소 모드에서는 스냅샷을 읽지 않는다', async () => {
+    const fetchMock = stubFetch(jsonResponse({ ok: true, data: { deals: [], lastUpdatedAt: null } }));
+
+    await getDeals({ includeExpired: true });
+
+    if (!USE_SAMPLE_DATA) expect(fetchMock.mock.calls[0][0]).toBe('/api/deals?includeExpired=1');
+    else expect(fetchMock).not.toHaveBeenCalled();
+  });
+});

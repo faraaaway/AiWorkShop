@@ -394,3 +394,19 @@ describe('PATCH /api/status/:siteId', () => {
     expect(stderrLines.join('')).toContain('musinsa');
   });
 });
+
+describe('PATCH /api/status/:siteId — 공개 배포판 (읽기 전용)', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('설정을 바꾸지 않고 403과 한글 안내를 돌려준다', async () => {
+    vi.stubEnv('NEXT_PUBLIC_BF_READONLY', '1');
+
+    const response = await callPatch('musinsa', { enabled: false });
+
+    expect(response.status).toBe(403);
+    expect(KOREAN.test(await response.text())).toBe(true);
+    expect((await readStatus('musinsa')).enabled).toBe(true);
+  });
+});

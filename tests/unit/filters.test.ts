@@ -3,6 +3,7 @@ import type { Deal } from '@/lib/types';
 import {
   DEFAULT_FILTERS,
   applyFilters,
+  countExpired,
   isFiltered,
   parseSavedView,
   sortDeals,
@@ -273,5 +274,39 @@ describe('time', () => {
     expect(isStale('2026-11-27T08:59:00+09:00', NOW)).toBe(true);
     expect(isStale('2026-11-27T09:01:00+09:00', NOW)).toBe(false);
     expect(isStale(null, NOW)).toBe(false);
+  });
+});
+
+describe('countExpired ("종료된 할인 보기"가 보여 줄 것이 있는가)', () => {
+  it('종료 시각이 지난 할인만 센다', () => {
+    const deals = [
+      deal('past-1', { endsAt: '2026-11-27T20:59:00+09:00' }),
+      deal('past-2', { endsAt: '2026-11-26T23:59:00+09:00' }),
+      deal('future', { endsAt: '2026-11-30T23:59:00+09:00' }),
+    ];
+    expect(countExpired(deals, NOW)).toBe(2);
+  });
+
+  it('종료 시각을 모르는 할인은 종료로 치지 않는다', () => {
+    expect(countExpired([deal('unknown', { endsAt: null })], NOW)).toBe(0);
+  });
+
+  it('지금 막 끝난 할인은 종료로 센다 (목록에서 숨기는 기준과 같다)', () => {
+    const justEnded = deal('edge', { endsAt: '2026-11-27T21:00:00+09:00' });
+    expect(countExpired([justEnded], NOW)).toBe(1);
+    expect(applyFilters([justEnded], DEFAULT_FILTERS, NOW)).toEqual([]);
+  });
+
+  it('종료된 것이 없거나 목록이 비면 0', () => {
+    expect(countExpired([deal('future')], NOW)).toBe(0);
+    expect(countExpired([], NOW)).toBe(0);
+  });
+
+  it('다른 필터와 상관없이 수집된 전체에서 센다', () => {
+    const deals = [
+      deal('men', { gender: 'men', endsAt: '2026-11-27T20:00:00+09:00' }),
+      deal('women', { gender: 'women', endsAt: '2026-11-27T20:00:00+09:00' }),
+    ];
+    expect(countExpired(deals, NOW)).toBe(2);
   });
 });

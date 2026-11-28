@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { isReadOnlyDeploy } from "@/lib/deploy-mode";
 import { formatAgo, formatDateTime } from "@/lib/time";
 
 /** public/black-friday-logo.png — 검은색, 투명 배경, 카트(왼쪽)+글자(오른쪽). width/height는 원본 크기(비율 유지용). */
@@ -13,10 +14,12 @@ const LOGO = {
   height: 112,
 } as const;
 
+const STATUS_HREF = "/status";
+
 const TABS = [
   { href: "/", label: "할인 목록" },
   { href: "/compare", label: "가격 비교" },
-  { href: "/status", label: "수집 상태" },
+  { href: STATUS_HREF, label: "수집 상태" },
 ];
 
 /** 머리말 오른쪽에 넣는 "마지막 업데이트" 한 줄 (FR-020). 시각을 모르면 지어내지 않는다. */
@@ -32,6 +35,9 @@ export function LastUpdated({ at, now }: { at: string | null; now: Date }) {
 /** 화면 공통 머리말: 왼쪽에 로고와 그 아래 이름, 오른쪽 끝에 목록↔상태 이동 탭과 화면별 정보(마지막 업데이트 등). */
 export function AppHeader({ children }: { children?: ReactNode }) {
   const pathname = usePathname();
+  // 공개 배포판은 수집하지 않으므로 수집 상태 탭을 보이지 않는다 (lib/deploy-mode.ts).
+  const readOnly = isReadOnlyDeploy();
+  const tabs = readOnly ? TABS.filter((tab) => tab.href !== STATUS_HREF) : TABS;
   return (
     <header className="bg-white">
       <div className="mx-auto flex max-w-screen-2xl flex-wrap items-end justify-between gap-x-4 gap-y-2 px-4 pb-3 pt-4">
@@ -52,7 +58,7 @@ export function AppHeader({ children }: { children?: ReactNode }) {
         {/* 오른쪽 끝: 위에 화면 이동 탭, 그 아래에 화면별 정보(마지막 업데이트 등). */}
         <div className="ml-auto flex flex-col items-end gap-1.5">
           <nav aria-label="화면 이동" className="flex gap-1">
-            {TABS.map((tab) => {
+            {tabs.map((tab) => {
               const current = pathname === tab.href;
               return (
                 <Link
@@ -69,6 +75,11 @@ export function AppHeader({ children }: { children?: ReactNode }) {
           {children && <div className="text-xs text-[#8A9099]">{children}</div>}
         </div>
       </div>
+      {readOnly && (
+        <p className="mx-auto max-w-screen-2xl px-4 pb-3 text-xs leading-5 text-[#8A9099]">
+          데모용 공개판입니다. 가격과 마감은 위 업데이트 시각에 수집한 값이니, 실제 값은 각 상품 페이지에서 확인하세요.
+        </p>
+      )}
     </header>
   );
 }

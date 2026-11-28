@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import type { SiteId, SiteStatusView } from '@/lib/types';
 import { ApiError, setSiteEnabled, startCrawl } from '@/lib/api';
+import { isReadOnlyDeploy } from '@/lib/deploy-mode';
 import {
   POLL_IDLE_MS,
   autoCrawlText,
@@ -98,7 +100,31 @@ function LoadError({ message, onRetry }: { message: string; onRetry: () => void 
   );
 }
 
+/** 공개 배포판에서 주소로 직접 들어왔을 때: 수집 상태는 보여 줄 것이 없으니 목록으로 안내한다. */
+function ReadOnlyNotice() {
+  return (
+    <div className="min-h-screen bg-white text-[#15171A]">
+      <AppHeader />
+      <main className="mx-auto max-w-4xl px-4 py-20 text-center">
+        <p className="text-base font-bold">공개 배포판에서는 수집 상태를 볼 수 없습니다</p>
+        <p className="mt-1 text-sm text-[#8A9099]">이 사이트는 수집해 둔 할인 목록만 보여 줍니다.</p>
+        <Link
+          href="/"
+          className="mt-5 inline-flex h-11 items-center rounded-full bg-[#15171A] px-5 text-sm font-bold text-white"
+        >
+          할인 목록으로 가기
+        </Link>
+      </main>
+    </div>
+  );
+}
+
 export default function StatusPage() {
+  // 수집 상태를 묻는 훅은 배포판에서 부르면 안 되므로 화면 자체를 갈라 그린다.
+  return isReadOnlyDeploy() ? <ReadOnlyNotice /> : <StatusScreen />;
+}
+
+function StatusScreen() {
   const status = useSiteStatus();
   const { sites, loadError, refresh } = status;
   const now = useNow(POLL_IDLE_MS);

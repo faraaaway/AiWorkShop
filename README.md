@@ -34,6 +34,34 @@ npm run build                     # 배포용 빌드 (개발 서버를 멈춘 �
 - 수집한 데이터는 `data/`(git 제외)에 JSON으로 저장됩니다.
 - 자세한 설치·검증 절차: [quickstart.md](specs/001-bf-deal-tracker/quickstart.md)
 
+## 공개 배포 (읽기 전용 데모)
+
+Vercel 같은 곳에서는 수집을 돌릴 수 없으므로(Obscura 실행 파일도, 유지되는 디스크도 없음), 공개 배포판은
+**내 PC에서 수집해 내보낸 스냅샷만 보여 주는 읽기 전용**입니다. 수집 상태 탭은 숨겨지고, 수집 시작·사이트
+켜기/끄기 API는 403을 돌려주며, 자동 수집도 돌지 않습니다.
+
+1. PC에서 평소처럼 수집합니다 (`npm run dev`의 자동 수집 또는 `npm run crawl -- --site all`).
+2. 스냅샷을 내보냅니다. `data/`의 모든 사이트 할인이 `public/snapshot/deals.json` 하나로 합쳐집니다.
+
+   ```powershell
+   npm run snapshot
+   ```
+
+3. 그 파일을 커밋하고 푸시하면 Vercel이 다시 배포하고, 배포판에 반영됩니다.
+
+   ```powershell
+   git add public/snapshot/deals.json
+   git commit -m "chore: update the public deal snapshot"
+   git push
+   ```
+
+- Vercel에 올리면 읽기 전용 모드가 자동으로 켜집니다 (`next.config.ts`가 `VERCEL=1`을 봅니다). 따로 넣을
+  환경변수는 없습니다.
+- 내 PC에서 배포판 모습을 확인하려면 개발 서버를 `BF_READONLY=1`로 띄웁니다
+  (PowerShell: `$env:BF_READONLY = "1"; npm run dev`). 평소 서버와 동시에 띄우지 마세요.
+- 스냅샷은 푸시한 시점까지만 최신입니다. 파일이 커밋마다 쌓이므로(약 2.3MB) 매시간보다는 필요할 때 올립니다.
+- 저장소가 공개라면 스냅샷(수집한 가격·상품 주소)도 그대로 공개됩니다.
+
 ## 설계 문서
 
 | 문서                                                     | 내용                                           |

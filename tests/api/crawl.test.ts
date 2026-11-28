@@ -327,3 +327,19 @@ describe('POST /api/crawl', () => {
     expect(body.ok === false && KOREAN.test(body.error)).toBe(true);
   });
 });
+
+describe('POST /api/crawl — 공개 배포판 (읽기 전용)', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('수집을 시작하지 않고 403과 한글 안내를 돌려준다', async () => {
+    vi.stubEnv('NEXT_PUBLIC_BF_READONLY', '1');
+
+    const { response, body } = await callCrawl({ siteId: 'all' });
+
+    expect(response.status).toBe(403);
+    expect(body.ok === false && KOREAN.test(body.error)).toBe(true);
+    expect(runnerMock.startBackgroundRun).not.toHaveBeenCalled();
+  });
+});

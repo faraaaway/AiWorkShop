@@ -5,10 +5,12 @@
  */
 import { getAdapter } from '@/crawler/adapters';
 import { startBackgroundRun } from '@/crawler/runner';
+import { READ_ONLY_MESSAGE, isReadOnlyDeploy } from '@/lib/deploy-mode';
 import {
   HTTP_ACCEPTED,
   HTTP_BAD_REQUEST,
   HTTP_CONFLICT,
+  HTTP_FORBIDDEN,
   fail,
   isJsonObject,
   logServerProblem,
@@ -106,6 +108,8 @@ async function explainNotStarted(
 }
 
 async function handlePost(request: Request): Promise<Response> {
+  // 공개 배포판은 수집하지 않는다: 누구나 누를 수 있고, 그곳에는 Obscura도 저장 공간도 없다.
+  if (isReadOnlyDeploy()) return fail(READ_ONLY_MESSAGE, HTTP_FORBIDDEN);
   const rejection = rejectCrossSite(request);
   if (rejection !== null) return rejection;
   const parsed = parseRequest(await readJsonBody(request), isForcedByQuery(request));

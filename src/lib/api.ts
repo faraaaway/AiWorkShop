@@ -4,6 +4,8 @@
  */
 
 import sampleDealsJson from '../../fixtures/sample-deals.json';
+import { READ_ONLY_MESSAGE, isReadOnlyDeploy } from '@/lib/deploy-mode';
+import { SNAPSHOT_PUBLIC_PATH, parseSnapshot, type DealsSnapshot } from '@/lib/snapshot';
 import type {
   ApiResponse,
   CrawlStartResponse,
@@ -24,9 +26,11 @@ export const USE_SAMPLE_DATA: boolean = false;
 const NETWORK_ERROR_MESSAGE = '서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.';
 const INVALID_RESPONSE_MESSAGE = '서버 응답을 읽지 못했습니다. 잠시 후 다시 시도해 주세요.';
 const UNKNOWN_ERROR_MESSAGE = '요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+const SNAPSHOT_MISSING_MESSAGE = '공개된 할인 목록을 찾지 못했습니다. 잠시 후 다시 시도해 주세요.';
 
 /** `status` used when the request never reached the server. */
 const NO_RESPONSE_STATUS = 0;
+const HTTP_FORBIDDEN_STATUS = 403;
 
 const SAMPLE_DEALS: readonly Deal[] = sampleDealsJson as readonly Deal[];
 
@@ -126,8 +130,41 @@ function getSampleDeals(opts: GetDealsOptions): DealsResponse {
 
 // ---------- public API ----------
 
+/**
+ * Public read-only deployment: the deals come from the static snapshot file that
+ * `npm run snapshot` wrote on the owner's PC (no API route, no storage on the host).
+ */
+async function getSnapshotDeals(opts: GetDealsOptions): Promise<DealsResponse> {
+  let response: Response;
+  try {
+    // no-cache: the CDN copy is revalidated, so a newly deployed snapshot shows up at once.
+    response = await fetch(SNAPSHOT_PUBLIC_PATH, { cache: 'no-cache' });
+  } catch {
+    throw new ApiError(NETWORK_ERROR_MESSAGE, NO_RESPONSE_STATUS);
+  }
+  if (!response.ok) throw new ApiError(SNAPSHOT_MISSING_MESSAGE, response.status);
+
+  let snapshot: DealsSnapshot;
+  try {
+    snapshot = parseSnapshot(await response.json());
+  } catch {
+    throw new ApiError(INVALID_RESPONSE_MESSAGE, response.status);
+  }
+  const now = opts.now ?? new Date();
+  const deals = opts.includeExpired
+    ? snapshot.deals
+    : snapshot.deals.filter((deal) => !isExpired(deal, now));
+  return { deals, lastUpdatedAt: snapshot.lastUpdatedAt };
+}
+
+/** Crawling and settings do not exist in the read-only deployment: fail before asking the server. */
+function rejectWhenReadOnly(): void {
+  if (isReadOnlyDeploy()) throw new ApiError(READ_ONLY_MESSAGE, HTTP_FORBIDDEN_STATUS);
+}
+
 /** All deals of all sites. Filtering and sorting happen on the client (lib/filters.ts). */
 export async function getDeals(opts: GetDealsOptions = {}): Promise<DealsResponse> {
+  if (isReadOnlyDeploy()) return getSnapshotDeals(opts);
   if (USE_SAMPLE_DATA) return getSampleDeals(opts);
   const path = opts.includeExpired ? '/api/deals?includeExpired=1' : '/api/deals';
   return request<DealsResponse>(path);
@@ -135,6 +172,7 @@ export async function getDeals(opts: GetDealsOptions = {}): Promise<DealsRespons
 
 /** Status of all 9 sites, in fixed order. */
 export async function getStatus(): Promise<StatusResponse> {
+  rejectWhenReadOnly();
   return request<StatusResponse>('/api/status');
 }
 
@@ -143,6 +181,7 @@ export async function startCrawl(
   siteId: SiteId | 'all',
   opts: StartCrawlOptions = {},
 ): Promise<CrawlStartResponse> {
+  rejectWhenReadOnly();
   return request<CrawlStartResponse>(
     '/api/crawl',
     jsonInit('POST', { siteId, force: opts.force ?? false }),
@@ -151,6 +190,7 @@ export async function startCrawl(
 
 /** Turns a site on or off and returns its updated status. */
 export async function setSiteEnabled(siteId: SiteId, enabled: boolean): Promise<SiteStatusView> {
+  rejectWhenReadOnly();
   return request<SiteStatusView>(
     `/api/status/${encodeURIComponent(siteId)}`,
     jsonInit('PATCH', { enabled }),

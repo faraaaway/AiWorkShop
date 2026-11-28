@@ -8,6 +8,18 @@ hosting requirements, multi-tenancy, or scaling infrastructure. Any feature that
 sense for a public service MUST be rejected under YAGNI.
 Rationale: the owner is the only user; complexity spent on public-service concerns is waste.
 
+Exception — read-only public demo (owner decision, 2026-11-28, for the workshop submission):
+a copy of the app MAY be hosted publicly as long as all of the following hold.
+- It shows only a snapshot of deals that the owner crawled on their own machine, exported with
+  `npm run snapshot` and committed (`public/snapshot/deals.json`). Crawling itself stays on the
+  owner's machine under Principle II.
+- The hosted copy MUST NOT crawl, MUST NOT expose crawl or settings controls (the API routes
+  for them answer 403 and the status screen is hidden), and MUST NOT store anything a visitor
+  enters. It needs nothing beyond static hosting: no accounts, database, or paid service.
+- It MUST say that prices and end times are as of the snapshot time, and every card keeps
+  linking to the shop's own product page (Principle III).
+Everything else in this principle still applies to the hosted copy.
+
 ### II. Obscura-Based Crawling, Polite and Bounded
 All data collection MUST go through the Obscura-driven crawler, one adapter per site
 (Naver Shopping, Musinsa, Zigzag, Ably, Queenit, 29CM, W Concept, Postie, 4910; new sites are
@@ -86,4 +98,17 @@ clarifications. Plans and specs MUST state how they comply with Principles I–V
 violation MUST be justified in the plan's complexity section. Compliance is reviewed at the
 end of each feature.
 
-**Version**: 2.0.0 | **Ratified**: 2026-11-27 | **Last Amended**: 2026-11-27
+**Version**: 3.0.0 | **Ratified**: 2026-11-27 | **Last Amended**: 2026-11-28
+
+<!--
+Sync Impact Report — 3.0.0 (2026-11-28)
+- Version: 2.0.0 -> 3.0.0 (MAJOR: Principle I is redefined — it used to forbid any public hosting).
+- Changed: Principle I gains the "read-only public demo" exception. Principles II–V unchanged.
+- Code that implements it: src/lib/deploy-mode.ts, src/lib/snapshot.ts, src/crawler/snapshot.ts,
+  next.config.ts (NEXT_PUBLIC_BF_READONLY), 403 in POST /api/crawl and PATCH /api/status/:siteId,
+  no auto-crawl in src/instrumentation.ts, status tab hidden in src/components/AppHeader.tsx.
+- Docs updated: README.md ("공개 배포"), specs/001-bf-deal-tracker/tasks.md (T060).
+- Not updated: specs/001-bf-deal-tracker/spec.md and plan.md still describe the personal-only
+  scope; the demo adds no requirement to them beyond this exception.
+-->
+

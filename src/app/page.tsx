@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { isCompareFull } from '@/lib/compare';
+import { isReadOnlyDeploy } from '@/lib/deploy-mode';
 import {
   DEFAULT_FILTERS,
   DEFAULT_SORT,
@@ -10,6 +11,7 @@ import {
   applyFilters,
   buildSiteOptions,
   countCollectedSites,
+  countExpired,
   isFiltered,
   loadSavedView,
   saveView,
@@ -69,6 +71,7 @@ function AllExpiredMessage({ onShowExpired }: { onShowExpired: () => void }) {
 export default function DealListPage() {
   const { data, error, reload } = useDeals();
   const compare = useCompare();
+  const readOnly = isReadOnlyDeploy();
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [sort, setSort] = useState<SortKey>(DEFAULT_SORT);
   const [restored, setRestored] = useState(false);
@@ -113,6 +116,8 @@ export default function DealListPage() {
     [data, filters.includeExpired, now],
   );
   const collectedSites = siteOptions ? countCollectedSites(siteOptions) : 0;
+  // 종료된 할인이 없으면 "종료된 할인 보기"를 흐리게 둔다 (켜도 달라지는 것이 없다).
+  const expiredCount = useMemo(() => (data ? countExpired(data.deals, now) : null), [data, now]);
 
   // 같은 상품이 여러 사이트에 있으면 카드에 "N곳 가격 비교" 링크를 단다 (US4-1).
   const groupByDealId = useMemo(
@@ -156,20 +161,27 @@ export default function DealListPage() {
         sort={sort}
         onSortChange={changeSort}
         siteOptions={siteOptions}
+        expiredCount={expiredCount}
       />
 
       {/* 비교함이 떠 있으면 마지막 줄 카드가 가려지지 않게 아래를 더 비운다 */}
       <main className={`mx-auto max-w-screen-2xl px-4 pt-4 ${trayItems.length > 0 ? 'pb-32' : 'pb-16'}`}>
-        {data && data.deals.length > 0 && collectedSites < SITE_ORDER.length && (
+        {/* 공개 배포판에는 수집 상태 화면이 없으므로 그쪽으로 가는 안내와 링크를 보이지 않는다 */}
+        {!readOnly && data && data.deals.length > 0 && collectedSites < SITE_ORDER.length && (
           <CollectionHint collected={collectedSites} total={SITE_ORDER.length} />
         )}
 
         {stale && (
           <p role="status" className="mb-4 rounded-lg bg-[#FFF4D6] px-3.5 py-2.5 text-sm text-[#5C4400]">
-            마지막 업데이트가 {STALE_AFTER_HOURS}시간을 넘었습니다. 가격과 마감 시각이 달라졌을 수 있습니다.{' '}
-            <Link href="/status" className="font-bold underline underline-offset-2">
-              다시 수집하기
-            </Link>
+            마지막 업데이트가 {STALE_AFTER_HOURS}시간을 넘었습니다. 가격과 마감 시각이 달라졌을 수 있습니다.
+            {!readOnly && (
+              <>
+                {' '}
+                <Link href="/status" className="font-bold underline underline-offset-2">
+                  다시 수집하기
+                </Link>
+              </>
+            )}
           </p>
         )}
 
@@ -195,7 +207,14 @@ export default function DealListPage() {
           </div>
         )}
 
-        {data && data.deals.length === 0 && (
+        {data && data.deals.length === 0 && readOnly && (
+          <div className="py-20 text-center">
+            <p className="text-base font-bold">아직 공개된 할인이 없습니다</p>
+            <p className="mt-1 text-sm text-[#8A9099]">할인 목록이 올라오면 여기에 표시됩니다.</p>
+          </div>
+        )}
+
+        {data && data.deals.length === 0 && !readOnly && (
           <div className="py-20 text-center">
             <p className="text-base font-bold">아직 수집된 할인이 없습니다</p>
             <p className="mt-1 text-sm text-[#8A9099]">수집 상태 화면에서 수집을 시작하면 여기에 표시됩니다.</p>

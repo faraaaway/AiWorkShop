@@ -5,8 +5,10 @@
  */
 import { getAdapter } from '@/crawler/adapters';
 import { getRunPhase } from '@/crawler/runner';
+import { READ_ONLY_MESSAGE, isReadOnlyDeploy } from '@/lib/deploy-mode';
 import {
   HTTP_BAD_REQUEST,
+  HTTP_FORBIDDEN,
   fail,
   isJsonObject,
   ok,
@@ -46,6 +48,8 @@ async function setEnabled(siteId: SiteId, enabled: boolean): Promise<Response> {
 }
 
 async function handlePatch(request: Request, context: RouteContext): Promise<Response> {
+  // 공개 배포판에서는 설정을 바꿀 수 없다 (수집 자체를 하지 않는다).
+  if (isReadOnlyDeploy()) return fail(READ_ONLY_MESSAGE, HTTP_FORBIDDEN);
   const rejection = rejectCrossSite(request);
   if (rejection !== null) return rejection;
   const { siteId } = await context.params;

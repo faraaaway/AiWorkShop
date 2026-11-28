@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "bf-deal-tracker-readonly",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "set BF_READONLY=1&& npm run dev"],
+      "port": 3000
     }
   ]
 }

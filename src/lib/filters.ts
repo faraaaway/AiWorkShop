@@ -74,6 +74,19 @@ export function applyFilters(deals: Deal[], state: FilterState, now: Date = new 
   });
 }
 
+// ── 종료된 할인 (보여 줄 것이 있는가) ───────────────────────────────────────
+
+/** "종료된 할인 보기"를 고를 수 없을 때의 이유. */
+export const NO_EXPIRED_REASON = '종료된 할인이 없습니다';
+
+/**
+ * 종료 시각이 지난 할인의 수. 다른 필터와 상관없이 수집된 전체에서 센다.
+ * 0이면 "종료된 할인 보기"를 켜도 목록이 달라지지 않는다 (수집할 때마다 끝난 할인은 목록에서 빠진다).
+ */
+export function countExpired(deals: readonly Deal[], now: Date = new Date()): number {
+  return deals.filter((deal) => isExpired(deal.endsAt, now)).length;
+}
+
 // ── 사이트 선택지 (어느 사이트에 실제로 할인이 있는가) ────────────────────
 
 export const NO_DEALS_REASON = '수집된 할인이 없습니다';

@@ -5,6 +5,7 @@ import type { SiteId } from '@/lib/types';
 import { GENDER_LABELS, SITE_LABELS, THEME_LABELS } from '@/lib/labels';
 import {
   GENDER_ORDER,
+  NO_EXPIRED_REASON,
   SITE_ORDER,
   THEME_ORDER,
   type DiscountMin,
@@ -28,6 +29,8 @@ interface FilterBarProps {
   onSortChange: (next: SortKey) => void;
   /** 사이트별 할인 개수. 목록을 아직 못 읽었으면 null (개수 없이 모두 고를 수 있게 둔다). */
   siteOptions: readonly SiteOption[] | null;
+  /** 수집된 것 중 종료된 할인의 수. 목록을 아직 못 읽었으면 null (그때는 칩을 평소대로 둔다). */
+  expiredCount?: number | null;
 }
 
 interface SiteFilterPanelProps {
@@ -68,8 +71,11 @@ function SiteFilterPanel({ selected, options, onToggle, onClear }: SiteFilterPan
 /**
  * 상단 고정 필터 (T031): 성별 탭 → 테마 칩 → 정렬·할인율·오늘 마감·사이트·종료 보기.
  */
-export function FilterBar({ filters, onChange, sort, onSortChange, siteOptions }: FilterBarProps) {
+export function FilterBar({ filters, onChange, sort, onSortChange, siteOptions, expiredCount = null }: FilterBarProps) {
   const [sitesOpen, setSitesOpen] = useState(false);
+  // 종료된 할인이 하나도 없으면 켜도 달라지는 것이 없으니 흐리게 두고 이유를 보여 준다.
+  // 이미 켜 둔 상태라면 다시 눌러 끌 수 있어야 한다.
+  const expiredUnavailable = expiredCount === 0 && !filters.includeExpired;
   const set = (patch: Partial<FilterState>) => onChange({ ...filters, ...patch });
 
   const toggleSite = (id: SiteId) => {
@@ -148,8 +154,15 @@ export function FilterBar({ filters, onChange, sort, onSortChange, siteOptions }
               {sitesOpen ? '▲' : '▼'}
             </span>
           </Chip>
-          <Chip selected={filters.includeExpired} onClick={() => set({ includeExpired: !filters.includeExpired })}>
+          <Chip
+            selected={filters.includeExpired}
+            onClick={() => set({ includeExpired: !filters.includeExpired })}
+            unavailableReason={expiredUnavailable ? NO_EXPIRED_REASON : undefined}
+          >
             종료된 할인 보기
+            {expiredCount !== null && expiredCount > 0 && (
+              <span className="ml-1 text-xs tabular-nums opacity-70">{expiredCount.toLocaleString('ko-KR')}</span>
+            )}
           </Chip>
         </div>
 
