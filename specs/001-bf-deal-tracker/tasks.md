@@ -164,9 +164,10 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 
 **Independent Test**: 두 사이트에 같은 상품이 있는 샘플로 최저가 강조 확인
 
-- [ ] T049 [US4] (Core) `src/lib/group.ts` — data-model.md "Stretch: ProductGroup" 그룹 키·최저가 계산 + `tests/unit/group.test.ts`
-- [ ] T050 [US4] (UI) `src/app/compare/page.tsx` — 그룹 상품 사이트별 가격표, 최저가 강조
-- [ ] T051 [US4] (UI) 비교함(2~4개 담기) — `src/components/CompareTray.tsx`, DealCard에 담기 버튼
+- [x] T049 [US4] (Core) `src/lib/group.ts` — data-model.md "Stretch: ProductGroup" 그룹 키·최저가 계산 + `tests/unit/group.test.ts`
+- [x] T050 [US4] (UI) `src/app/compare/page.tsx` — 그룹 상품 사이트별 가격표, 최저가 강조
+- [x] T051 [US4] (UI) 비교함(2~4개 담기) — `src/components/CompareTray.tsx`, DealCard에 담기 버튼
+  - **완료(2026-11-28, Core)**: 비교함 로직은 `src/lib/compare.ts`(+`tests/unit/compare.test.ts`), 브라우저 기억은 `src/components/useCompare.ts`. 비교 화면은 머리말 탭 "가격 비교", 비교함의 "비교하기", 카드의 "N곳 가격 비교"로 들어간다. 실수집 데이터(3,416개) 기준 여러 사이트에 함께 있는 같은 상품은 5개(4910↔에이블리 4, 무신사↔4910 1).
 
 ---
 
@@ -176,8 +177,19 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
 - [x] T053 [P] (UI) 필터·정렬 상태를 `localStorage`에 기억(FR-022, Stretch) — `src/lib/filters.ts`, `src/app/page.tsx`
 - [x] T054 [P] (UI) 마지막 업데이트 12시간 초과 경고 배너(FR-020a, Stretch) — `src/app/page.tsx`
 - [x] T055 [P] (Core) 자동 주기 수집(FR-002a, Stretch) — `src/crawler/schedule.ts`, `src/instrumentation.ts`
-- [ ] T056 (전원) quickstart.md V1–V8 검증, 실패 항목 수정, `README.md`에 실행법 요약
-- [ ] T057 (Core) 최종 `main` 정리·태그 `v0.1.0`
+- [x] T056 (전원) quickstart.md V1–V8 검증, 실패 항목 수정, `README.md`에 실행법 요약
+  - **검증(2026-11-28, Core, 실수집 데이터 9개 사이트)**
+    - V1 통과: 카드에 사이트·할인율·할인가·정가(모르면 "알 수 없음")·마감·수집 시각, 머리말에 마지막 업데이트.
+    - V2 통과: 카드 링크는 모두 `target="_blank"`의 실제 상품 주소. V3에서 연 20개 모두 해당 상품 페이지였다.
+    - V3 **부분 충족**: 무작위 20개(사이트별 배분) 대조 — 링크 20/20, 할인가 18/20 일치(불일치 1: 4910 48,800원 ↔ 상품 페이지 쿠폰 할인가 47,580원 — T047의 알려진 한계, 미확인 1: 4910 상품 페이지 대표가를 읽지 못함). 할인율은 13개가 같고 4개는 1%p 낮다(우리는 버림, 사이트는 반올림 — data-model.md가 허용한 1%p 이내). 에이블리 1개는 우리 값이 판매가(76,000원·61%)이고 사이트 강조값은 쿠폰적용가(70,680원·64%). 지그재그·포스티·퀸잇은 수집값이 쿠폰가/첫구매 특가다. 종료 시각은 무신사만 상품 페이지와 대조했고(일치), 아뜨랑스는 상품 페이지에 당일 특가 카운트다운이 있지만 수집값이 없다("알 수 없음"). → "20개 중 19개에서 4개 항목 모두 일치"(SC-003)는 충족하지 못했다.
+    - V4 통과: 여성 → 아우터 → 50% 이상 3번 클릭으로 156개, 모두 조건에 맞고 마감 임박 순 정렬도 맞음.
+    - V5 통과: 조건에 맞는 것이 없으면 안내 문구와 [필터 초기화].
+    - V6 통과: 08시 정기 수집에서 에이블리가 차단(챌린지 페이지 감지, 6시간 쉼), 퀸잇이 0건(구조 변경 의심)이었지만 두 곳의 이전 할인(352개·19개)은 유지되고 나머지 7곳은 갱신·표시됐다. 전체 수집이 한 곳 실패 뒤에도 이어지는 것은 `tests/unit/runner.test.ts` "saves sites 1 and 3 when site 2 throws".
+    - V7 통과: 375px 폭에서 `/`, `/compare`, `/status` 모두 가로 스크롤 없음.
+    - V8 통과: `tests/unit/filters.test.ts` "5,000개도 1초 안에 걸러 정렬한다" + 브라우저에서 실데이터 3,416개 필터 변경 약 0.5초(개발 모드).
+    - V9(추가) 통과: 가격 비교 화면에서 최저가 강조, 비교함 2~4개 나란히 표시, 5번째는 담기지 않음.
+- [x] T057 (Core) 최종 `main` 정리·태그 `v0.1.0`
+  - **완료(2026-11-28, Core)**: `tsc --noEmit`, `eslint .`, `vitest run`(1,204개 통과, 5개 건너뜀), `next build` 통과 뒤 태그. 태그 시점에 남은 것: T043 네이버쇼핑(CAPTCHA로 스텁 유지), T056 V3의 SC-003 미충족 항목(4910 가격 기준, 쿠폰가 수집 사이트, 종료 시각 없는 사이트).
 
 ---
 

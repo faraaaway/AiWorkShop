@@ -1,9 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import type { Deal } from '@/lib/types';
-import { getDeals } from '@/lib/api';
+import { isCompareFull } from '@/lib/compare';
 import {
   DEFAULT_FILTERS,
   DEFAULT_SORT,
@@ -18,10 +17,14 @@ import {
   type FilterState,
   type SortKey,
 } from '@/lib/filters';
-import { STALE_AFTER_HOURS, formatAgo, formatDateTime, isStale } from '@/lib/time';
-import { AppHeader } from '@/components/AppHeader';
+import { groupDeals, indexGroupsByDealId } from '@/lib/group';
+import { STALE_AFTER_HOURS, isStale } from '@/lib/time';
+import { AppHeader, LastUpdated } from '@/components/AppHeader';
+import { CompareTray } from '@/components/CompareTray';
 import { DealCard } from '@/components/DealCard';
 import { FilterBar } from '@/components/FilterBar';
+import { useCompare } from '@/components/useCompare';
+import { useDeals } from '@/components/useDeals';
 import { useNow } from '@/components/useNow';
 
 /** 한 번에 그리는 카드 수. 아래로 내리면 이만큼씩 더 그린다 (5,000개에서도 필터가 바로 반응하도록). */
@@ -29,9 +32,9 @@ const PAGE_SIZE = 60;
 
 const GRID = 'grid grid-cols-2 gap-x-3 gap-y-7 sm:grid-cols-3 sm:gap-x-4 lg:grid-cols-4 xl:grid-cols-5';
 
-interface DealsData {
-  deals: Deal[];
-  lastUpdatedAt: string | null;
+/** 사이트별 가격 비교 화면에서 이 묶음을 맨 앞에 보여 주는 주소. */
+function groupHref(key: string): string {
+  return `/compare?group=${encodeURIComponent(key)}`;
 }
 
 /** 일부 사이트만 수집됐을 때 필터 아래에 한 줄로 알린다 (수집이 막힌 사이트가 있을 수 있다). */
@@ -64,30 +67,14 @@ function AllExpiredMessage({ onShowExpired }: { onShowExpired: () => void }) {
 }
 
 export default function DealListPage() {
-  const [data, setData] = useState<DealsData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { data, error, reload } = useDeals();
+  const compare = useCompare();
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [sort, setSort] = useState<SortKey>(DEFAULT_SORT);
   const [restored, setRestored] = useState(false);
   const [shown, setShown] = useState(PAGE_SIZE);
   const now = useNow();
   const moreRef = useRef<HTMLDivElement | null>(null);
-
-  const load = useCallback(async () => {
-    setError(null);
-    try {
-      // 실제 API는 종료된 할인을 기본으로 빼고 준다. 한 번에 모두 받아 두고 "종료된 할인 보기"는
-      // 다른 필터처럼 화면에서 거른다 (토글할 때마다 다시 받지 않아 5,000개에서도 바로 반응한다).
-      const result = await getDeals({ includeExpired: true });
-      setData({ deals: result.deals, lastUpdatedAt: result.lastUpdatedAt });
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : '할인 목록을 불러오지 못했습니다.');
-    }
-  }, []);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
 
   // 지난번에 고른 필터·정렬 되살리기 (FR-022)
   useEffect(() => {
@@ -127,6 +114,20 @@ export default function DealListPage() {
   );
   const collectedSites = siteOptions ? countCollectedSites(siteOptions) : 0;
 
+  // 같은 상품이 여러 사이트에 있으면 카드에 "N곳 가격 비교" 링크를 단다 (US4-1).
+  const groupByDealId = useMemo(
+    () => indexGroupsByDealId(data ? groupDeals(data.deals, now) : []),
+    [data, now],
+  );
+
+  // 비교함에 담은 상품 (US4-2). 지금 목록에 없는 것은 deal 없이 자리만 남겨 뺄 수 있게 한다.
+  const trayItems = useMemo(() => {
+    if (!data) return [];
+    const byId = new Map(data.deals.map((deal) => [deal.id, deal]));
+    return compare.ids.map((id) => ({ id, deal: byId.get(id) ?? null }));
+  }, [data, compare.ids]);
+  const compareFull = isCompareFull(compare.ids);
+
   // 목록 끝이 보이면 다음 묶음을 그린다.
   useEffect(() => {
     const target = moreRef.current;
@@ -146,17 +147,7 @@ export default function DealListPage() {
 
   return (
     <div className="min-h-screen bg-white text-[#15171A]">
-      <AppHeader>
-        {data &&
-          (data.lastUpdatedAt ? (
-            <span>
-              마지막 업데이트 <time dateTime={data.lastUpdatedAt}>{formatDateTime(data.lastUpdatedAt)}</time> (
-              {formatAgo(data.lastUpdatedAt, now)})
-            </span>
-          ) : (
-            <span>마지막 업데이트 알 수 없음</span>
-          ))}
-      </AppHeader>
+      <AppHeader>{data && <LastUpdated at={data.lastUpdatedAt} now={now} />}</AppHeader>
 
       {/* 상단 고정이 화면 전체 높이에서 동작하도록 감싸는 요소 없이 바로 둔다 */}
       <FilterBar
@@ -167,7 +158,8 @@ export default function DealListPage() {
         siteOptions={siteOptions}
       />
 
-      <main className="mx-auto max-w-screen-2xl px-4 pb-16 pt-4">
+      {/* 비교함이 떠 있으면 마지막 줄 카드가 가려지지 않게 아래를 더 비운다 */}
+      <main className={`mx-auto max-w-screen-2xl px-4 pt-4 ${trayItems.length > 0 ? 'pb-32' : 'pb-16'}`}>
         {data && data.deals.length > 0 && collectedSites < SITE_ORDER.length && (
           <CollectionHint collected={collectedSites} total={SITE_ORDER.length} />
         )}
@@ -184,7 +176,7 @@ export default function DealListPage() {
         {error && (
           <div role="alert" className="rounded-lg bg-[#FDECEE] px-3.5 py-3 text-sm text-[#9B0C1F]">
             <p>{error}</p>
-            <button type="button" onClick={() => void load()} className="mt-1 font-bold underline underline-offset-2">
+            <button type="button" onClick={() => void reload()} className="mt-1 font-bold underline underline-offset-2">
               다시 불러오기
             </button>
           </div>
@@ -250,11 +242,23 @@ export default function DealListPage() {
             ) : (
               <>
                 <ul className={GRID}>
-                  {visible.map((deal) => (
-                    <li key={deal.id} className="min-w-0">
-                      <DealCard deal={deal} now={now} />
-                    </li>
-                  ))}
+                  {visible.map((deal) => {
+                    const group = groupByDealId.get(deal.id);
+                    return (
+                      <li key={deal.id} className="min-w-0">
+                        <DealCard
+                          deal={deal}
+                          now={now}
+                          compare={{
+                            selected: compare.ids.includes(deal.id),
+                            full: compareFull,
+                            onToggle: () => compare.toggle(deal.id),
+                          }}
+                          groupLink={group && { href: groupHref(group.key), siteCount: group.offers.length }}
+                        />
+                      </li>
+                    );
+                  })}
                 </ul>
                 {hasMore && <div ref={moreRef} className="h-10" aria-hidden="true" />}
               </>
@@ -262,6 +266,8 @@ export default function DealListPage() {
           </>
         )}
       </main>
+
+      <CompareTray items={trayItems} onRemove={compare.remove} onClear={compare.clear} />
     </div>
   );
 }

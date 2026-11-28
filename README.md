@@ -1,6 +1,6 @@
 # BF Deal Tracker — 블랙프라이데이 의류 할인 모아보기
 
-무신사·29CM·W컨셉·네이버쇼핑·지그재그·에이블리·퀸잇·포스티·4910의 블프 할인을 Obscura로 수집해
+무신사·29CM·W컨셉·네이버쇼핑·지그재그·에이블리·퀸잇·포스티·4910·아뜨랑스의 블프 할인을 Obscura로 수집해
 **할인율 · 어디서 · 언제까지**를 배민식 카드 목록으로 비교하는 개인용 웹앱.
 
 ## 팀원 시작 순서
@@ -8,6 +8,31 @@
 1. **내 담당 확인** → [specs/001-bf-deal-tracker/team/README.md](specs/001-bf-deal-tracker/team/README.md)
 2. **설치** (Node 22+, Obscura v0.2.7 stealth 빌드) → [quickstart.md](specs/001-bf-deal-tracker/quickstart.md)
 3. **작업 목록** → [tasks.md](specs/001-bf-deal-tracker/tasks.md)
+
+## 실행
+
+`.env.example`을 `.env.local`로 복사해 `OBSCURA_PATH`(Obscura 실행 파일 경로)를 적은 뒤:
+
+```powershell
+npm install
+npm run dev                       # http://localhost:3000 — 떠 있는 동안 매시 정각에 자동 수집
+npm run crawl -- --site musinsa   # 한 사이트만 수집
+npm run crawl -- --site all       # 켜진 사이트 전부 수집
+npm test                          # 단위·파서 테스트 (네트워크 없음)
+npm run typecheck                 # 타입 검사
+npm run lint                      # ESLint
+npm run build                     # 배포용 빌드 (개발 서버를 멈춘 뒤 실행)
+```
+
+| 화면      | 주소       | 내용                                                           |
+| --------- | ---------- | -------------------------------------------------------------- |
+| 할인 목록 | `/`        | 카드 목록, 성별·테마·할인율·사이트 필터, 정렬, 비교함 담기     |
+| 가격 비교 | `/compare` | 비교함에 담은 2~4개 나란히 보기, 여러 사이트에 있는 같은 상품의 사이트별 가격 |
+| 수집 상태 | `/status`  | 사이트별 수집 결과, 지금 수집, 사이트 켜기/끄기                |
+
+- 자동 수집 간격은 `.env.local`의 `BF_AUTO_CRAWL_MINUTES`(기본 60, `0`이면 끔)로 바꿉니다.
+- 수집한 데이터는 `data/`(git 제외)에 JSON으로 저장됩니다.
+- 자세한 설치·검증 절차: [quickstart.md](specs/001-bf-deal-tracker/quickstart.md)
 
 ## 설계 문서
 

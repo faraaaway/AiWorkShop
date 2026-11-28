@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { formatAgo, formatDateTime } from "@/lib/time";
 
 /** public/black-friday-logo.png — 검은색, 투명 배경, 카트(왼쪽)+글자(오른쪽). width/height는 원본 크기(비율 유지용). */
 const LOGO = {
@@ -14,8 +15,19 @@ const LOGO = {
 
 const TABS = [
   { href: "/", label: "할인 목록" },
+  { href: "/compare", label: "가격 비교" },
   { href: "/status", label: "수집 상태" },
 ];
+
+/** 머리말 오른쪽에 넣는 "마지막 업데이트" 한 줄 (FR-020). 시각을 모르면 지어내지 않는다. */
+export function LastUpdated({ at, now }: { at: string | null; now: Date }) {
+  if (at === null) return <span>마지막 업데이트 알 수 없음</span>;
+  return (
+    <span>
+      마지막 업데이트 <time dateTime={at}>{formatDateTime(at)}</time> ({formatAgo(at, now)})
+    </span>
+  );
+}
 
 /** 화면 공통 머리말: 왼쪽에 로고와 그 아래 이름, 오른쪽 끝에 목록↔상태 이동 탭과 화면별 정보(마지막 업데이트 등). */
 export function AppHeader({ children }: { children?: ReactNode }) {
