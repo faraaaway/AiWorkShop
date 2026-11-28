@@ -51,7 +51,8 @@ export function AppHeader({ children }: { children?: ReactNode }) {
             priority
             className="h-12 w-auto"
           />
-          <h1 className="text-4xl my-1 mt-4 font-extrabold tracking-tight text-[#15171A]">
+          {/* 휴대폰 폭에서는 한 줄에 들어가도록 작게 쓴다 (320px 폭에서도 줄이 바뀌지 않는 크기). */}
+          <h1 className="my-1 mt-4 whitespace-nowrap text-[22px] font-extrabold tracking-tight text-[#15171A] sm:text-4xl">
             블랙프라이데이 할인 모아보기
           </h1>
         </div>
@@ -76,8 +77,12 @@ export function AppHeader({ children }: { children?: ReactNode }) {
         </div>
       </div>
       {readOnly && (
-        <p className="mx-auto max-w-screen-2xl px-4 pb-3 text-xs leading-5 text-[#8A9099]">
-          데모용 공개판입니다. 가격과 마감은 위 업데이트 시각에 수집한 값이니, 실제 값은 각 상품 페이지에서 확인하세요.
+        // 휴대폰 폭에서는 한 줄에 들어가는 짧은 문구를 작게 쓰고, 넓은 화면에서는 전체 문장을 보여 준다.
+        <p className="mx-auto max-w-screen-2xl truncate px-4 pb-3 text-[11px] leading-5 text-[#8A9099] sm:overflow-visible sm:whitespace-normal sm:text-xs">
+          <span className="sm:hidden">데모용 공개판 · 실제 가격·마감은 각 상품 페이지에서 확인</span>
+          <span className="hidden sm:inline">
+            데모용 공개판입니다. 가격과 마감은 위 업데이트 시각에 수집한 값이니, 실제 값은 각 상품 페이지에서 확인하세요.
+          </span>
         </p>
       )}
     </header>
