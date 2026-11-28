@@ -49,7 +49,10 @@ export function AppHeader({ children }: { children?: ReactNode }) {
             width={LOGO.width}
             height={LOGO.height}
             priority
-            className="h-12 w-auto"
+            // 검은 로고를 흰색으로 뒤집은 뒤(invert) 뒤 배경과의 차이로 그린다(mix-blend-difference):
+            // 흰 배경에서는 검게, 어두운 배경에서는 희게 보인다. 휴대폰 브라우저의 다크 모드는 배경만
+            // 어둡게 바꾸고 이미지는 그대로 두기 때문에, 이렇게 하지 않으면 검은 로고가 묻혀 버린다.
+            className="h-12 w-auto invert mix-blend-difference"
           />
           {/* 휴대폰 폭에서는 한 줄에 들어가도록 작게 쓴다 (320px 폭에서도 줄이 바뀌지 않는 크기). */}
           <h1 className="my-1 mt-4 whitespace-nowrap text-[22px] font-extrabold tracking-tight text-[#15171A] sm:text-4xl">
