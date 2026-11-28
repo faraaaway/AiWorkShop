@@ -9,6 +9,7 @@ import {
   DEFAULT_SORT,
   SITE_ORDER,
   applyFilters,
+  buildBrandOptions,
   buildSiteOptions,
   countCollectedSites,
   countExpired,
@@ -116,6 +117,11 @@ export default function DealListPage() {
     [data, filters.includeExpired, now],
   );
   const collectedSites = siteOptions ? countCollectedSites(siteOptions) : 0;
+  // 브랜드 필터 선택지: 할인이 많은 브랜드부터 (종료된 할인은 "종료된 할인 보기"가 켜져 있을 때만 센다).
+  const brandOptions = useMemo(
+    () => (data ? buildBrandOptions(data.deals, filters.includeExpired, now) : null),
+    [data, filters.includeExpired, now],
+  );
   // 종료된 할인이 없으면 "종료된 할인 보기"를 흐리게 둔다 (켜도 달라지는 것이 없다).
   const expiredCount = useMemo(() => (data ? countExpired(data.deals, now) : null), [data, now]);
 
@@ -161,6 +167,7 @@ export default function DealListPage() {
         sort={sort}
         onSortChange={changeSort}
         siteOptions={siteOptions}
+        brandOptions={brandOptions}
         expiredCount={expiredCount}
       />
 

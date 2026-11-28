@@ -3,12 +3,14 @@ import type { Deal } from '@/lib/types';
 import {
   DEFAULT_FILTERS,
   applyFilters,
+  buildBrandOptions,
   countExpired,
   isFiltered,
   parseSavedView,
   sortDeals,
   type FilterState,
 } from '@/lib/filters';
+import { normalizeBrand } from '@/lib/group';
 import { formatRemaining, isEndingSoon, isExpired, isStale } from '@/lib/time';
 
 // 기준 시각: 2026-11-27 21:00 KST
@@ -308,5 +310,135 @@ describe('countExpired ("종료된 할인 보기"가 보여 줄 것이 있는가
       deal('women', { gender: 'women', endsAt: '2026-11-27T20:00:00+09:00' }),
     ];
     expect(countExpired(deals, NOW)).toBe(2);
+  });
+});
+
+describe('브랜드 필터', () => {
+  const deals = [
+    deal('a', { brand: '나이키' }),
+    deal('b', { brand: 'NIKE' }),
+    deal('c', { brand: '어그' }),
+    deal('d', { brand: null }),
+    deal('e', { brand: ' 나이키 ' }),
+  ];
+
+  it('고른 브랜드의 할인만 남긴다 (공백 차이는 같은 브랜드)', () => {
+    expect(ids(applyFilters(deals, filters({ brands: [normalizeBrand('나이키')] }), NOW))).toEqual(['a', 'e']);
+  });
+
+  it('대소문자만 다른 표기는 같은 브랜드로 본다', () => {
+    expect(ids(applyFilters(deals, filters({ brands: [normalizeBrand('nike')] }), NOW))).toEqual(['b']);
+  });
+
+  it('여러 브랜드를 고르면 그중 하나라도 맞는 것을 남긴다', () => {
+    const state = filters({ brands: [normalizeBrand('나이키'), normalizeBrand('어그')] });
+    expect(ids(applyFilters(deals, state, NOW))).toEqual(['a', 'c', 'e']);
+  });
+
+  it('브랜드를 고르면 브랜드를 모르는 할인은 빠진다', () => {
+    expect(ids(applyFilters(deals, filters({ brands: [normalizeBrand('어그')] }), NOW))).not.toContain('d');
+  });
+
+  it('아무 브랜드도 안 고르면 모두 남는다', () => {
+    expect(applyFilters(deals, filters(), NOW)).toHaveLength(5);
+  });
+
+  it('다른 조건과 함께 걸린다 (AND)', () => {
+    const mixed = [deal('a', { brand: '어그', gender: 'men' }), deal('b', { brand: '어그', gender: 'women' })];
+    expect(ids(applyFilters(mixed, filters({ brands: [normalizeBrand('어그')], gender: 'men' }), NOW))).toEqual(['a']);
+  });
+});
+
+describe('buildBrandOptions', () => {
+  it('브랜드별 개수를 세어 많은 순으로 돌려준다 (같으면 이름순)', () => {
+    const options = buildBrandOptions(
+      [deal('1', { brand: '어그' }), deal('2', { brand: '나이키' }), deal('3', { brand: '나이키' }), deal('4', { brand: '가나' })],
+      false,
+      NOW,
+    );
+    expect(options.map((option) => [option.label, option.count])).toEqual([
+      ['나이키', 2],
+      ['가나', 1],
+      ['어그', 1],
+    ]);
+    expect(options[0].key).toBe(normalizeBrand('나이키'));
+  });
+
+  it('표기가 여러 가지면 가장 많이 쓰인 표기를 이름으로 쓴다', () => {
+    const options = buildBrandOptions(
+      [deal('1', { brand: 'Nike' }), deal('2', { brand: 'NIKE' }), deal('3', { brand: 'NIKE' })],
+      false,
+      NOW,
+    );
+    expect(options).toEqual([{ key: 'nike', label: 'NIKE', count: 3 }]);
+  });
+
+  it('브랜드를 모르는 할인은 세지 않는다', () => {
+    expect(buildBrandOptions([deal('1', { brand: null }), deal('2', { brand: '  ' })], false, NOW)).toEqual([]);
+  });
+
+  it('종료된 할인은 "종료된 할인 보기"가 켜져 있을 때만 센다', () => {
+    const deals = [deal('1', { brand: '어그' }), deal('2', { brand: '어그', endsAt: '2026-11-27T20:00:00+09:00' })];
+    expect(buildBrandOptions(deals, false, NOW)[0].count).toBe(1);
+    expect(buildBrandOptions(deals, true, NOW)[0].count).toBe(2);
+  });
+});
+
+describe('검색', () => {
+  const deals = [
+    deal('a', { name: '울 블렌드 더플 코트', brand: '어그' }),
+    deal('b', { name: 'Wool Duffle COAT', brand: 'NIKE' }),
+    deal('c', { name: '경량 패딩', brand: '나이키', siteId: '29cm' }),
+  ];
+
+  it('상품명에 들어 있는 글자로 찾는다', () => {
+    expect(ids(applyFilters(deals, filters({ query: '더플' }), NOW))).toEqual(['a']);
+  });
+
+  it('영문은 대소문자를 가리지 않는다', () => {
+    expect(ids(applyFilters(deals, filters({ query: 'coat' }), NOW))).toEqual(['b']);
+  });
+
+  it('브랜드 이름으로도 찾는다', () => {
+    expect(ids(applyFilters(deals, filters({ query: '나이키' }), NOW))).toEqual(['c']);
+  });
+
+  it('사이트 이름으로도 찾는다', () => {
+    expect(ids(applyFilters(deals, filters({ query: '29cm' }), NOW))).toEqual(['c']);
+  });
+
+  it('여러 낱말은 순서와 상관없이 모두 들어 있어야 한다', () => {
+    expect(ids(applyFilters(deals, filters({ query: '코트 울' }), NOW))).toEqual(['a']);
+    expect(ids(applyFilters(deals, filters({ query: '코트 패딩' }), NOW))).toEqual([]);
+  });
+
+  it('빈칸뿐인 검색어는 조건이 아니다', () => {
+    expect(applyFilters(deals, filters({ query: '   ' }), NOW)).toHaveLength(3);
+    expect(isFiltered(filters({ query: '   ' }))).toBe(false);
+  });
+
+  it('다른 조건과 함께 걸린다 (AND)', () => {
+    expect(ids(applyFilters(deals, filters({ query: 'duffle', brands: [normalizeBrand('어그')] }), NOW))).toEqual([]);
+  });
+});
+
+describe('브랜드·검색과 필터 상태', () => {
+  it('브랜드를 골랐거나 검색어가 있으면 조건이 걸린 것이다', () => {
+    expect(isFiltered(filters({ brands: ['nike'] }))).toBe(true);
+    expect(isFiltered(filters({ query: '코트' }))).toBe(true);
+  });
+
+  it('고른 브랜드는 기억하고 되살린다 (문자열만, 중복 없이)', () => {
+    const view = parseSavedView({ filters: { brands: ['nike', 3, '', 'nike', '어그'] }, sort: 'price' });
+    expect(view.filters.brands).toEqual(['nike', '어그']);
+  });
+
+  it('검색어는 기억하지 않는다 (다음에 열면 빈 목록처럼 보이지 않게)', () => {
+    expect(parseSavedView({ filters: { query: '코트' } }).filters.query).toBe('');
+  });
+
+  it('저장된 값에 브랜드가 없으면 빈 목록', () => {
+    expect(parseSavedView({ filters: {} }).filters.brands).toEqual([]);
+    expect(parseSavedView({ filters: { brands: 'nike' } }).filters.brands).toEqual([]);
   });
 });

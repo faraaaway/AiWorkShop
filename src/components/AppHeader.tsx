@@ -40,7 +40,8 @@ export function AppHeader({ children }: { children?: ReactNode }) {
   const tabs = readOnly ? TABS.filter((tab) => tab.href !== STATUS_HREF) : TABS;
   return (
     <header className="bg-white">
-      <div className="mx-auto flex max-w-screen-2xl flex-wrap items-end justify-between gap-x-4 gap-y-2 px-4 pb-3 pt-4">
+      {/* items-start: 오른쪽 탭 묶음을 제목 줄이 아니라 로고와 같은 높이에 둔다. */}
+      <div className="mx-auto flex max-w-screen-2xl flex-wrap items-start justify-between gap-x-4 gap-y-2 px-4 pb-3 pt-4">
         <div className="flex flex-col items-start gap-1">
           {/* 장식용 로고: 바로 아래 제목이 같은 내용을 말하므로 대체 텍스트는 비워 둔다. */}
           <Image
@@ -60,7 +61,8 @@ export function AppHeader({ children }: { children?: ReactNode }) {
           </h1>
         </div>
         {/* 오른쪽 끝: 위에 화면 이동 탭, 그 아래에 화면별 정보(마지막 업데이트 등). */}
-        <div className="ml-auto flex flex-col items-end gap-1.5">
+        {/* mt-2: 높이 48px인 로고의 가운데에 탭(약 32px)이 오도록 살짝 내린다. */}
+        <div className="ml-auto mt-2 flex flex-col items-end gap-1.5">
           <nav aria-label="화면 이동" className="flex gap-1">
             {tabs.map((tab) => {
               const current = pathname === tab.href;
