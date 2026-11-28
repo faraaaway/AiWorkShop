@@ -189,6 +189,7 @@ description: "Task list for BF Deal Tracker (4명 · 5시간)"
     - V8 통과: `tests/unit/filters.test.ts` "5,000개도 1초 안에 걸러 정렬한다" + 브라우저에서 실데이터 3,416개 필터 변경 약 0.5초(개발 모드).
     - V9(추가) 통과: 가격 비교 화면에서 최저가 강조, 비교함 2~4개 나란히 표시, 5번째는 담기지 않음.
 - [x] T060 (Core) 공개 배포판(읽기 전용 데모) — 헌법 3.0.0의 1조 예외. `npm run snapshot`(`src/crawler/snapshot.ts`)이 `data/`의 할인을 `public/snapshot/deals.json`으로 내보내고, 배포판(`src/lib/deploy-mode.ts`, Vercel 빌드에서 자동)은 그 파일만 읽는다: 수집 상태 탭 숨김, `POST /api/crawl`·`PATCH /api/status/:siteId` 403, 자동 수집 끔. 절차는 README "공개 배포". 테스트: `tests/unit/snapshot.test.ts`, `tests/unit/deploy-mode.test.ts`, `tests/unit/api.test.ts`·`tests/api/*.test.ts`의 읽기 전용 항목
+- [x] T061 (Core) 브랜드 필터와 검색 — `src/lib/filters.ts`(`FilterState.brands`·`query`, `buildBrandOptions`), `src/components/BrandFilterPanel.tsx`, `src/components/FilterBar.tsx`(브랜드 칩은 사이트 칩과 "종료된 할인 보기" 사이, 검색창은 성별 탭 줄). 브랜드는 대소문자·공백만 다른 표기를 하나로 합치고, 검색은 상품명·브랜드·사이트 이름에서 띄어 쓴 낱말이 모두 들어 있는 것을 찾는다. 고른 브랜드는 브라우저에 기억하고 검색어는 기억하지 않는다. 테스트: `tests/unit/filters.test.ts`
 - [x] T057 (Core) 최종 `main` 정리·태그 `v0.1.0`
   - **완료(2026-11-28, Core)**: `tsc --noEmit`, `eslint .`, `vitest run`(1,204개 통과, 5개 건너뜀), `next build` 통과 뒤 태그. 태그 시점에 남은 것: T043 네이버쇼핑(CAPTCHA로 스텁 유지), T056 V3의 SC-003 미충족 항목(4910 가격 기준, 쿠폰가 수집 사이트, 종료 시각 없는 사이트).
 

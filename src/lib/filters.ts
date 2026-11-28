@@ -1,6 +1,8 @@
 // 목록 필터·정렬 순수 함수 (T030) + 선택 기억 (T053).
 import { SITE_IDS } from '@/lib/types';
 import type { Deal, Gender, SiteId, Theme } from '@/lib/types';
+import { normalizeBrand } from '@/lib/group';
+import { SITE_LABELS } from '@/lib/labels';
 import { isEndingSoon, isExpired } from '@/lib/time';
 
 export type DiscountMin = 0 | 30 | 50 | 70;
@@ -17,6 +19,10 @@ export interface FilterState {
   endingToday: boolean;
   /** 종료된 할인도 보기 */
   includeExpired: boolean;
+  /** 고른 브랜드의 키(`normalizeBrand` 결과). 비어 있으면 모든 브랜드 */
+  brands: string[];
+  /** 검색어. 낱말을 띄어 쓰면 모두 들어 있는 것만 남긴다. 빈칸뿐이면 조건 없음 */
+  query: string;
 }
 
 export const DEFAULT_FILTERS: FilterState = {
@@ -26,7 +32,12 @@ export const DEFAULT_FILTERS: FilterState = {
   sites: [],
   endingToday: false,
   includeExpired: false,
+  brands: [],
+  query: '',
 };
+
+/** 기억해 두는 브랜드 선택의 최대 개수 (저장된 값이 망가져도 끝없이 커지지 않게). */
+const MAX_SAVED_BRANDS = 30;
 
 export const DEFAULT_SORT: SortKey = 'discount';
 
@@ -49,8 +60,21 @@ export function isFiltered(state: FilterState): boolean {
     state.minDiscount !== 0 ||
     state.sites.length > 0 ||
     state.endingToday ||
-    state.includeExpired
+    state.includeExpired ||
+    state.brands.length > 0 ||
+    searchTokens(state.query).length > 0
   );
+}
+
+/** 검색어를 비교용 낱말로 나눈다 (소문자, 전각→반각). 빈칸뿐이면 빈 배열. */
+function searchTokens(query: string): string[] {
+  return query.normalize('NFKC').toLowerCase().split(/\s+/).filter((token) => token !== '');
+}
+
+/** 상품명·브랜드·사이트 이름에 모든 낱말이 들어 있는가 (순서 무관). */
+function matchesSearch(deal: Deal, tokens: readonly string[]): boolean {
+  const haystack = `${deal.name} ${deal.brand ?? ''} ${SITE_LABELS[deal.siteId]}`.normalize('NFKC').toLowerCase();
+  return tokens.every((token) => haystack.includes(token));
 }
 
 /**
@@ -58,10 +82,16 @@ export function isFiltered(state: FilterState): boolean {
  * - 할인율 조건이 있으면 할인율을 모르는(null) 상품은 제외한다.
  * - 종료된 할인은 `includeExpired`가 켜져 있을 때만 남긴다.
  * - "오늘 마감"은 진행 중이면서 마감까지 24시간 이내인 것만 남긴다.
+ * - 브랜드를 고르면 그 브랜드만 남긴다 (브랜드를 모르는 상품은 빠진다).
+ * - 검색어가 있으면 상품명·브랜드·사이트 이름에 모든 낱말이 들어 있는 것만 남긴다.
  */
 export function applyFilters(deals: Deal[], state: FilterState, now: Date = new Date()): Deal[] {
   const sites = state.sites.length > 0 ? new Set<SiteId>(state.sites) : null;
+  const brands = state.brands.length > 0 ? new Set(state.brands) : null;
+  const tokens = searchTokens(state.query);
   return deals.filter((deal) => {
+    if (brands && !brands.has(normalizeBrand(deal.brand))) return false;
+    if (tokens.length > 0 && !matchesSearch(deal, tokens)) return false;
     if (!state.includeExpired && isExpired(deal.endsAt, now)) return false;
     if (state.gender !== 'all' && deal.gender !== state.gender) return false;
     if (state.theme !== 'all' && deal.theme !== state.theme) return false;
@@ -85,6 +115,50 @@ export const NO_EXPIRED_REASON = '종료된 할인이 없습니다';
  */
 export function countExpired(deals: readonly Deal[], now: Date = new Date()): number {
   return deals.filter((deal) => isExpired(deal.endsAt, now)).length;
+}
+
+// ── 브랜드 선택지 ───────────────────────────────────────────────────────────
+
+export interface BrandOption {
+  /** 비교용 키 (`normalizeBrand` 결과). `FilterState.brands`에 이 값을 담는다 */
+  key: string;
+  /** 화면에 보일 이름 — 그 브랜드에서 가장 많이 쓰인 표기 */
+  label: string;
+  /** 지금 목록에서 볼 수 있는 개수 ("종료된 할인 보기"가 꺼져 있으면 진행 중인 것만) */
+  count: number;
+}
+
+/** 표기별 개수에서 가장 많이 쓰인 표기를 고른다 (같으면 가나다순으로 앞선 것). */
+function mostUsedSpelling(spellings: ReadonlyMap<string, number>): string {
+  return [...spellings].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ko'))[0][0];
+}
+
+/**
+ * 수집된 Deal에서 브랜드 필터 선택지를 만든다: 많은 순, 같으면 이름순.
+ * 대소문자·공백만 다른 표기는 한 브랜드로 합치고, 브랜드를 모르는 상품은 세지 않는다.
+ */
+export function buildBrandOptions(
+  deals: readonly Deal[],
+  includeExpired: boolean,
+  now: Date = new Date(),
+): BrandOption[] {
+  const spellingsByKey = new Map<string, Map<string, number>>();
+  for (const deal of deals) {
+    const key = normalizeBrand(deal.brand);
+    if (key === '' || deal.brand === null) continue;
+    if (!includeExpired && isExpired(deal.endsAt, now)) continue;
+    const label = deal.brand.trim();
+    const spellings = spellingsByKey.get(key) ?? new Map<string, number>();
+    spellings.set(label, (spellings.get(label) ?? 0) + 1);
+    spellingsByKey.set(key, spellings);
+  }
+  return [...spellingsByKey]
+    .map(([key, spellings]) => ({
+      key,
+      label: mostUsedSpelling(spellings),
+      count: [...spellings.values()].reduce((sum, count) => sum + count, 0),
+    }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'ko'));
 }
 
 // ── 사이트 선택지 (어느 사이트에 실제로 할인이 있는가) ────────────────────
@@ -177,6 +251,13 @@ function oneOf<T>(value: unknown, allowed: readonly T[], fallback: T): T {
   return (allowed as readonly unknown[]).includes(value) ? (value as T) : fallback;
 }
 
+/** 저장된 브랜드 키: 빈 값이 아닌 문자열만, 중복 없이, 한도까지. */
+function parseSavedBrands(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  const keys = raw.filter((value): value is string => typeof value === 'string' && value !== '');
+  return [...new Set(keys)].slice(0, MAX_SAVED_BRANDS);
+}
+
 /** 저장된 값을 검증해 되살린다. 모르는 값은 기본값으로 바꾼다. */
 export function parseSavedView(raw: unknown): SavedView {
   const obj = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
@@ -192,6 +273,9 @@ export function parseSavedView(raw: unknown): SavedView {
       sites,
       endingToday: f.endingToday === true,
       includeExpired: f.includeExpired === true,
+      brands: parseSavedBrands(f.brands),
+      // 검색어는 기억하지 않는다: 다음에 열었을 때 이유 없이 목록이 비어 보이면 안 된다.
+      query: '',
     },
     sort: oneOf<SortKey>(obj.sort, SORT_KEYS, DEFAULT_SORT),
   };
@@ -211,7 +295,9 @@ export function loadSavedView(): SavedView | null {
 export function saveView(view: SavedView): void {
   if (typeof window === 'undefined') return;
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(view));
+    // 검색어는 남기지 않는다 (되살리지도 않는다 — parseSavedView).
+    const remembered: SavedView = { ...view, filters: { ...view.filters, query: '' } };
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(remembered));
   } catch {
     // 저장 공간이 막혀 있어도 목록은 계속 동작해야 한다.
   }

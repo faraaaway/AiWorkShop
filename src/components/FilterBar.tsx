@@ -8,12 +8,15 @@ import {
   NO_EXPIRED_REASON,
   SITE_ORDER,
   THEME_ORDER,
+  type BrandOption,
   type DiscountMin,
   type FilterState,
   type SiteOption,
   type SortKey,
 } from '@/lib/filters';
+import { BrandFilterPanel } from '@/components/BrandFilterPanel';
 import { Chip } from '@/components/Chip';
+import { SearchBox } from '@/components/SearchBox';
 import { SortSelect } from '@/components/SortSelect';
 
 const DISCOUNT_CHIPS: DiscountMin[] = [30, 50, 70];
@@ -29,6 +32,8 @@ interface FilterBarProps {
   onSortChange: (next: SortKey) => void;
   /** 사이트별 할인 개수. 목록을 아직 못 읽었으면 null (개수 없이 모두 고를 수 있게 둔다). */
   siteOptions: readonly SiteOption[] | null;
+  /** 브랜드별 할인 개수(많은 순). 목록을 아직 못 읽었으면 null */
+  brandOptions: readonly BrandOption[] | null;
   /** 수집된 것 중 종료된 할인의 수. 목록을 아직 못 읽었으면 null (그때는 칩을 평소대로 둔다). */
   expiredCount?: number | null;
 }
@@ -69,10 +74,22 @@ function SiteFilterPanel({ selected, options, onToggle, onClear }: SiteFilterPan
 }
 
 /**
- * 상단 고정 필터 (T031): 성별 탭 → 테마 칩 → 정렬·할인율·오늘 마감·사이트·종료 보기.
+ * 상단 고정 필터 (T031): 성별 탭·검색 → 테마 칩 → 정렬·할인율·오늘 마감·사이트·브랜드·종료 보기.
  */
-export function FilterBar({ filters, onChange, sort, onSortChange, siteOptions, expiredCount = null }: FilterBarProps) {
-  const [sitesOpen, setSitesOpen] = useState(false);
+export function FilterBar({
+  filters,
+  onChange,
+  sort,
+  onSortChange,
+  siteOptions,
+  brandOptions,
+  expiredCount = null,
+}: FilterBarProps) {
+  // 사이트·브랜드 선택 패널은 한 번에 하나만 편다 (상단 고정 영역이 화면을 덮지 않게).
+  const [openPanel, setOpenPanel] = useState<'sites' | 'brands' | null>(null);
+  const sitesOpen = openPanel === 'sites';
+  const brandsOpen = openPanel === 'brands';
+  const togglePanel = (panel: 'sites' | 'brands') => setOpenPanel((open) => (open === panel ? null : panel));
   // 종료된 할인이 하나도 없으면 켜도 달라지는 것이 없으니 흐리게 두고 이유를 보여 준다.
   // 이미 켜 둔 상태라면 다시 눌러 끌 수 있어야 한다.
   const expiredUnavailable = expiredCount === 0 && !filters.includeExpired;
@@ -83,6 +100,10 @@ export function FilterBar({ filters, onChange, sort, onSortChange, siteOptions, 
     set({ sites: SITE_ORDER.filter((s) => next.includes(s)) });
   };
 
+  const toggleBrand = (key: string) => {
+    set({ brands: filters.brands.includes(key) ? filters.brands.filter((b) => b !== key) : [...filters.brands, key] });
+  };
+
   const siteChipLabel =
     filters.sites.length === 0
       ? '사이트'
@@ -90,26 +111,43 @@ export function FilterBar({ filters, onChange, sort, onSortChange, siteOptions, 
         ? SITE_LABELS[filters.sites[0]]
         : `사이트 ${filters.sites.length}곳`;
 
+  const brandChipLabel =
+    filters.brands.length === 0
+      ? '브랜드'
+      : filters.brands.length === 1
+        ? (brandOptions?.find((option) => option.key === filters.brands[0])?.label ?? filters.brands[0])
+        : `브랜드 ${filters.brands.length}개`;
+
   return (
     <div className="sticky top-0 z-20 border-b border-[#E6E8EC] bg-white">
       <div className="mx-auto max-w-screen-2xl">
-        {/* 성별 탭 */}
-        <div role="group" aria-label="성별" className="flex border-b border-[#EEF0F3] px-2">
-          {(['all', ...GENDER_ORDER] as const).map((gender) => {
-            const selected = filters.gender === gender;
-            return (
-              <button
-                key={gender}
-                type="button"
-                aria-pressed={selected}
-                onClick={() => set({ gender })}
-                className={`relative h-11 min-w-0 flex-1 text-[15px] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#15171A] sm:flex-none sm:px-5 ${selected ? 'font-bold text-[#15171A]' : 'font-medium text-[#8A9099] hover:text-[#15171A]'}`}
-              >
-                {gender === 'all' ? '전체' : GENDER_LABELS[gender]}
-                {selected && <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-[#15171A]" />}
-              </button>
-            );
-          })}
+        {/* 성별 탭 + 검색 (좁은 화면에서는 검색이 탭 위 줄로 올라간다) */}
+        <div className="flex flex-wrap items-center border-b border-[#EEF0F3] px-2">
+          <div role="group" aria-label="성별" className="flex w-full min-w-0 sm:w-auto">
+            {(['all', ...GENDER_ORDER] as const).map((gender) => {
+              const selected = filters.gender === gender;
+              return (
+                <button
+                  key={gender}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => set({ gender })}
+                  className={`relative h-11 min-w-0 flex-1 text-[15px] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#15171A] sm:flex-none sm:px-5 ${selected ? 'font-bold text-[#15171A]' : 'font-medium text-[#8A9099] hover:text-[#15171A]'}`}
+                >
+                  {gender === 'all' ? '전체' : GENDER_LABELS[gender]}
+                  {selected && <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-[#15171A]" />}
+                </button>
+              );
+            })}
+          </div>
+          {/* 휴대폰: 맨 윗줄에 화면 폭 전체. 넓은 화면: 탭 오른쪽에서 남는 폭만큼, 최대 576px. */}
+          <div className="order-first w-full px-2 pb-1 pt-2.5 sm:order-none sm:flex sm:w-auto sm:min-w-0 sm:flex-1 sm:justify-end sm:py-1 sm:pl-6">
+            <SearchBox
+              value={filters.query}
+              onChange={(query) => set({ query })}
+              className="w-full sm:max-w-xl"
+            />
+          </div>
         </div>
 
         {/* 테마 칩 */}
@@ -147,11 +185,22 @@ export function FilterBar({ filters, onChange, sort, onSortChange, siteOptions, 
             selected={filters.sites.length > 0}
             expanded={sitesOpen}
             controls="site-filter-panel"
-            onClick={() => setSitesOpen((open) => !open)}
+            onClick={() => togglePanel('sites')}
           >
             {siteChipLabel}
             <span aria-hidden="true" className="ml-1 inline-block text-[10px]">
               {sitesOpen ? '▲' : '▼'}
+            </span>
+          </Chip>
+          <Chip
+            selected={filters.brands.length > 0}
+            expanded={brandsOpen}
+            controls="brand-filter-panel"
+            onClick={() => togglePanel('brands')}
+          >
+            {brandChipLabel}
+            <span aria-hidden="true" className="ml-1 inline-block text-[10px]">
+              {brandsOpen ? '▲' : '▼'}
             </span>
           </Chip>
           <Chip
@@ -172,6 +221,15 @@ export function FilterBar({ filters, onChange, sort, onSortChange, siteOptions, 
             options={siteOptions}
             onToggle={toggleSite}
             onClear={() => set({ sites: [] })}
+          />
+        )}
+
+        {brandsOpen && (
+          <BrandFilterPanel
+            selected={filters.brands}
+            options={brandOptions}
+            onToggle={toggleBrand}
+            onClear={() => set({ brands: [] })}
           />
         )}
       </div>

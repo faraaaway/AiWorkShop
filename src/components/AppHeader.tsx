@@ -40,7 +40,8 @@ export function AppHeader({ children }: { children?: ReactNode }) {
   const tabs = readOnly ? TABS.filter((tab) => tab.href !== STATUS_HREF) : TABS;
   return (
     <header className="bg-white">
-      <div className="mx-auto flex max-w-screen-2xl flex-wrap items-end justify-between gap-x-4 gap-y-2 px-4 pb-3 pt-4">
+      {/* items-start: 오른쪽 탭 묶음을 제목 줄이 아니라 로고와 같은 높이에 둔다. */}
+      <div className="mx-auto flex max-w-screen-2xl flex-wrap items-start justify-between gap-x-4 gap-y-2 px-4 pb-3 pt-4">
         <div className="flex flex-col items-start gap-1">
           {/* 장식용 로고: 바로 아래 제목이 같은 내용을 말하므로 대체 텍스트는 비워 둔다. */}
           <Image
@@ -49,7 +50,10 @@ export function AppHeader({ children }: { children?: ReactNode }) {
             width={LOGO.width}
             height={LOGO.height}
             priority
-            className="h-12 w-auto"
+            // 검은 로고를 흰색으로 뒤집은 뒤(invert) 뒤 배경과의 차이로 그린다(mix-blend-difference):
+            // 흰 배경에서는 검게, 어두운 배경에서는 희게 보인다. 휴대폰 브라우저의 다크 모드는 배경만
+            // 어둡게 바꾸고 이미지는 그대로 두기 때문에, 이렇게 하지 않으면 검은 로고가 묻혀 버린다.
+            className="h-12 w-auto invert mix-blend-difference"
           />
           {/* 휴대폰 폭에서는 한 줄에 들어가도록 작게 쓴다 (320px 폭에서도 줄이 바뀌지 않는 크기). */}
           <h1 className="my-1 mt-4 whitespace-nowrap text-[22px] font-extrabold tracking-tight text-[#15171A] sm:text-4xl">
@@ -57,7 +61,8 @@ export function AppHeader({ children }: { children?: ReactNode }) {
           </h1>
         </div>
         {/* 오른쪽 끝: 위에 화면 이동 탭, 그 아래에 화면별 정보(마지막 업데이트 등). */}
-        <div className="ml-auto flex flex-col items-end gap-1.5">
+        {/* mt-2: 높이 48px인 로고의 가운데에 탭(약 32px)이 오도록 살짝 내린다. */}
+        <div className="ml-auto mt-2 flex flex-col items-end gap-1.5">
           <nav aria-label="화면 이동" className="flex gap-1">
             {tabs.map((tab) => {
               const current = pathname === tab.href;
