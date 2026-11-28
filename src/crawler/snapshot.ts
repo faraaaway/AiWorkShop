@@ -5,7 +5,7 @@
  * 이 파일을 커밋·푸시하면 Vercel이 다시 배포하고, 배포판은 이 파일만 읽는다(lib/deploy-mode.ts).
  * 사이트에 접속하지 않는다 — 수집은 `npm run crawl`이나 개발 서버의 자동 수집이 한다.
  */
-import { mkdir, rename, writeFile } from 'node:fs/promises';
+import { mkdir, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -22,6 +22,12 @@ export const SNAPSHOT_FILE = path.join('public', 'snapshot', 'deals.json');
 
 const EXIT_OK = 0;
 const EXIT_PROBLEM = 1;
+const EXIT_USAGE = 2;
+const ALLOW_PARTIAL_FLAG = '--allow-partial';
+const USAGE = [
+  '사용법: npm run snapshot [-- --allow-partial]',
+  '  --allow-partial   읽지 못한 사이트가 있어도 그 사이트를 빼고 내보냄',
+].join('\n');
 const BYTES_PER_KB = 1024;
 const NO_DEALS_MESSAGE =
   '수집된 할인이 없어 스냅샷을 만들지 않았습니다. 먼저 "npm run crawl -- --site all"로 수집해 주세요.';
@@ -30,6 +36,12 @@ export interface ExportOptions {
   /** 쓸 파일. 기본은 저장소의 public/snapshot/deals.json */
   outFile?: string;
   now?: Date;
+  /** 읽지 못한 사이트가 있어도 그 사이트를 빼고 내보낸다. 기본은 false (오류로 멈춘다). */
+  allowPartial?: boolean;
+}
+
+export interface SnapshotArgs {
+  allowPartial: boolean;
 }
 
 export interface ExportResult {
@@ -89,21 +101,45 @@ async function readStatusesOrProblems(): Promise<{ statuses: SiteStatus[]; probl
   };
 }
 
+function buildPartialMessage(problems: readonly string[]): string {
+  return [
+    '읽지 못한 사이트가 있어 스냅샷을 만들지 않았습니다 (그대로 올리면 공개 목록에서 그 사이트가 통째로 빠집니다):',
+    ...problems.map((problem) => `  - ${problem}`),
+    `그 사이트를 빼고라도 내보내려면 "npm run snapshot -- ${ALLOW_PARTIAL_FLAG}"로 실행하세요.`,
+  ].join('\n');
+}
+
 /**
- * data/의 할인을 스냅샷 파일로 쓴다. 할인이 하나도 없으면 쓰지 않고 오류를 던진다
- * (빈 목록으로 공개된 스냅샷을 덮어쓰지 않는다). 임시 파일에 쓴 뒤 바꿔치기해 중간 상태가 남지 않는다.
+ * 임시 파일에 쓴 뒤 바꿔치기해 중간 상태가 남지 않게 한다. 임시 파일은 같은 폴더에 둔다(다른 드라이브면
+ * 바꿔치기가 안 된다). 실패하면 임시 파일을 지운다 — public/ 아래라 남으면 그대로 공개된다.
+ */
+async function writeFileAtomically(file: string, text: string): Promise<void> {
+  const tempFile = `${file}.tmp`;
+  await mkdir(path.dirname(file), { recursive: true });
+  try {
+    await writeFile(tempFile, text, 'utf8');
+    await rename(tempFile, file);
+  } catch (error) {
+    await rm(tempFile, { force: true });
+    throw error;
+  }
+}
+
+/**
+ * data/의 할인을 스냅샷 파일로 쓴다. 다음 경우에는 쓰지 않고 오류를 던진다 (공개된 스냅샷을 망가뜨리지 않는다):
+ * 할인이 하나도 없을 때, 그리고 읽지 못한 사이트가 있는데 `allowPartial`이 아닐 때.
  */
 export async function exportSnapshot(options: ExportOptions = {}): Promise<ExportResult> {
   const outFile = path.resolve(options.outFile ?? SNAPSHOT_FILE);
   const [dealsRead, statusesRead] = await Promise.all([readAllDeals(), readStatusesOrProblems()]);
+  if (dealsRead.problems.length > 0 && options.allowPartial !== true) {
+    throw new Error(buildPartialMessage(dealsRead.problems));
+  }
   if (dealsRead.deals.length === 0) throw new Error(NO_DEALS_MESSAGE);
 
   const snapshot = buildSnapshot(dealsRead.deals, statusesRead.statuses, options.now ?? new Date());
   const text = formatSnapshotFile(snapshot);
-  const tempFile = `${outFile}.tmp`;
-  await mkdir(path.dirname(outFile), { recursive: true });
-  await writeFile(tempFile, text, 'utf8');
-  await rename(tempFile, outFile);
+  await writeFileAtomically(outFile, text);
 
   return {
     outFile,
@@ -140,10 +176,21 @@ function describeResult(result: ExportResult): string[] {
   ];
 }
 
+/** `[]` or `['--allow-partial']`; anything else is not understood (null). */
+export function parseArgs(argv: readonly string[]): SnapshotArgs | null {
+  if (argv.some((arg) => arg !== ALLOW_PARTIAL_FLAG)) return null;
+  return { allowPartial: argv.includes(ALLOW_PARTIAL_FLAG) };
+}
+
 /** Runs the export and returns the exit code; never calls process.exit, so output is not cut off. */
-export async function main(): Promise<number> {
+export async function main(argv: readonly string[] = []): Promise<number> {
+  const args = parseArgs(argv);
+  if (args === null) {
+    printErrorLine(USAGE);
+    return EXIT_USAGE;
+  }
   try {
-    const result = await exportSnapshot();
+    const result = await exportSnapshot({ allowPartial: args.allowPartial });
     result.problems.forEach((problem) => printErrorLine(`주의: ${problem}`));
     describeResult(result).forEach(printLine);
     return EXIT_OK;
@@ -164,7 +211,7 @@ function isRunDirectly(): boolean {
 }
 
 if (isRunDirectly()) {
-  void main().then((exitCode) => {
+  void main(process.argv.slice(2)).then((exitCode) => {
     process.exitCode = exitCode;
   });
 }

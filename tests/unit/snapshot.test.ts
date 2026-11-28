@@ -1,9 +1,9 @@
-import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, readdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { Deal, SiteId, SiteStatus } from '@/lib/types';
-import { buildSnapshot, exportSnapshot, formatSnapshotFile } from '@/crawler/snapshot';
+import { buildSnapshot, exportSnapshot, formatSnapshotFile, parseArgs } from '@/crawler/snapshot';
 import { SNAPSHOT_PUBLIC_PATH, parseSnapshot } from '@/lib/snapshot';
 import { defaultStatus, writeDeals, writeStatus } from '@/lib/store';
 
@@ -112,6 +112,12 @@ describe('parseSnapshot', () => {
     ['모르는 사이트', { ...deal('musinsa', '1'), siteId: 'unknown-shop' }],
     ['할인가가 숫자가 아님', { ...deal('musinsa', '1'), salePrice: '60,000원' }],
     ['주소가 http(s)가 아님', { ...deal('musinsa', '1'), url: 'javascript:alert(1)' }],
+    ['이미지 주소가 http(s)가 아님', { ...deal('musinsa', '1'), imageUrl: 'javascript:alert(1)' }],
+    ['정가가 숫자도 null도 아님', { ...deal('musinsa', '1'), originalPrice: '100,000원' }],
+    ['할인율이 숫자도 null도 아님', { ...deal('musinsa', '1'), discountRate: '40%' }],
+    ['품절 여부가 참/거짓이 아님', { ...deal('musinsa', '1'), soldOut: 'no' }],
+    ['브랜드가 문자열도 null도 아님', { ...deal('musinsa', '1'), brand: 42 }],
+    ['종료 시각이 문자열도 null도 아님', { ...deal('musinsa', '1'), endsAt: 20261130 }],
     ['할인 항목이 객체가 아님', 'musinsa:1'],
   ])('할인 항목이 틀리면 오류: %s', (_label, badDeal) => {
     expect(() => parseSnapshot({ ...valid, deals: [badDeal] })).toThrow();
@@ -172,15 +178,60 @@ describe('exportSnapshot (data/ → 스냅샷 파일)', () => {
     expect(await readFile(outFile, 'utf8')).toBe('previous');
   });
 
-  it('읽을 수 없는 사이트는 건너뛰고 무엇을 뺐는지 알려 준다', async () => {
+  it('읽을 수 없는 사이트가 있으면 쓰지 않고 오류를 낸다 (공개된 목록에서 그 사이트가 통째로 빠지지 않게)', async () => {
+    await seed();
+    await writeFile(path.join(dataDir, 'deals', '29cm.json'), '{ broken', 'utf8');
+    const outFile = path.join(outDir, 'deals.json');
+    await writeFile(outFile, 'previous', 'utf8');
+
+    await expect(exportSnapshot({ outFile, now: NOW })).rejects.toThrow(/29cm/);
+
+    expect(await readFile(outFile, 'utf8')).toBe('previous');
+  });
+
+  it('allowPartial이면 읽을 수 없는 사이트를 빼고 쓰되 무엇을 뺐는지 알려 준다', async () => {
     await seed();
     await writeFile(path.join(dataDir, 'deals', '29cm.json'), '{ broken', 'utf8');
     const outFile = path.join(outDir, 'deals.json');
 
-    const result = await exportSnapshot({ outFile, now: NOW });
+    const result = await exportSnapshot({ outFile, now: NOW, allowPartial: true });
 
     expect(result.siteCounts).toEqual({ musinsa: 2 });
     expect(result.problems).toHaveLength(1);
     expect(result.problems[0]).toContain('29cm');
+  });
+
+  it('쓰고 난 뒤 임시 파일을 남기지 않는다', async () => {
+    await seed();
+    const outFile = path.join(outDir, 'deals.json');
+
+    await exportSnapshot({ outFile, now: NOW });
+
+    expect((await readdir(outDir)).sort()).toEqual(['deals.json']);
+  });
+
+  it('파일을 쓸 수 없으면 오류를 내고 임시 파일을 남기지 않는다', async () => {
+    await seed();
+    // 쓰려는 자리에 폴더가 있으면 바꿔치기가 실패한다.
+    const outFile = path.join(outDir, 'blocked');
+    await mkdir(path.join(outFile, 'inner'), { recursive: true });
+
+    await expect(exportSnapshot({ outFile, now: NOW })).rejects.toThrow();
+
+    expect((await readdir(outDir)).sort()).toEqual(['blocked']);
+  });
+});
+
+describe('parseArgs (npm run snapshot -- …)', () => {
+  it('옵션이 없으면 일부만 내보내기를 허용하지 않는다', () => {
+    expect(parseArgs([])).toEqual({ allowPartial: false });
+  });
+
+  it('--allow-partial을 알아듣는다', () => {
+    expect(parseArgs(['--allow-partial'])).toEqual({ allowPartial: true });
+  });
+
+  it('모르는 옵션은 null (사용법을 보여 준다)', () => {
+    expect(parseArgs(['--force'])).toBeNull();
   });
 });
